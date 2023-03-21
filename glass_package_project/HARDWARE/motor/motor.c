@@ -1,6 +1,21 @@
 #include "motor.h"
 #include "math.h"
 
+volatile motor_struct GE_motor_struct={
+	.name=GE_motor,
+	.motion=stop,
+	.dir=front,
+	.FRONT=1,
+	
+};
+volatile motor_struct GC_rot_motor_struct;
+volatile motor_struct GC_ver_motor_stcut;
+volatile motor_struct GP_motor_struct;
+volatile motor_struct GO_hor_motor_struct;
+volatile motor_struct GO_ver_motor_struct;
+
+
+
 // 步数，第几步，定时器时钟频率，启动频率，目标频率，曲线系数
 unsigned short GetStepPeriodOnAcc(float len, u16 i, float pwm_clock, float fre_min, float fre_max,  float flexible)
 {
