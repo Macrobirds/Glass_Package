@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\USMART;..\SYSTEM\GPIO;..\SYSTEM\IIC;..\SYSTEM\pwm;..\HARDWARE\pos_sensor;..\HARDWARE\motor</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\USMART;..\SYSTEM\GPIO;..\SYSTEM\IIC;..\SYSTEM\pwm;..\HARDWARE\pos_sensor;..\HARDWARE\motor;..\SYSTEM\Malloc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,6 +403,16 @@
               <FileType>5</FileType>
               <FilePath>.\stm32f10x_conf.h</FilePath>
             </File>
+            <File>
+              <FileName>Globalconfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Globalconfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>Globalconfig.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Globalconfig.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -462,6 +472,11 @@
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\pwm\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\Malloc\malloc.c</FilePath>
             </File>
           </Files>
         </Group>
