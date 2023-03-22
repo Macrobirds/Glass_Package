@@ -167,8 +167,8 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_usart.h)(0x504F415E)
 I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x4D783BB4)
 I (..\SYSTEM\sys\sys.h)(0x550FC1BF)
-F (..\HARDWARE\motor\motor.c)(0x64196C8B)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\motor.o --omf_browse ..\obj\motor.crf --depend ..\obj\motor.d)
-I (..\HARDWARE\motor\motor.h)(0x64196A64)
+F (..\HARDWARE\motor\motor.c)(0x641A4C62)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\motor.o --omf_browse ..\obj\motor.crf --depend ..\obj\motor.d)
+I (..\HARDWARE\motor\motor.h)(0x641A4C62)
 I (..\SYSTEM\sys\sys.h)(0x550FC1BF)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -403,8 +403,8 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\stm32f10x_usart.h)(0x504F415E)
 I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x4D783BB4)
-F (..\SYSTEM\pwm\pwm.c)(0x64196C8B)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\pwm.o --omf_browse ..\obj\pwm.crf --depend ..\obj\pwm.d)
-I (..\SYSTEM\pwm\pwm.h)(0x64195EDB)
+F (..\SYSTEM\pwm\pwm.c)(0x64197B06)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\pwm.o --omf_browse ..\obj\pwm.crf --depend ..\obj\pwm.d)
+I (..\SYSTEM\pwm\pwm.h)(0x64197AD3)
 I (..\USER\stm32f10x_conf.h)(0x5501900A)
 I (..\STM32F10x_FWLib\inc\stm32f10x_adc.h)(0x4D783BB4)
 I (..\USER\stm32f10x.h)(0x4D783CB4)

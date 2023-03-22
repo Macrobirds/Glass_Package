@@ -1,20 +1,124 @@
 #include "motor.h"
 #include "math.h"
+#include "Globalconfig.h"
+#include "position.h"
+#include "mydelay.h"
+#include "malloc.h"
 
-volatile motor_struct GE_motor_struct={
+
+motor_struct GE_motor_struct={
 	.name=GE_motor,
-	.motion=stop,
-	.dir=front,
+	.motion=Stop,
+	.dir=Front,
 	.FRONT=1,
+	.TIM=TIM1,
+	.AccPeriodArray=NULL,
 	
 };
-volatile motor_struct GC_rot_motor_struct;
-volatile motor_struct GC_ver_motor_stcut;
-volatile motor_struct GP_motor_struct;
-volatile motor_struct GO_hor_motor_struct;
-volatile motor_struct GO_ver_motor_struct;
+motor_struct GC_rot_motor_struct={
+	.name=GC_rot_motor,
+	.motion=Stop,
+	.dir=Front,
+	.FRONT=1,
+	.TIM=TIM5,
+	.AccPeriodArray=NULL,
+};
+motor_struct GC_ver_motor_stcut={
+	.name=GC_ver_motor,
+	.motion=Stop,
+	.dir=Front,
+	.FRONT=1,
+	.TIM=TIM3,
+	.AccPeriodArray=NULL,
+};
+motor_struct GP_motor_struct={
+	.name=GP_motor,
+	.motion=Stop,
+	.dir=Front,
+	.FRONT=1,
+	.TIM=TIM8,
+	.AccPeriodArray=NULL,
+};
+motor_struct GO_hor_motor_struct={
+	.name=GO_hor_motor,
+	.motion=Stop,
+	.dir=Front,
+	.FRONT=1,
+	.TIM=TIM2,
+	.AccPeriodArray=NULL,
+};
+motor_struct GO_ver_motor_struct={
+	.name=GO_ver_motor,
+	.motion=Stop,
+	.dir=Front,
+	.FRONT=1,
+	.TIM=TIM4,
+	.AccPeriodArray=NULL,
+};
 
+void motor_parameter_Init(void)
+{
+	//set GE motor parm
+	GE_motor_struct.pulse_1mm=Global_Parm.MOT.GE_1mm;
+	GE_motor_struct.maxfeq=Global_Parm.MOT.GE_max_speed*GE_motor_struct.pulse_1mm;
+	GE_motor_struct.startfeq=Global_Parm.MOT.GE_min_speed*GE_motor_struct.pulse_1mm;
+	GE_motor_struct.max_pos=Global_Parm.GIO.GE_max_pos;
+	GE_motor_struct.defaultfeq=GE_motor_struct.pulse_1mm*30;
+	GE_motor_struct.curvature=2;
+	GE_motor_struct.t_m=(GE_motor_struct.timerfeq/GE_motor_struct.defaultfeq);
+	GE_motor_struct.accStepNumber=GE_motor_struct.pulse_1mm*10;
+	
+	//set GCV motor parm
+	GC_ver_motor_stcut.pulse_1mm=Global_Parm.MOT.GCV_1mm;
+	GC_ver_motor_stcut.maxfeq=Global_Parm.MOT.GCV_max_speed*GC_ver_motor_stcut.pulse_1mm;
+	GC_ver_motor_stcut.startfeq=Global_Parm.MOT.GCV_min_speed*GC_ver_motor_stcut.pulse_1mm;
+	GC_ver_motor_stcut.max_pos=Global_Parm.GCS.GCV_max_pos;
+	GC_ver_motor_stcut.defaultfeq=GC_ver_motor_stcut.pulse_1mm*30;
+	GC_ver_motor_stcut.curvature=2;
+	GC_ver_motor_stcut.t_m=(GC_ver_motor_stcut.timerfeq/GC_ver_motor_stcut.defaultfeq);
+	GC_ver_motor_stcut.accStepNumber=GC_ver_motor_stcut.pulse_1mm*10;
+	
+	//set GCR motor parm
+	GC_rot_motor_struct.pulse_1mm=1; //unit be angel
+	GC_rot_motor_struct.maxfeq=Global_Parm.MOT.GCR_max_speed;
+	GC_rot_motor_struct.startfeq=Global_Parm.MOT.GCR_min_speed;
+	GC_rot_motor_struct.max_pos=Global_Parm.GCS.GCR_max_pos;
+	GC_rot_motor_struct.defaultfeq=200;
+	GC_rot_motor_struct.t_m=(GC_rot_motor_struct.timerfeq/GC_rot_motor_struct.defaultfeq);
+	GC_rot_motor_struct.accStepNumber=GC_rot_motor_struct.pulse_1mm*10;
+	
+	//set GP motor parm
+	GP_motor_struct.pulse_1mm=Global_Parm.MOT.GP_1mm;
+	GP_motor_struct.maxfeq=Global_Parm.MOT.GP_max_speed*GP_motor_struct.pulse_1mm;
+	GP_motor_struct.startfeq=Global_Parm.MOT.GP_min_speed*GP_motor_struct.pulse_1mm;
+	GP_motor_struct.defaultfeq=GP_motor_struct.pulse_1mm*30;
+	GP_motor_struct.max_pos=Global_Parm.GP.max_pos;
+	GP_motor_struct.curvature=2;
+	GP_motor_struct.t_m=(GP_motor_struct.timerfeq/GP_motor_struct.defaultfeq);
+	GP_motor_struct.accStepNumber=GP_motor_struct.pulse_1mm*10;
+	
+	
+	//set GOH motor parm
+	GO_hor_motor_struct.pulse_1mm=Global_Parm.MOT.GOH_1mm;
+	GO_hor_motor_struct.maxfeq=Global_Parm.MOT.GOH_max_speed;
+	GO_hor_motor_struct.startfeq=Global_Parm.MOT.GOH_min_speed;
+	GO_hor_motor_struct.defaultfeq=GO_hor_motor_struct.pulse_1mm*30;
+	GO_hor_motor_struct.max_pos=Global_Parm.GCS.GOH_max_pos;
+	GO_hor_motor_struct.curvature=2;
+	GO_hor_motor_struct.t_m=(GO_hor_motor_struct.timerfeq/GO_hor_motor_struct.defaultfeq);
+	GO_hor_motor_struct.accStepNumber=GO_hor_motor_struct.pulse_1mm*10;
+	
+	//set GOV motor parm
+	GO_ver_motor_struct.pulse_1mm=Global_Parm.MOT.GOV_1mm;
+	GO_ver_motor_struct.maxfeq=Global_Parm.MOT.GOV_max_speed*GO_ver_motor_struct.pulse_1mm;
+	GO_ver_motor_struct.startfeq=Global_Parm.MOT.GOV_min_speed*GO_ver_motor_struct.pulse_1mm;
+	GO_ver_motor_struct.defaultfeq=GO_ver_motor_struct.pulse_1mm*30;
+	GO_ver_motor_struct.max_pos=Global_Parm.GIO.GOV_max_pos;
+	GO_ver_motor_struct.curvature=2;
+	GO_ver_motor_struct.t_m=(GO_ver_motor_struct.timerfeq/GO_ver_motor_struct.defaultfeq);
+	GO_ver_motor_struct.accStepNumber=GO_ver_motor_struct.pulse_1mm*10;
 
+}
 
 // 步数，第几步，定时器时钟频率，启动频率，目标频率，曲线系数
 unsigned short GetStepPeriodOnAcc(float len, u16 i, float pwm_clock, float fre_min, float fre_max,  float flexible)
@@ -89,9 +193,211 @@ void GetStepPeriodArrayOnDec(unsigned short period[], float len,  float pwm_cloc
     }
 }
 
-void motorGo(u8 stepperMotorName, long planPosition);
 
-// 匀速控制电机运行，参数：电机名，位置，频率
-void stepperMotorRun_planPosition(u8 stepperMotorName, long planPosition, u32 freq);
 
-void stepperMotorStop(u8 stepperMotorName);
+//获取对应电机的轴原点传感器状态
+u8 motor_Get_Start_Sen(enum motor_index motor_name)
+{
+	switch(motor_name)
+	{
+		case GE_motor:
+		return GE_start_Sen;
+		break;
+		case GC_rot_motor:
+		return GC_rot_Sen;	
+		break;
+		case GC_ver_motor:
+		return GC_ver_Sen;	
+		break;
+		case GP_motor:
+		return GP_start_Sen;
+		break;
+		case GO_hor_motor:
+		return GOH_start_Sen;	
+		break;
+		case GO_ver_motor:
+		return GOV_start_Sen;	
+		break;
+		default: break;
+	}
+}
+
+
+//设置对应电机的方向
+void motor_Set_Direction(motor_struct * motor,enum motor_direction dir)
+{
+	 u8 direction=0;
+	 if(dir==Front)
+	 {
+		direction=motor->FRONT;
+	 }
+	 else
+	 {
+		 direction=!motor->FRONT;
+	 }
+		switch(motor->name)
+	{
+		case GE_motor:
+		GE_DIR=direction;
+		break;
+		case GC_rot_motor:
+		GC_rot_DIR=direction;
+		break;
+		case GC_ver_motor:
+		GC_ver_DIR=direction;
+		break;
+		case GP_motor:
+		GP_DIR=direction;
+		break;
+		case GO_hor_motor:
+		GOH_DIR=direction;
+		break;
+		case GO_ver_motor:
+		GOV_DIR=direction;
+		break;
+		default: break;
+	}
+}
+
+void stepperMotorStop(motor_struct * motor)
+{
+	TIM_Cmd(motor->TIM,DISABLE);
+	motor->motion=Stop;
+}
+
+// 匀速控制电机运行 电机结构体 电机状态 匀速运动频率
+void motorGo(motor_struct * motor, long planPosition,u32 freq)
+{
+	enum motor_direction OldDirection=Front;
+	long planStepNumber=0;
+	
+	
+	if(planPosition>0) //目标位置不在原点
+	{
+		motor->planpostion=planPosition;
+		planStepNumber=planPosition-motor->postion;
+		
+	}
+	else//目标位置在原点
+	{ 
+		motor->planpostion=0;
+		if(motor_Get_Start_Sen(motor->name)==Sen_Block)  //原点传感器感应
+		{
+			planStepNumber=0;
+		}
+		else//位置未初始化成功
+		{
+			if(motor->postion<=0) motor->postion=motor->max_pos; 
+			planStepNumber=planPosition-motor->postion;
+		}
+	
+	}
+	
+	
+		OldDirection=motor->dir;
+		if(planStepNumber>0)
+		{
+			motor->dir=Front;
+			motor_Set_Direction(motor,Front);
+		}
+		else if(planStepNumber<0)
+		{
+			motor->dir=Back;
+			motor_Set_Direction(motor,Back);
+			planStepNumber*=-1;
+		}
+		else
+		{
+			stepperMotorStop(motor);
+			return;
+		}
+		if(OldDirection!=motor->dir)
+		{
+			my_delay_us(5);
+		}
+		motor->motion=ConstMove; //标记运动状态为匀速运动
+		motor->planSetpNumber=planStepNumber; //设置目标步数
+		motor->t_m=motor->timerfeq/freq;//设置目标计数值
+		
+		TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->t_m)%0xffff);
+		TIM_Cmd(motor->TIM,ENABLE);
+}
+
+
+
+
+// 设置混合参数  约15mm
+void setMixtureData(motor_struct * motor)
+{
+	if(motor->AccPeriodArray!=NULL)
+	{
+		myfree(SRAMIN,motor->AccPeriodArray);
+	}
+	
+	if(motor->planSetpNumber>=motor->pulse_1mm*20)
+	{
+		motor->AccPeriodArray=mymalloc(SRAMIN,motor->accStepNumber*2);
+		GetStepPeriodArrayOnAcc(motor->AccPeriodArray,motor->accStepNumber,motor->timerfeq,motor->startfeq,motor->maxfeq,motor->curvature);
+		motor->motion=AccMove; //设置电机运动状态为加减速状态
+	}
+	else
+	{
+		motor->motion=ConstMove;//设置电机运动状态为匀速状态
+		motor->t_m=motor->timerfeq/motor->defaultfeq;
+	}
+	
+}
+
+
+// 变速控制电机运行
+void motorGo_acc(motor_struct * motor, long planPosition)
+{
+	enum motor_direction OldDirection=Front;
+	long planStepNumber=0;
+	
+	OldDirection=motor->dir;
+	if(planPosition>0)
+	{
+		motor->planpostion=planPosition;
+		planStepNumber=planPosition-motor->postion;
+	}
+	else
+	{
+		motor->planpostion=0;
+		if(motor_Get_Start_Sen(motor->name)==Sen_Block)
+		{
+			motor->planSetpNumber=0;
+			planStepNumber=0;
+		}
+		else
+		{
+			if(motor->postion<=0) motor->postion=motor->max_pos;
+			planStepNumber=planPosition-motor->postion;
+		}
+	}
+	if(planStepNumber>0)
+	{
+		motor->dir=Front;
+		motor_Set_Direction(motor,Front);
+	}
+	else if(planStepNumber<0)
+	{
+		motor->dir=Back;
+		motor_Set_Direction(motor,Back);
+		planStepNumber*=-1;
+	}
+	else
+	{
+		stepperMotorStop(motor);
+		return;
+	}
+	
+	motor->planSetpNumber=planStepNumber;
+	if(OldDirection!=motor->dir)
+	{
+			my_delay_us(5);
+	}
+	setMixtureData(motor);
+	TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->AccPeriodArray[0])%0xffff);
+	TIM_Cmd(motor->TIM,ENABLE);
+}

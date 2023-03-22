@@ -1,7 +1,9 @@
 #include "pwm.h"
+#include "motor.h"
 
 
 
+//GE motor pwm
 void TIM1_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -10,6 +12,8 @@ void TIM1_PWM_Init(u16 psc)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
+	
+	GE_motor_struct.timerfeq=72000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -37,6 +41,8 @@ void TIM1_PWM_Init(u16 psc)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
+
+//GO_ver_motor pwm
 void TIM4_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -46,6 +52,8 @@ void TIM4_PWM_Init(u16 psc)
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
+	
+	GO_ver_motor_struct.timerfeq=72000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -75,6 +83,8 @@ void TIM4_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 
 }
+
+//GC_ver_motor pwm
 void TIM3_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -84,6 +94,8 @@ void TIM3_PWM_Init(u16 psc)
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
+	
+	GC_ver_motor_stcut.timerfeq=72000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -111,6 +123,8 @@ void TIM3_PWM_Init(u16 psc)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
+
+//GP_motor pwm
 void TIM8_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -119,6 +133,8 @@ void TIM8_PWM_Init(u16 psc)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_AFIO,ENABLE);
+	
+	GP_motor_struct.timerfeq=72000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -146,6 +162,8 @@ void TIM8_PWM_Init(u16 psc)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
+
+//GC_rot_motor pwm
 void TIM5_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -154,6 +172,8 @@ void TIM5_PWM_Init(u16 psc)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
+	
+	GC_rot_motor_struct.timerfeq=72000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -182,6 +202,7 @@ void TIM5_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
+//GO_ver_motor_pwm
 //引脚复用重定位 ，需要最后设置 ，否则复位失败
 void TIM2_PWM_Init(u16 psc)
 {
@@ -194,6 +215,8 @@ void TIM2_PWM_Init(u16 psc)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable,ENABLE); //disable JTAG
 	GPIO_PinRemapConfig(GPIO_FullRemap_TIM2,ENABLE); //TIM2 Remap CH1->PA15
+	
+	GO_hor_motor_struct.timerfeq=72000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;

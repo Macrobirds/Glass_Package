@@ -1,6 +1,7 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
 #include "sys.h"
+#include "stm32f10x_conf.h"
 
 
 
@@ -21,40 +22,47 @@ enum motor_index{
 };
 
 enum motor_state{
-	stop,
-	move,
+	Stop,
+	AccMove,
+	ConstMove,
 };
 
 enum motor_direction
 {
-	front,
-	back
+	Front,
+	Back
 };
 
 typedef struct{
 	enum motor_index name; //电机名称
-	enum motor_state motion; //电机运动状态
-	enum motor_direction dir; //电机运动方向
-	u16 paluse_1mm; //移动1mm脉冲数
+	volatile enum motor_state motion; //电机运动状态
+	volatile enum motor_direction dir; //电机运动方向
+	u16 pulse_1mm; //移动1mm脉冲数
+	u16 t_m;
 	u32 maxfeq; //最大运行频率
-	u32 startfeq; //启动频率
+	u32 startfeq; //最小启动频率
+	u32 defaultfeq; //匀速运动频率
 	u32 planSetpNumber; //计划运行步数
 	u32 planpostion; //计划运行位置
-	u32 accStepNumberl;
+	u32 accStepNumber;
 	u32 max_pos; //最大轨道位置
-	u32 postion; //电机位置
-	u32 step; //电机单次运动步数
-	u8 * AccPeriodArray; //加减速数组
+	volatile u32 postion; //电机位置
+	volatile u32 step; //电机单次运动步数
+	u16 timerfeq; //定时器频率
+	u16 * AccPeriodArray; //加减速数组
 	u8 FRONT; //向前运动DR口电平高低 
 	float curvature; //加减速曲线曲率（值越小加速度越小）
+	TIM_TypeDef * TIM;
 }motor_struct;
 	
 	
-volatile motor_struct GE_motor_struct;
-volatile motor_struct GC_rot_motor_struct;
-volatile motor_struct GC_ver_motor_stcut;
-volatile motor_struct GP_motor_struct;
-volatile motor_struct GO_hor_motor_struct;
-volatile motor_struct GO_ver_motor_struct;
+motor_struct GE_motor_struct;
+motor_struct GC_rot_motor_struct;
+motor_struct GC_ver_motor_stcut;
+motor_struct GP_motor_struct;
+motor_struct GO_hor_motor_struct;
+motor_struct GO_ver_motor_struct;
+
+void motor_parameter_Init(void);
 
 #endif
