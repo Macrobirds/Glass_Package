@@ -29,7 +29,6 @@ static void Exti_0_7_GPIO_Init(void)
 static void Exti_Init_0_7(void)
 {
 	EXTI_InitTypeDef EXTI_InitStructure;
- 	NVIC_InitTypeDef NVIC_InitStructure;
 	//GPIO ≥ı ºªØ
 	Exti_0_7_GPIO_Init();
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);

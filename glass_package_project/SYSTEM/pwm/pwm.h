@@ -2,7 +2,7 @@
 #define __PWM_H
 #include "stm32f10x_conf.h"
 
-#define PSC_FEQ 72
+#define PSC_FEQ 720
 
 void TIM1_PWM_Init(u16 psc);
 void TIM4_PWM_Init(u16 psc);

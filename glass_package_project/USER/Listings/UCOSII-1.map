@@ -1,4 +1,4 @@
-Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
+Component: ARM Compiler 5.06 update 4 (build 422) Tool: armlink [4d35d2]
 
 ==============================================================================
 
@@ -53,6 +53,18 @@ Section Cross References
     motor.o(i.GetStepPeriodArrayOnAcc) refers to d2f.o(x$fpl$d2f) for __aeabi_d2f
     motor.o(i.GetStepPeriodArrayOnAcc) refers to ffixu.o(x$fpl$ffixu) for __aeabi_f2uiz
     motor.o(i.GetStepPeriodArrayOnAcc) refers to fleqf.o(x$fpl$fleqf) for __aeabi_cfcmple
+    motor.o(i.GetStepPeriodArrayOnDec) refers to faddsub_clz.o(x$fpl$fsub) for __aeabi_fsub
+    motor.o(i.GetStepPeriodArrayOnDec) refers to fdiv.o(x$fpl$fdiv) for __aeabi_fdiv
+    motor.o(i.GetStepPeriodArrayOnDec) refers to fflt_clz.o(x$fpl$fflt) for __aeabi_i2f
+    motor.o(i.GetStepPeriodArrayOnDec) refers to fmul.o(x$fpl$fmul) for __aeabi_fmul
+    motor.o(i.GetStepPeriodArrayOnDec) refers to expf.o(i.expf) for expf
+    motor.o(i.GetStepPeriodArrayOnDec) refers to faddsub_clz.o(x$fpl$fadd) for __aeabi_fadd
+    motor.o(i.GetStepPeriodArrayOnDec) refers to f2d.o(x$fpl$f2d) for __aeabi_f2d
+    motor.o(i.GetStepPeriodArrayOnDec) refers to ddiv.o(x$fpl$ddiv) for __aeabi_ddiv
+    motor.o(i.GetStepPeriodArrayOnDec) refers to d2f.o(x$fpl$d2f) for __aeabi_d2f
+    motor.o(i.GetStepPeriodArrayOnDec) refers to faddsub_clz.o(x$fpl$frsb) for __aeabi_frsub
+    motor.o(i.GetStepPeriodArrayOnDec) refers to ffixu.o(x$fpl$ffixu) for __aeabi_f2uiz
+    motor.o(i.GetStepPeriodArrayOnDec) refers to fleqf.o(x$fpl$fleqf) for __aeabi_cfcmple
     motor.o(i.GetStepPeriodOnAcc) refers to faddsub_clz.o(x$fpl$fsub) for __aeabi_fsub
     motor.o(i.GetStepPeriodOnAcc) refers to fdiv.o(x$fpl$fdiv) for __aeabi_fdiv
     motor.o(i.GetStepPeriodOnAcc) refers to fflt_clz.o(x$fpl$ffltu) for __aeabi_ui2f
@@ -74,6 +86,28 @@ Section Cross References
     motor.o(i.GetStepPeriodOnDec) refers to d2f.o(x$fpl$d2f) for __aeabi_d2f
     motor.o(i.GetStepPeriodOnDec) refers to faddsub_clz.o(x$fpl$frsb) for __aeabi_frsub
     motor.o(i.GetStepPeriodOnDec) refers to ffixu.o(x$fpl$ffixu) for __aeabi_f2uiz
+    motor.o(i.motorGo) refers to motor.o(i.motor_Get_Start_Sen) for motor_Get_Start_Sen
+    motor.o(i.motorGo) refers to motor.o(i.motor_Set_Direction) for motor_Set_Direction
+    motor.o(i.motorGo) refers to motor.o(i.stepperMotorStop) for stepperMotorStop
+    motor.o(i.motorGo) refers to mydelay.o(i.my_delay_us) for my_delay_us
+    motor.o(i.motorGo) refers to stm32f10x_tim.o(i.TIM_ClearITPendingBit) for TIM_ClearITPendingBit
+    motor.o(i.motorGo) refers to stm32f10x_tim.o(i.TIM_SetCompare1) for TIM_SetCompare1
+    motor.o(i.motorGo) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
+    motor.o(i.motorGo_acc) refers to motor.o(i.motor_Get_Start_Sen) for motor_Get_Start_Sen
+    motor.o(i.motorGo_acc) refers to motor.o(i.motor_Set_Direction) for motor_Set_Direction
+    motor.o(i.motorGo_acc) refers to motor.o(i.stepperMotorStop) for stepperMotorStop
+    motor.o(i.motorGo_acc) refers to mydelay.o(i.my_delay_us) for my_delay_us
+    motor.o(i.motorGo_acc) refers to motor.o(i.setMixtureData) for setMixtureData
+    motor.o(i.motorGo_acc) refers to stm32f10x_tim.o(i.TIM_ClearITPendingBit) for TIM_ClearITPendingBit
+    motor.o(i.motorGo_acc) refers to stm32f10x_tim.o(i.TIM_SetCompare1) for TIM_SetCompare1
+    motor.o(i.motorGo_acc) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
+    motor.o(i.motor_parameter_Init) refers to globalconfig.o(.bss) for Global_Parm
+    motor.o(i.motor_parameter_Init) refers to motor.o(.data) for GE_motor_struct
+    motor.o(i.setMixtureData) refers to malloc.o(i.myfree) for myfree
+    motor.o(i.setMixtureData) refers to malloc.o(i.mymalloc) for mymalloc
+    motor.o(i.setMixtureData) refers to fflt_clz.o(x$fpl$ffltu) for __aeabi_ui2f
+    motor.o(i.setMixtureData) refers to motor.o(i.GetStepPeriodArrayOnAcc) for GetStepPeriodArrayOnAcc
+    motor.o(i.stepperMotorStop) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
     delay.o(i.SysTick_Handler) refers to os_core.o(i.OSIntEnter) for OSIntEnter
     delay.o(i.SysTick_Handler) refers to os_core.o(i.OSTimeTick) for OSTimeTick
     delay.o(i.SysTick_Handler) refers to os_core.o(i.OSIntExit) for OSIntExit
@@ -148,30 +182,101 @@ Section Cross References
     myiic.o(i.IIC_WriteOneByte) refers to myiic.o(i.IIC_Send_Byte) for IIC_Send_Byte
     myiic.o(i.IIC_WriteOneByte) refers to myiic.o(i.IIC_Wait_Ack) for IIC_Wait_Ack
     myiic.o(i.IIC_WriteOneByte) refers to myiic.o(i.IIC_Stop) for IIC_Stop
+    pwm.o(i.Motor_PWM_Init) refers to pwm.o(i.TIM1_PWM_Init) for TIM1_PWM_Init
+    pwm.o(i.Motor_PWM_Init) refers to pwm.o(i.TIM4_PWM_Init) for TIM4_PWM_Init
+    pwm.o(i.Motor_PWM_Init) refers to pwm.o(i.TIM3_PWM_Init) for TIM3_PWM_Init
+    pwm.o(i.Motor_PWM_Init) refers to pwm.o(i.TIM8_PWM_Init) for TIM8_PWM_Init
+    pwm.o(i.Motor_PWM_Init) refers to pwm.o(i.TIM5_PWM_Init) for TIM5_PWM_Init
+    pwm.o(i.Motor_PWM_Init) refers to pwm.o(i.TIM2_PWM_Init) for TIM2_PWM_Init
+    pwm.o(i.TIM1_CC_IRQHandler) refers to stm32f10x_tim.o(i.TIM_GetITStatus) for TIM_GetITStatus
+    pwm.o(i.TIM1_CC_IRQHandler) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
+    pwm.o(i.TIM1_CC_IRQHandler) refers to stm32f10x_tim.o(i.TIM_SetCompare1) for TIM_SetCompare1
+    pwm.o(i.TIM1_CC_IRQHandler) refers to stm32f10x_tim.o(i.TIM_ClearITPendingBit) for TIM_ClearITPendingBit
+    pwm.o(i.TIM1_CC_IRQHandler) refers to motor.o(.data) for GE_motor_struct
+    pwm.o(i.TIM1_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
+    pwm.o(i.TIM1_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
     pwm.o(i.TIM1_PWM_Init) refers to stm32f10x_tim.o(i.TIM_TimeBaseInit) for TIM_TimeBaseInit
     pwm.o(i.TIM1_PWM_Init) refers to stm32f10x_tim.o(i.TIM_OC1Init) for TIM_OC1Init
     pwm.o(i.TIM1_PWM_Init) refers to stm32f10x_tim.o(i.TIM_ITConfig) for TIM_ITConfig
     pwm.o(i.TIM1_PWM_Init) refers to misc.o(i.NVIC_Init) for NVIC_Init
+    pwm.o(i.TIM1_PWM_Init) refers to motor.o(.data) for GE_motor_struct
+    pwm.o(i.TIM2_IRQHandler) refers to stm32f10x_tim.o(i.TIM_GetITStatus) for TIM_GetITStatus
+    pwm.o(i.TIM2_IRQHandler) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
+    pwm.o(i.TIM2_IRQHandler) refers to stm32f10x_tim.o(i.TIM_SetCompare1) for TIM_SetCompare1
+    pwm.o(i.TIM2_IRQHandler) refers to stm32f10x_tim.o(i.TIM_ClearITPendingBit) for TIM_ClearITPendingBit
+    pwm.o(i.TIM2_IRQHandler) refers to motor.o(.data) for GO_hor_motor_struct
+    pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd) for RCC_APB1PeriphClockCmd
+    pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
+    pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_PinRemapConfig) for GPIO_PinRemapConfig
+    pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
     pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_tim.o(i.TIM_TimeBaseInit) for TIM_TimeBaseInit
     pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_tim.o(i.TIM_OC1Init) for TIM_OC1Init
     pwm.o(i.TIM2_PWM_Init) refers to stm32f10x_tim.o(i.TIM_ITConfig) for TIM_ITConfig
     pwm.o(i.TIM2_PWM_Init) refers to misc.o(i.NVIC_Init) for NVIC_Init
+    pwm.o(i.TIM2_PWM_Init) refers to motor.o(.data) for GO_hor_motor_struct
+    pwm.o(i.TIM3_IRQHandler) refers to stm32f10x_tim.o(i.TIM_GetITStatus) for TIM_GetITStatus
+    pwm.o(i.TIM3_IRQHandler) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
+    pwm.o(i.TIM3_IRQHandler) refers to stm32f10x_tim.o(i.TIM_SetCompare1) for TIM_SetCompare1
+    pwm.o(i.TIM3_IRQHandler) refers to stm32f10x_tim.o(i.TIM_ClearITPendingBit) for TIM_ClearITPendingBit
+    pwm.o(i.TIM3_IRQHandler) refers to motor.o(.data) for GC_ver_motor_struct
+    pwm.o(i.TIM3_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd) for RCC_APB1PeriphClockCmd
+    pwm.o(i.TIM3_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
+    pwm.o(i.TIM3_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
     pwm.o(i.TIM3_PWM_Init) refers to stm32f10x_tim.o(i.TIM_TimeBaseInit) for TIM_TimeBaseInit
     pwm.o(i.TIM3_PWM_Init) refers to stm32f10x_tim.o(i.TIM_OC1Init) for TIM_OC1Init
     pwm.o(i.TIM3_PWM_Init) refers to stm32f10x_tim.o(i.TIM_ITConfig) for TIM_ITConfig
     pwm.o(i.TIM3_PWM_Init) refers to misc.o(i.NVIC_Init) for NVIC_Init
+    pwm.o(i.TIM3_PWM_Init) refers to motor.o(.data) for GC_ver_motor_struct
+    pwm.o(i.TIM4_IRQHandler) refers to stm32f10x_tim.o(i.TIM_GetITStatus) for TIM_GetITStatus
+    pwm.o(i.TIM4_IRQHandler) refers to stm32f10x_tim.o(i.TIM_Cmd) for TIM_Cmd
+    pwm.o(i.TIM4_IRQHandler) refers to stm32f10x_tim.o(i.TIM_SetCompare1) for TIM_SetCompare1
+    pwm.o(i.TIM4_IRQHandler) refers to stm32f10x_tim.o(i.TIM_ClearITPendingBit) for TIM_ClearITPendingBit
+    pwm.o(i.TIM4_IRQHandler) refers to motor.o(.data) for GO_ver_motor_struct
+    pwm.o(i.TIM4_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd) for RCC_APB1PeriphClockCmd
+    pwm.o(i.TIM4_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
+    pwm.o(i.TIM4_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
     pwm.o(i.TIM4_PWM_Init) refers to stm32f10x_tim.o(i.TIM_TimeBaseInit) for TIM_TimeBaseInit
     pwm.o(i.TIM4_PWM_Init) refers to stm32f10x_tim.o(i.TIM_OC1Init) for TIM_OC1Init
     pwm.o(i.TIM4_PWM_Init) refers to stm32f10x_tim.o(i.TIM_ITConfig) for TIM_ITConfig
     pwm.o(i.TIM4_PWM_Init) refers to misc.o(i.NVIC_Init) for NVIC_Init
+    pwm.o(i.TIM4_PWM_Init) refers to motor.o(.data) for GO_ver_motor_struct
+    pwm.o(i.TIM5_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd) for RCC_APB1PeriphClockCmd
+    pwm.o(i.TIM5_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
+    pwm.o(i.TIM5_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
     pwm.o(i.TIM5_PWM_Init) refers to stm32f10x_tim.o(i.TIM_TimeBaseInit) for TIM_TimeBaseInit
     pwm.o(i.TIM5_PWM_Init) refers to stm32f10x_tim.o(i.TIM_OC1Init) for TIM_OC1Init
     pwm.o(i.TIM5_PWM_Init) refers to stm32f10x_tim.o(i.TIM_ITConfig) for TIM_ITConfig
     pwm.o(i.TIM5_PWM_Init) refers to misc.o(i.NVIC_Init) for NVIC_Init
+    pwm.o(i.TIM5_PWM_Init) refers to motor.o(.data) for GC_rot_motor_struct
+    pwm.o(i.TIM8_PWM_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
+    pwm.o(i.TIM8_PWM_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
     pwm.o(i.TIM8_PWM_Init) refers to stm32f10x_tim.o(i.TIM_TimeBaseInit) for TIM_TimeBaseInit
     pwm.o(i.TIM8_PWM_Init) refers to stm32f10x_tim.o(i.TIM_OC1Init) for TIM_OC1Init
     pwm.o(i.TIM8_PWM_Init) refers to stm32f10x_tim.o(i.TIM_ITConfig) for TIM_ITConfig
     pwm.o(i.TIM8_PWM_Init) refers to misc.o(i.NVIC_Init) for NVIC_Init
+    pwm.o(i.TIM8_PWM_Init) refers to motor.o(.data) for GP_motor_struct
+    malloc.o(i.my_mem_free) refers to malloc.o(.data) for mallco_dev
+    malloc.o(i.my_mem_free) refers to malloc.o(.constdata) for memsize
+    malloc.o(i.my_mem_init) refers to malloc.o(i.mymemset) for mymemset
+    malloc.o(i.my_mem_init) refers to malloc.o(.constdata) for memtblsize
+    malloc.o(i.my_mem_init) refers to malloc.o(.data) for mallco_dev
+    malloc.o(i.my_mem_malloc) refers to malloc.o(.data) for mallco_dev
+    malloc.o(i.my_mem_malloc) refers to malloc.o(.constdata) for memblksize
+    malloc.o(i.my_mem_perused) refers to malloc.o(.data) for mallco_dev
+    malloc.o(i.my_mem_perused) refers to malloc.o(.constdata) for memtblsize
+    malloc.o(i.myfree) refers to malloc.o(i.my_mem_free) for my_mem_free
+    malloc.o(i.myfree) refers to malloc.o(.data) for mallco_dev
+    malloc.o(i.mymalloc) refers to malloc.o(i.my_mem_malloc) for my_mem_malloc
+    malloc.o(i.mymalloc) refers to malloc.o(.data) for mallco_dev
+    malloc.o(i.myrealloc) refers to malloc.o(i.my_mem_malloc) for my_mem_malloc
+    malloc.o(i.myrealloc) refers to malloc.o(i.mymemcpy) for mymemcpy
+    malloc.o(i.myrealloc) refers to malloc.o(i.myfree) for myfree
+    malloc.o(i.myrealloc) refers to malloc.o(.data) for mallco_dev
+    malloc.o(.data) refers to malloc.o(i.my_mem_init) for my_mem_init
+    malloc.o(.data) refers to malloc.o(i.my_mem_perused) for my_mem_perused
+    malloc.o(.data) refers to malloc.o(.bss) for mem1base
+    malloc.o(.data) refers to malloc.o(.ARM.__AT_0x68000000) for mem2base
+    malloc.o(.data) refers to malloc.o(.ARM.__AT_0x680F0000) for mem2mapbase
     startup_stm32f10x_hd.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f10x_hd.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
     startup_stm32f10x_hd.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
@@ -836,14 +941,13 @@ Section Cross References
     _get_argv_nomalloc.o(.text) refers (Special) to hrguard.o(.text) for __heap_region$guard
     _get_argv_nomalloc.o(.text) refers to defsig_rtmem_outer.o(.text) for __rt_SIGRTMEM
     _get_argv_nomalloc.o(.text) refers to sys_command.o(.text) for _sys_command_string
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000004) for __rt_lib_shutdown_cpp_1
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000002) for __rt_lib_shutdown_fini_1
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000009) for __rt_lib_shutdown_fp_trap_1
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000011) for __rt_lib_shutdown_heap_1
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000012) for __rt_lib_shutdown_return
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$0000000C) for __rt_lib_shutdown_signal_1
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000006) for __rt_lib_shutdown_stdio_1
-    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$0000000E) for __rt_lib_shutdown_user_alloc_1
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000002) for __rt_lib_shutdown_cpp_1
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000007) for __rt_lib_shutdown_fp_trap_1
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$0000000F) for __rt_lib_shutdown_heap_1
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000010) for __rt_lib_shutdown_return
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$0000000A) for __rt_lib_shutdown_signal_1
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$00000004) for __rt_lib_shutdown_stdio_1
+    libshutdown.o(.ARM.Collect$$libshutdown$$00000000) refers (Special) to libshutdown2.o(.ARM.Collect$$libshutdown$$0000000C) for __rt_lib_shutdown_user_alloc_1
     sys_command.o(.text) refers (Special) to use_no_semi.o(.text) for __I$use$semihosting
     sys_command.o(.text) refers (Special) to indicate_semi.o(.text) for __semihosting_library_function
     defsig_rtmem_outer.o(.text) refers to defsig_rtmem_inner.o(.text) for __rt_SIGRTMEM_inner

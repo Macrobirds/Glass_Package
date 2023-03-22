@@ -23,7 +23,7 @@ motor_struct GC_rot_motor_struct={
 	.TIM=TIM5,
 	.AccPeriodArray=NULL,
 };
-motor_struct GC_ver_motor_stcut={
+motor_struct GC_ver_motor_struct={
 	.name=GC_ver_motor,
 	.motion=Stop,
 	.dir=Front,
@@ -69,14 +69,14 @@ void motor_parameter_Init(void)
 	GE_motor_struct.accStepNumber=GE_motor_struct.pulse_1mm*10;
 	
 	//set GCV motor parm
-	GC_ver_motor_stcut.pulse_1mm=Global_Parm.MOT.GCV_1mm;
-	GC_ver_motor_stcut.maxfeq=Global_Parm.MOT.GCV_max_speed*GC_ver_motor_stcut.pulse_1mm;
-	GC_ver_motor_stcut.startfeq=Global_Parm.MOT.GCV_min_speed*GC_ver_motor_stcut.pulse_1mm;
-	GC_ver_motor_stcut.max_pos=Global_Parm.GCS.GCV_max_pos;
-	GC_ver_motor_stcut.defaultfeq=GC_ver_motor_stcut.pulse_1mm*30;
-	GC_ver_motor_stcut.curvature=2;
-	GC_ver_motor_stcut.t_m=(GC_ver_motor_stcut.timerfeq/GC_ver_motor_stcut.defaultfeq);
-	GC_ver_motor_stcut.accStepNumber=GC_ver_motor_stcut.pulse_1mm*10;
+	GC_ver_motor_struct.pulse_1mm=Global_Parm.MOT.GCV_1mm;
+	GC_ver_motor_struct.maxfeq=Global_Parm.MOT.GCV_max_speed*GC_ver_motor_struct.pulse_1mm;
+	GC_ver_motor_struct.startfeq=Global_Parm.MOT.GCV_min_speed*GC_ver_motor_struct.pulse_1mm;
+	GC_ver_motor_struct.max_pos=Global_Parm.GCS.GCV_max_pos;
+	GC_ver_motor_struct.defaultfeq=GC_ver_motor_struct.pulse_1mm*30;
+	GC_ver_motor_struct.curvature=2;
+	GC_ver_motor_struct.t_m=(GC_ver_motor_struct.timerfeq/GC_ver_motor_struct.defaultfeq);
+	GC_ver_motor_struct.accStepNumber=GC_ver_motor_struct.pulse_1mm*10;
 	
 	//set GCR motor parm
 	GC_rot_motor_struct.pulse_1mm=1; //unit be angel
@@ -317,8 +317,9 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		}
 		motor->motion=ConstMove; //标记运动状态为匀速运动
 		motor->planSetpNumber=planStepNumber; //设置目标步数
+		motor->step=0; //设置当前步数
 		motor->t_m=motor->timerfeq/freq;//设置目标计数值
-		
+		TIM_ClearITPendingBit(motor->TIM,TIM_IT_CC1); //清楚中断标志位
 		TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->t_m)%0xffff);
 		TIM_Cmd(motor->TIM,ENABLE);
 }
@@ -337,6 +338,7 @@ void setMixtureData(motor_struct * motor)
 	if(motor->planSetpNumber>=motor->pulse_1mm*20)
 	{
 		motor->AccPeriodArray=mymalloc(SRAMIN,motor->accStepNumber*2);
+		motor->t_m=motor->timerfeq/motor->maxfeq;
 		GetStepPeriodArrayOnAcc(motor->AccPeriodArray,motor->accStepNumber,motor->timerfeq,motor->startfeq,motor->maxfeq,motor->curvature);
 		motor->motion=AccMove; //设置电机运动状态为加减速状态
 	}
@@ -350,7 +352,7 @@ void setMixtureData(motor_struct * motor)
 
 
 // 变速控制电机运行
-void motorGo_acc(motor_struct * motor, long planPosition)
+u8 motorGo_acc(motor_struct * motor, long planPosition)
 {
 	enum motor_direction OldDirection=Front;
 	long planStepNumber=0;
@@ -389,15 +391,26 @@ void motorGo_acc(motor_struct * motor, long planPosition)
 	else
 	{
 		stepperMotorStop(motor);
-		return;
+		return TRUE;
 	}
 	
 	motor->planSetpNumber=planStepNumber;
+	motor->step=0;
 	if(OldDirection!=motor->dir)
 	{
 			my_delay_us(5);
 	}
 	setMixtureData(motor);
-	TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->AccPeriodArray[0])%0xffff);
-	TIM_Cmd(motor->TIM,ENABLE);
+	if(motor->AccPeriodArray!=NULL)
+	{
+		TIM_ClearITPendingBit(motor->TIM,TIM_IT_CC1);
+		TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->AccPeriodArray[0])%0xffff);
+		TIM_Cmd(motor->TIM,ENABLE);
+	}else
+	{
+		motor->motion=Stop;
+		return FALSE;
+	}
+
+	return TRUE;
 }

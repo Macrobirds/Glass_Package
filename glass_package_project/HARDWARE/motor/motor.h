@@ -30,7 +30,7 @@ enum motor_state{
 enum motor_direction
 {
 	Front,
-	Back
+	Back,
 };
 
 typedef struct{
@@ -38,7 +38,7 @@ typedef struct{
 	volatile enum motor_state motion; //电机运动状态
 	volatile enum motor_direction dir; //电机运动方向
 	u16 pulse_1mm; //移动1mm脉冲数
-	u16 t_m;
+	u16 t_m; //匀速运动时定时器计数值
 	u32 maxfeq; //最大运行频率
 	u32 startfeq; //最小启动频率
 	u32 defaultfeq; //匀速运动频率
@@ -56,12 +56,12 @@ typedef struct{
 }motor_struct;
 	
 	
-motor_struct GE_motor_struct;
-motor_struct GC_rot_motor_struct;
-motor_struct GC_ver_motor_stcut;
-motor_struct GP_motor_struct;
-motor_struct GO_hor_motor_struct;
-motor_struct GO_ver_motor_struct;
+extern motor_struct GE_motor_struct;
+extern motor_struct GC_rot_motor_struct;
+extern motor_struct GC_ver_motor_struct;
+extern motor_struct GP_motor_struct;
+extern motor_struct GO_hor_motor_struct;
+extern motor_struct GO_ver_motor_struct;
 
 void motor_parameter_Init(void);
 

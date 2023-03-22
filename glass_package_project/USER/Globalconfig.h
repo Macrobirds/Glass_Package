@@ -2,6 +2,8 @@
 #define __GLOBALCONFIG_H
 #include "sys.h"
 
+#define TRUE 1
+#define FALSE 0
 
 typedef struct{
 	u16 GE_1mm;
@@ -65,7 +67,7 @@ struct Global_Parameter_struct{
 	Glass_In_Out_Date GIO;
 };
 
-struct Global_Parameter_struct Global_Parm; 
+extern struct Global_Parameter_struct Global_Parm; 
 
 void Set_Global_Parameter_Default(void);
 
