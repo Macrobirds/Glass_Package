@@ -283,5 +283,83 @@ void EXTI1_IRQHandler(void);
 void EXTI2_IRQHandler(void);
 void EXTI3_IRQHandler(void);
 void EXTI4_IRQHandler(void);
-void EXTI9_5_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
+
+
+void EXTI9_5_IRQHandler(void)
+{
+	//GOH_end_Sen
+	if(EXTI_GetITStatus(EXTI_Line5)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line5);
+	}
+	//GOV_start_Sen
+	if(EXTI_GetITStatus(EXTI_Line6)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line6);
+	}
+	//GOV_galss_Sen
+	if(EXTI_GetITStatus(EXTI_Line7)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line7);
+	}
+	//GE_down_Sen
+	if(EXTI_GetITStatus(EXTI_Line8)!=RESET)
+	{
+		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
+		{
+			
+		}
+		
+		EXTI_ClearITPendingBit(EXTI_Line8);
+	}
+	//GE_up_Sen
+	if(EXTI_GetITStatus(EXTI_Line9)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line9);
+	}
+
+}
+void EXTI15_10_IRQHandler(void)
+{
+	//GP_start_Sen
+	if(EXTI_GetITStatus(EXTI_Line10)!=RESET)
+	{
+		if(GE_motor_struct.planpostion==0) //目标位置为原点
+		{
+			delay_us(50);
+			if(GE_start_Sen==Sen_Block)//原点感应
+			{
+				TIM_Cmd(GE_motor_struct.TIM,DISABLE);
+				GE_motor_struct.postion=0;
+				GE_motor_struct.motion=Stop;
+			}
+		}
+		EXTI_ClearITPendingBit(EXTI_Line10);
+	}
+	//GC_rot_Sen
+	if(EXTI_GetITStatus(EXTI_Line11)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line11);
+	}
+	//GC_ver_Sen
+	if(EXTI_GetITStatus(EXTI_Line12)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line12);
+	}
+	//GP_start_Sen
+	if(EXTI_GetITStatus(EXTI_Line13)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line13);
+	}
+	//GOH_start_Sen
+	if(EXTI_GetITStatus(EXTI_Line14)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line14);
+	}
+	//GOH_mid_Sen
+	if(EXTI_GetITStatus(EXTI_Line15)!=RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line15);
+	}
+
+}

@@ -32,6 +32,9 @@
 ..\obj\motor.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
 ..\obj\motor.o: ..\USER\Globalconfig.h
+..\obj\motor.o: ..\SYSTEM\delay\delay.h
+..\obj\motor.o: ..\SYSTEM\usart\usart.h
+..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\motor.o: ..\HARDWARE\pos_sensor\position.h
 ..\obj\motor.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\motor.o: ..\SYSTEM\Malloc\malloc.h

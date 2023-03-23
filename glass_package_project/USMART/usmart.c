@@ -204,9 +204,9 @@ u8 usmart_sys_cmd_exe(u8 *str)
 //需要根据所移植到的MCU的定时器参数进行修改
 void usmart_reset_runtime(void)
 {
-	TIM_ClearFlag(TIM4,TIM_FLAG_Update);//清除中断标志位 
-	TIM_SetAutoreload(TIM4,0XFFFF);//将重装载值设置到最大
-	TIM_SetCounter(TIM4,0);		//清空定时器的CNT
+	TIM_ClearFlag(TIM7,TIM_FLAG_Update);//清除中断标志位 
+	TIM_SetAutoreload(TIM7,0XFFFF);//将重装载值设置到最大
+	TIM_SetCounter(TIM7,0);		//清空定时器的CNT
 	usmart_dev.runtime=0;	
 }
 //获得runtime时间
@@ -214,50 +214,50 @@ void usmart_reset_runtime(void)
 //需要根据所移植到的MCU的定时器参数进行修改
 u32 usmart_get_runtime(void)
 {
-	if(TIM_GetFlagStatus(TIM4,TIM_FLAG_Update)==SET)//在运行期间,产生了定时器溢出
+	if(TIM_GetFlagStatus(TIM7,TIM_FLAG_Update)==SET)//在运行期间,产生了定时器溢出
 	{
 		usmart_dev.runtime+=0XFFFF;
 	}
-	usmart_dev.runtime+=TIM_GetCounter(TIM4);
+	usmart_dev.runtime+=TIM_GetCounter(TIM7);
 	return usmart_dev.runtime;		//返回计数值
 }
 //下面这两个函数,非USMART函数,放到这里,仅仅方便移植. 
 //定时器4中断服务程序	 
-void TIM4_IRQHandler(void)
+void TIM7_IRQHandler(void)
 { 		    		  			    
-	if(TIM_GetITStatus(TIM4,TIM_IT_Update)==SET)//溢出中断
+	if(TIM_GetITStatus(TIM7,TIM_IT_Update)==SET)//溢出中断
 	{
 		usmart_dev.scan();	//执行usmart扫描	
-		TIM_SetCounter(TIM4,0);		//清空定时器的CNT
-		TIM_SetAutoreload(TIM4,100);//恢复原来的设置		    				   				     	    	
+		TIM_SetCounter(TIM7,0);		//清空定时器的CNT
+		TIM_SetAutoreload(TIM7,100);//恢复原来的设置		    				   				     	    	
 	}				   
-	TIM_ClearITPendingBit(TIM4,TIM_IT_Update);  //清除中断标志位    
+	TIM_ClearITPendingBit(TIM7,TIM_IT_Update);  //清除中断标志位    
 }
 //使能定时器4,使能中断.
-void Timer4_Init(u16 arr,u16 psc)
+void Timer7_Init(u16 arr,u16 psc)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE); //TIM4时钟使能 
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7, ENABLE); //TIM4时钟使能 
  
 	//TIM4初始化设置
  	TIM_TimeBaseStructure.TIM_Period = arr; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
 	TIM_TimeBaseStructure.TIM_Prescaler =psc; //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
-	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+	TIM_TimeBaseInit(TIM7, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
  
-	TIM_ITConfig( TIM4, TIM_IT_Update|TIM_IT_Trigger, ENABLE );//TIM4 允许更新，触发中断
+	TIM_ITConfig( TIM7, TIM_IT_Update|TIM_IT_Trigger, ENABLE );//TIM4 允许更新，触发中断
 
 	//TIM4中断分组配置
-	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //TIM3中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM7_IRQn;  //TIM3中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;  //先占优先级03级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级3级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
-	TIM_Cmd(TIM4, ENABLE);  //使能TIM4							 
+	TIM_Cmd(TIM7, ENABLE);  //使能TIM4							 
 }
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -266,7 +266,7 @@ void Timer4_Init(u16 arr,u16 psc)
 void usmart_init(u8 sysclk)
 {
 #if USMART_ENTIMX_SCAN==1
-	Timer4_Init(1000,(u32)sysclk*100-1);//分频,时钟为10K ,100ms中断一次,注意,计数频率必须为10Khz,以和runtime单位(0.1ms)同步.
+	Timer7_Init(1000,(u32)sysclk*100-1);//分频,时钟为10K ,100ms中断一次,注意,计数频率必须为10Khz,以和runtime单位(0.1ms)同步.
 #endif
 	usmart_dev.sptype=1;	//十六进制显示参数
 }		
