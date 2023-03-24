@@ -176,7 +176,7 @@ static void Exti_Init_8_15(void)
 	{
 		//GPIOE.8
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOE, GPIO_PinSource8);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling; //双边沿触发
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //双边沿触发
 		EXTI_InitStructure.EXTI_Line = EXTI_Line8;
 		EXTI_Init(&EXTI_InitStructure);
 	}
@@ -288,18 +288,33 @@ void EXTI4_IRQHandler(void);
 void EXTI9_5_IRQHandler(void)
 {
 	//GOH_end_Sen
-	if(EXTI_GetITStatus(EXTI_Line5)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line5)!=RESET) //水平出料到达终点
 	{
+		delay_us(50);
+		if(GOH_end_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			GO_hor_motor_struct.postion=GO.GOH_end_pos;
+			GO_hor_motor_struct.motion=Stop;
+		}
 		EXTI_ClearITPendingBit(EXTI_Line5);
 	}
 	//GOV_start_Sen
-	if(EXTI_GetITStatus(EXTI_Line6)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line6)!=RESET) //垂直出料槽到达原点
 	{
+		delay_us(50);
+		if(GOV_start_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM4,DISABLE);
+			GO_ver_motor_struct.postion=0;
+			GO_ver_motor_struct.motion=Stop;
+		}
 		EXTI_ClearITPendingBit(EXTI_Line6);
 	}
 	//GOV_galss_Sen
 	if(EXTI_GetITStatus(EXTI_Line7)!=RESET)
 	{
+		printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line7);
 	}
 	//GE_down_Sen
@@ -307,7 +322,12 @@ void EXTI9_5_IRQHandler(void)
 	{
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
-			
+			delay_us(50);
+			if(GE_down_Sen==Sen_Block)
+			{
+				TIM_Cmd(TIM1,DISABLE);
+				GE_motor_struct.motion=Stop;
+			}
 		}
 		
 		EXTI_ClearITPendingBit(EXTI_Line8);
@@ -315,6 +335,15 @@ void EXTI9_5_IRQHandler(void)
 	//GE_up_Sen
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET)
 	{
+		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
+		{
+			delay_us(50);
+			if(GE_up_Sen==Sen_Block)
+			{
+				TIM_Cmd(TIM1,DISABLE);
+				GE_motor_struct.motion=Stop;
+			}
+		}
 		EXTI_ClearITPendingBit(EXTI_Line9);
 	}
 
@@ -322,44 +351,99 @@ void EXTI9_5_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
 	//GP_start_Sen
-	if(EXTI_GetITStatus(EXTI_Line10)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line10)!=RESET) //进料槽移动到原点
 	{
-		if(GE_motor_struct.planpostion==0) //目标位置为原点
-		{
 			delay_us(50);
 			if(GE_start_Sen==Sen_Block)//原点感应
 			{
-				TIM_Cmd(GE_motor_struct.TIM,DISABLE);
+				TIM_Cmd(TIM1,DISABLE);
 				GE_motor_struct.postion=0;
 				GE_motor_struct.motion=Stop;
 			}
-		}
 		EXTI_ClearITPendingBit(EXTI_Line10);
 	}
 	//GC_rot_Sen
-	if(EXTI_GetITStatus(EXTI_Line11)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line11)!=RESET) //夹手旋转至原点
 	{
+		delay_us(50);
+		if(GC_rot_Sen==Sen_Block) //夹手旋转停止
+		{
+			TIM_Cmd(TIM5,DISABLE);
+			GC_rot_motor_struct.postion=0;
+			GC_rot_motor_struct.motion=Stop;
+		}
 		EXTI_ClearITPendingBit(EXTI_Line11);
 	}
 	//GC_ver_Sen
-	if(EXTI_GetITStatus(EXTI_Line12)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line12)!=RESET) //夹手运动到垂直原点
 	{
+		delay_us(50);
+		if(GC_ver_Sen==Sen_Block) //夹手垂直停止
+		{
+			TIM_Cmd(TIM3,DISABLE);
+			GC_ver_motor_struct.postion=0;
+			GC_ver_motor_struct.motion=Stop;
+		}
+
 		EXTI_ClearITPendingBit(EXTI_Line12);
 	}
 	//GP_start_Sen
-	if(EXTI_GetITStatus(EXTI_Line13)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line13)!=RESET) //封片运动到原点
 	{
+		delay_us(50);
+		if(GP_start_Sen==Sen_Block)//封片设备停止
+		{
+			TIM_Cmd(TIM8,DISABLE);
+			GP_motor_struct.postion=0;
+			GP_motor_struct.motion=Stop;
+		}
 		EXTI_ClearITPendingBit(EXTI_Line13);
 	}
 	//GOH_start_Sen
-	if(EXTI_GetITStatus(EXTI_Line14)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line14)!=RESET) //封片设备到达原点
 	{
+		delay_us(50);
+		if(GOH_start_Sen==Sen_Block)//封片设备停止
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			GO_hor_motor_struct.postion=0;
+			GO_hor_motor_struct.motion=Stop;
+		}
 		EXTI_ClearITPendingBit(EXTI_Line14);
 	}
 	//GOH_mid_Sen
-	if(EXTI_GetITStatus(EXTI_Line15)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line15)!=RESET) //水平出料电机经过工作点
 	{
+		if(GO_hor_motor_struct.dir==Front) //向终点方向
+		{
+			delay_us(50);
+			if(GOH_mid_Sen==Sen_Block) //到达工作点停止
+			{
+				TIM_Cmd(TIM2,DISABLE);
+				GO_hor_motor_struct.postion=GO.GOH_mid_pos;
+				GO_hor_motor_struct.motion=Stop;
+			}
+		}
 		EXTI_ClearITPendingBit(EXTI_Line15);
 	}
 
 }
+
+//	printf("exit8 trigger\r\n");
+//		if(GE_start_Sen==Sen_Block)
+//		{
+//	//		TIM_ClearITPendingBit(TIM3,TIM_IT_CC1);
+//			TIM_SetCompare1(TIM2,(TIM2->CNT+1000)%0xffff);
+//			TIM_Cmd(TIM2,ENABLE);
+//			
+//			
+////	TIM_SetAutoreload(TIM1,1000);//设定自动重装值	
+////	TIM_SetCompare1(TIM1,500); //匹配值2等于重装值一半，是以占空比为50%	
+////	TIM_Cmd(TIM1,ENABLE);
+
+//			
+//		}else
+//		{
+//			TIM_Cmd(TIM2, DISABLE);  //关闭TIM8				
+//		}
+//		EXTI_ClearITPendingBit(EXTI_Line8);

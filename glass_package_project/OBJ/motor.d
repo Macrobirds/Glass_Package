@@ -36,5 +36,6 @@
 ..\obj\motor.o: ..\SYSTEM\usart\usart.h
 ..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\motor.o: ..\HARDWARE\pos_sensor\position.h
+..\obj\motor.o: ..\TASK\taskthread.h
 ..\obj\motor.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\motor.o: ..\SYSTEM\Malloc\malloc.h

@@ -5,11 +5,21 @@
 //这下面要包含所用到的函数所申明的头文件(用户自己添加) 
 #include "delay.h"		
 #include "sys.h"
+#include "motor.h"
 
 												 
-extern void led_set(u8 sta);
-extern void test_fun(void(*ledset)(u8),u8 sta);
-extern void restore_string(char *buf);
+static void Set_motor_dir(u8 dir)
+{
+	if(dir)
+	{
+		GOH_DIR=1;
+	}else
+	{
+		GOH_DIR=0;
+	}
+		
+}
+
 //函数名列表初始化(用户自己添加)
 //用户直接在这里输入要执行的函数名及其查找串
 struct _m_usmart_nametab usmart_nametab[]=
@@ -20,7 +30,7 @@ struct _m_usmart_nametab usmart_nametab[]=
 #endif
 	(void*)delay_ms,"void delay_ms(u16 nms)",
 	(void*)delay_us,"void delay_us(u32 nus)",	
-
+	(void*)Set_motor_dir,"void Set_motor_dir(u8 dir)",
 };						  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

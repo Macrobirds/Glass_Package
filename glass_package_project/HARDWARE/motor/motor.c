@@ -241,10 +241,10 @@ void motor_Set_Direction(motor_struct * motor,enum motor_direction dir)
 		GE_DIR=direction;
 		break;
 		case GC_rot_motor:
-		GC_rot_DIR=direction;
+		GCR_DIR=direction;
 		break;
 		case GC_ver_motor:
-		GC_ver_DIR=direction;
+		GCV_DIR=direction;
 		break;
 		case GP_motor:
 		GP_DIR=direction;
@@ -263,6 +263,28 @@ void stepperMotorStop(motor_struct * motor)
 {
 	TIM_Cmd(motor->TIM,DISABLE);
 	motor->motion=Stop;
+}
+
+void stepperMotorStart(motor_struct * motor,u16 arr)
+{
+		switch(motor->name)
+		{
+			//TIM1 TIM8
+			case GE_motor:
+			case GP_motor:
+			TIM_SetAutoreload(motor->TIM,arr);
+			TIM_SetCompare1(motor->TIM,arr/2);
+			break;
+			//TIM2-5
+			case GC_ver_motor:
+			case GC_rot_motor: 
+			case GO_hor_motor:
+			case GO_ver_motor:
+			TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+arr)%0xffff);
+			break;
+			default: break;
+		}
+		TIM_Cmd(motor->TIM,ENABLE);
 }
 
 // 匀速控制电机运行 电机结构体 电机状态 匀速运动频率
@@ -319,9 +341,8 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		motor->planSetpNumber=planStepNumber; //设置目标步数
 		motor->step=0; //设置当前步数
 		motor->t_m=motor->timerfeq/freq;//设置目标计数值
-		TIM_ClearITPendingBit(motor->TIM,TIM_IT_CC1); //清楚中断标志位
-		TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->t_m)%0xffff);
-		TIM_Cmd(motor->TIM,ENABLE);
+		stepperMotorStart(motor,motor->t_m);
+		
 }
 
 
@@ -347,6 +368,18 @@ void setMixtureData(motor_struct * motor)
 		motor->motion=ConstMove;//设置电机运动状态为匀速状态
 		motor->t_m=motor->timerfeq/motor->defaultfeq;
 	}
+	
+//	switch(motor->name)
+//		{
+//			//TIM2-5
+//			case GC_ver_motor:
+//			case GC_rot_motor: 
+//			case GO_hor_motor:
+//			case GO_ver_motor: //将所有计数值除以2
+//			GetStepPeriodArrayCCX(motor->AccPeriodArray,motor->accStepNumber);
+//			break;
+//			default: break;
+//		}
 	
 }
 
@@ -403,9 +436,9 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 	setMixtureData(motor);
 	if(motor->AccPeriodArray!=NULL)
 	{
-		TIM_ClearITPendingBit(motor->TIM,TIM_IT_CC1);
-		TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+motor->AccPeriodArray[0])%0xffff);
-		TIM_Cmd(motor->TIM,ENABLE);
+
+		stepperMotorStart(motor,motor->AccPeriodArray[0]);
+		
 	}else
 	{
 		motor->motion=Stop;

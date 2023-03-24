@@ -43,3 +43,9 @@
 ..\obj\main.o: ..\SYSTEM\usart\usart.h
 ..\obj\main.o: ..\USMART\usmart.h
 ..\obj\main.o: ..\USMART\usmart_str.h
+..\obj\main.o: ..\HARDWARE\pos_sensor\position.h
+..\obj\main.o: ..\TASK\taskthread.h
+..\obj\main.o: ..\HARDWARE\motor\motor.h
+..\obj\main.o: ..\USER\Globalconfig.h
+..\obj\main.o: ..\SYSTEM\pwm\pwm.h
+..\obj\main.o: ..\SYSTEM\GPIO\gpio.h

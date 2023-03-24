@@ -32,3 +32,4 @@
 ..\obj\usmart_config.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\usmart_config.o: ..\SYSTEM\delay\delay.h
 ..\obj\usmart_config.o: ..\SYSTEM\sys\sys.h
+..\obj\usmart_config.o: ..\HARDWARE\motor\motor.h

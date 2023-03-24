@@ -6,40 +6,61 @@
 //GE motor pwm
 void TIM1_PWM_Init(u16 psc)
 {
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
 	
-	GE_motor_struct.timerfeq=72000000/psc;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);	//使能定时器1时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 	
-	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA,&GPIO_InitStructure);
+  GE_motor_struct.timerfeq=72000000/psc;
+ 
+	   //设置该引脚为复用输出功能,输出TIM1 CH1的PWM脉冲波形	GPIOA.8
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8; //TIM1_CH1
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  //复用推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIO
 	
-	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;
-	TIM_TimeBaseStructure.TIM_Prescaler =psc-1;
-	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
+   //设置该引脚为复用输出功能,输出TIM1 CH1的PWM脉冲波形	GPIOA.8
+	   //初始化TIM8
+	TIM_TimeBaseStructure.TIM_Period = 1000; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值
+	TIM_TimeBaseStructure.TIM_Prescaler =psc-1; //设置用来作为TIMx时钟频率除数的预分频值 
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseStructure.TIM_RepetitionCounter=0; //repeate counter must set 0
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+
 	
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
-	TIM_OCInitStructure.TIM_Pulse = 500;
-	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
-	TIM_OC1Init(TIM1, &TIM_OCInitStructure);
+	 	
+		TIM_ITConfig(TIM1,TIM_IT_Update,ENABLE ); //使能指定的TIM1中断,允许更新中断 
+		TIM_ClearFlag(TIM1, TIM_FLAG_Update);//清中断标志位
+		
+	//初始化TIM8 Channel1 PWM模式	 
+		TIM_OCInitStructure.TIM_OCMode=TIM_OCMode_PWM2;//输出模式有八种，选着PWM1模式
+		TIM_OCInitStructure.TIM_OCPolarity=TIM_OCPolarity_High;
+		TIM_OCInitStructure.TIM_OutputState=TIM_OutputState_Enable;
+		TIM_OCInitStructure.TIM_Pulse=500;
+    TIM_OC1Init(TIM1,&TIM_OCInitStructure);
+
+
+	TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);  //使能TIM3在CCR2上的预装载寄存器
+	TIM_ARRPreloadConfig(TIM1,ENABLE);
+
 	
-	TIM_ITConfig(TIM1,TIM_IT_CC1,ENABLE);
-	NVIC_InitStructure.NVIC_IRQChannel = TIM1_CC_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //TIM1中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级3级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+ 
+ TIM_CtrlPWMOutputs(TIM1,ENABLE);																// 开启定时器
+ 
+	TIM_Cmd(TIM1, DISABLE);  
 }
 
 //GO_ver_motor pwm
@@ -53,7 +74,7 @@ void TIM4_PWM_Init(u16 psc)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
 	
-	GO_ver_motor_struct.timerfeq=72000000/psc;
+	GO_ver_motor_struct.timerfeq=36000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -71,13 +92,14 @@ void TIM4_PWM_Init(u16 psc)
 	TIM_OCInitStructure.TIM_Pulse = 500;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
+//	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
 	TIM_OC1Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM4,TIM_OCPreload_Disable);
 	
 	TIM_ITConfig(TIM4,TIM_IT_CC1,ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -95,7 +117,7 @@ void TIM3_PWM_Init(u16 psc)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
 	
-	GC_ver_motor_struct.timerfeq=72000000/psc;
+	GC_ver_motor_struct.timerfeq=36000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -112,13 +134,14 @@ void TIM3_PWM_Init(u16 psc)
 	TIM_OCInitStructure.TIM_Pulse = 500;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
+//	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
 	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM3,TIM_OCPreload_Disable);
 	
 	TIM_ITConfig(TIM3,TIM_IT_CC1,ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -127,40 +150,60 @@ void TIM3_PWM_Init(u16 psc)
 //GP_motor pwm
 void TIM8_PWM_Init(u16 psc)
 {
-	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef TIM_OCInitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
+
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8,ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_AFIO,ENABLE);
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
 	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);	//使能定时器1时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC,ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+
 	GP_motor_struct.timerfeq=72000000/psc;
-	
+ 
+   //设置该引脚为复用输出功能,输出TIM1 CH1的PWM脉冲波形	GPIOA.8
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC,&GPIO_InitStructure);
 	
-	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;
-	TIM_TimeBaseStructure.TIM_Prescaler =psc-1;
-	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure);
 	
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
-	TIM_OCInitStructure.TIM_Pulse = 500;
-	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
-	TIM_OC1Init(TIM8, &TIM_OCInitStructure);
+   //初始化TIM8
+	TIM_TimeBaseStructure.TIM_Period = 1000; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值
+	TIM_TimeBaseStructure.TIM_Prescaler =psc-1; //设置用来作为TIMx时钟频率除数的预分频值 
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseStructure.TIM_RepetitionCounter=0; //repeate counter must set 0
+	TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+//	TIM_UpdateRequestConfig(TIM8,TIM_UpdateSource_Regular);
+//	TIM_SelectOnePulseMode(TIM8,TIM_OPMode_Single); //单脉冲模式
 	
-	TIM_ITConfig(TIM8,TIM_IT_CC1,ENABLE);
-	NVIC_InitStructure.NVIC_IRQChannel = TIM8_CC_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+	 	
+		TIM_ITConfig(TIM8,TIM_IT_Update,ENABLE ); //使能指定的TIM1中断,允许更新中断 
+		TIM_ClearFlag(TIM8, TIM_FLAG_Update);//清中断标志位
+		
+	//初始化TIM8 Channel1 PWM模式	 
+		TIM_OCInitStructure.TIM_OCMode=TIM_OCMode_PWM2;//输出模式有八种，选着PWM1模式
+		TIM_OCInitStructure.TIM_OCPolarity=TIM_OCPolarity_High;
+		TIM_OCInitStructure.TIM_OutputState=TIM_OutputState_Enable;
+		TIM_OCInitStructure.TIM_Pulse=500;
+    TIM_OC1Init(TIM8,&TIM_OCInitStructure);
+
+
+	TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);  //使能TIM3在CCR2上的预装载寄存器
+	TIM_ARRPreloadConfig(TIM8,ENABLE);
+
+	
+	NVIC_InitStructure.NVIC_IRQChannel = TIM8_UP_IRQn;  //TIM1中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级3级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+ 
+ TIM_CtrlPWMOutputs(TIM8,ENABLE);																// 开启定时器
+ 
+	TIM_Cmd(TIM8, DISABLE);  
 }
 
 //GC_rot_motor pwm
@@ -173,7 +216,7 @@ void TIM5_PWM_Init(u16 psc)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
 	
-	GC_rot_motor_struct.timerfeq=72000000/psc;
+	GC_rot_motor_struct.timerfeq=36000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -190,13 +233,14 @@ void TIM5_PWM_Init(u16 psc)
 	TIM_OCInitStructure.TIM_Pulse = 500;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
+//	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
 	TIM_OC1Init(TIM5, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM5,TIM_OCPreload_Disable);
 	
 	TIM_ITConfig(TIM5,TIM_IT_CC1,ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM5_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -213,10 +257,11 @@ void TIM2_PWM_Init(u16 psc)
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO,ENABLE);
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable,ENABLE); //disable JTAG
-	GPIO_PinRemapConfig(GPIO_FullRemap_TIM2,ENABLE); //TIM2 Remap CH1->PA15
+	GPIO_PinRemapConfig(GPIO_FullRemap_TIM2, ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); //disable JTAG
+
 	
-	GO_hor_motor_struct.timerfeq=72000000/psc;
+	GO_hor_motor_struct.timerfeq=36000000/psc;
 	
 	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_AF_PP;
@@ -236,10 +281,11 @@ void TIM2_PWM_Init(u16 psc)
 	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
 	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
 	TIM_OC1Init(TIM2, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM2,TIM_OCPreload_Disable); //关闭预转载
 	
 	TIM_ITConfig(TIM2,TIM_IT_CC1,ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -247,20 +293,21 @@ void TIM2_PWM_Init(u16 psc)
 
 void Motor_PWM_Init(void)
 {
-	TIM1_PWM_Init(PSC_FEQ);
-	TIM4_PWM_Init(PSC_FEQ);
-	TIM3_PWM_Init(PSC_FEQ);
-	TIM8_PWM_Init(PSC_FEQ);
-	TIM5_PWM_Init(PSC_FEQ);
-	TIM2_PWM_Init(PSC_FEQ);
+	TIM1_PWM_Init(APB2_PSC_FEQ);
+	TIM4_PWM_Init(APB1_PSC_FEQ);
+	TIM3_PWM_Init(APB1_PSC_FEQ);
+	TIM8_PWM_Init(APB2_PSC_FEQ);
+	TIM5_PWM_Init(APB1_PSC_FEQ);
+	TIM2_PWM_Init(APB1_PSC_FEQ);
 }
 
 
 
-void TIM1_CC_IRQHandler(void) //TIM1中断
+void TIM1_UP_IRQHandler(void) //TIM1中断
 {
-	if(TIM_GetITStatus(TIM1,TIM_IT_CC1)!=RESET)
+	if(TIM_GetITStatus(TIM1,TIM_IT_Update)!=RESET)
 	{
+		TIM_ClearITPendingBit(TIM1,TIM_FLAG_Update);//清除更新中断标志位		
 		if(GE_motor_struct.dir==Front) //计算当前位置
 		{
 			GE_motor_struct.postion++;
@@ -287,55 +334,67 @@ void TIM1_CC_IRQHandler(void) //TIM1中断
 	
 		if(GE_motor_struct.motion==ConstMove)//电机匀速运动
 		{
-			TIM_SetCompare1(TIM1,(TIM1->CNT+GE_motor_struct.t_m)%0xffff);
+			TIM_SetAutoreload(TIM1,GE_motor_struct.t_m);//设定自动重装值	
+			TIM_SetCompare1(TIM1,GE_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
 		}else
 		{
 			//加速运动
 			if(GE_motor_struct.step<=GE_motor_struct.accStepNumber)
 			{
-				TIM_SetCompare1(TIM1,(TIM1->CNT+GE_motor_struct.AccPeriodArray[GE_motor_struct.step])%0xffff);
+				TIM_SetAutoreload(TIM1,GE_motor_struct.AccPeriodArray[GE_motor_struct.step]);//设定自动重装值	
+				TIM_SetCompare1(TIM1,GE_motor_struct.AccPeriodArray[GE_motor_struct.step]/2); //匹配值2等于重装值一半，是以占空比为50%	
 			}//减速运动
 			else if(GE_motor_struct.step>=GE_motor_struct.planSetpNumber-GE_motor_struct.accStepNumber)
 			{
-				TIM_SetCompare1(TIM1,(TIM1->CNT+GE_motor_struct.AccPeriodArray[GE_motor_struct.planSetpNumber-GE_motor_struct.step])%0xffff);
+				TIM_SetAutoreload(TIM1,GE_motor_struct.AccPeriodArray[GE_motor_struct.planSetpNumber-GE_motor_struct.step]);//设定自动重装值	
+				TIM_SetCompare1(TIM1,GE_motor_struct.AccPeriodArray[GE_motor_struct.planSetpNumber-GE_motor_struct.step]/2); //匹配值2等于重装值一半，是以占空比为50%	
 			}//匀速运动
 			else
 			{
-				TIM_SetCompare1(TIM1,(TIM1->CNT+GE_motor_struct.t_m)%0xffff);
+				TIM_SetAutoreload(TIM1,GE_motor_struct.t_m);//设定自动重装值	
+				TIM_SetCompare1(TIM1,GE_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
 			}
 			
 		}
+
+
 		
-		TIM_ClearITPendingBit(TIM1,TIM_IT_CC1);
 	}
 }
 
+
+
+
 void TIM2_IRQHandler(void) //TIM2 中断 GO_hor_motor
 {
+	static u8 tim_cnt=0;
 	if(TIM_GetITStatus(TIM2,TIM_IT_CC1)!=RESET)
 	{
-		if(GO_hor_motor_struct.dir==Front) //计算当前位置
+		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
+		tim_cnt++;
+		tim_cnt%=2;
+		if(!tim_cnt) //偶数步数
 		{
-			GO_hor_motor_struct.postion++;
-		}else
-		{
-			GO_hor_motor_struct.postion--;
-		}
-		GO_hor_motor_struct.step++;//计算当前步数
-		
-		if(GO_hor_motor_struct.planSetpNumber==GO_hor_motor_struct.step) //到达指定步数,电机停止
-		{
-			TIM_Cmd(TIM2,DISABLE);
-			GO_hor_motor_struct.motion=Stop;
-			return;
+				if(GO_hor_motor_struct.dir==Front) //计算当前位置
+				{
+					GO_hor_motor_struct.postion++;
+				}else
+				{
+					GO_hor_motor_struct.postion--;
+				}
+				GO_hor_motor_struct.step++;//计算当前步数
+				if(GO_hor_motor_struct.planSetpNumber==GO_hor_motor_struct.step) //到达指定步数,电机停止
+				{
+					TIM_Cmd(TIM2,DISABLE);
+					GO_hor_motor_struct.motion=Stop;
+					return;
+				}
 		}
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
 		
 		/****/
 		
-		
-	
 		if(GO_hor_motor_struct.motion==ConstMove)//电机匀速运动
 		{
 			TIM_SetCompare1(TIM2,(TIM2->CNT+GO_hor_motor_struct.t_m)%0xffff);
@@ -356,30 +415,39 @@ void TIM2_IRQHandler(void) //TIM2 中断 GO_hor_motor
 			}
 			
 		}
-		
-		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
 	}
+
 }
+
+
 
 void TIM3_IRQHandler(void) //TIM3 中断
 {
+	static u8 tim_cnt=0;
 	if(TIM_GetITStatus(TIM3,TIM_IT_CC1)!=RESET)
 	{
-		if(GC_ver_motor_struct.dir==Front) //计算当前位置
+		TIM_ClearITPendingBit(TIM3,TIM_IT_CC1);
+		tim_cnt++;
+		tim_cnt%=2;
+		if(!tim_cnt)
 		{
-			GC_ver_motor_struct.postion++;
-		}else
-		{
-			GC_ver_motor_struct.postion--;
+				if(GC_ver_motor_struct.dir==Front) //计算当前位置
+				{
+					GC_ver_motor_struct.postion++;
+				}else
+				{
+					GC_ver_motor_struct.postion--;
+				}
+				GC_ver_motor_struct.step++;//计算当前步数
+				
+				if(GC_ver_motor_struct.planSetpNumber==GC_ver_motor_struct.step) //到达指定步数,电机停止
+				{
+					TIM_Cmd(TIM3,DISABLE);
+					GC_ver_motor_struct.motion=Stop;
+					return;
+				}
 		}
-		GC_ver_motor_struct.step++;//计算当前步数
 		
-		if(GC_ver_motor_struct.planSetpNumber==GC_ver_motor_struct.step) //到达指定步数,电机停止
-		{
-			TIM_Cmd(TIM3,DISABLE);
-			GC_ver_motor_struct.motion=Stop;
-			return;
-		}
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
 		
@@ -409,30 +477,40 @@ void TIM3_IRQHandler(void) //TIM3 中断
 			}
 			
 		}
-		
-		TIM_ClearITPendingBit(TIM3,TIM_IT_CC1);
+
 	}
+
+
 }
+
 
 void TIM4_IRQHandler(void) //TIM4 中断
 {
+	static u8 tim_cnt;
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC1)!=RESET)
 	{
-		if(GO_ver_motor_struct.dir==Front) //计算当前位置
-		{
-			GO_ver_motor_struct.postion++;
-		}else
-		{
-			GO_ver_motor_struct.postion--;
-		}
-		GO_ver_motor_struct.step++;//计算当前步数
-		
-		if(GO_ver_motor_struct.planSetpNumber==GO_ver_motor_struct.step) //到达指定步数,电机停止
-		{
-			TIM_Cmd(TIM4,DISABLE);
-			GO_ver_motor_struct.motion=Stop;
-			return;
-		}
+			TIM_ClearITPendingBit(TIM4,TIM_IT_CC1);
+			tim_cnt++;
+			tim_cnt%=2;
+			if(!tim_cnt)
+			{
+					if(GO_ver_motor_struct.dir==Front) //计算当前位置
+					{
+						GO_ver_motor_struct.postion++;
+					}else
+					{
+						GO_ver_motor_struct.postion--;
+					}
+					GO_ver_motor_struct.step++;//计算当前步数
+					
+					if(GO_ver_motor_struct.planSetpNumber==GO_ver_motor_struct.step) //到达指定步数,电机停止
+					{
+						TIM_Cmd(TIM4,DISABLE);
+						GO_ver_motor_struct.motion=Stop;
+						return;
+					}
+			}
+	
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
 		
@@ -463,38 +541,45 @@ void TIM4_IRQHandler(void) //TIM4 中断
 			
 		}
 		
-		TIM_ClearITPendingBit(TIM4,TIM_IT_CC1);
 	}
 }
 
+
+
 void TIM5_IRQHandler(void) //TIM5 中断
 {
+static u8 tim_cnt=0;
 if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
 	{
-		if(GC_rot_motor_struct.dir==Front) //计算当前位置
+		TIM_ClearITPendingBit(TIM5,TIM_IT_CC1);
+		tim_cnt++;
+		tim_cnt%=2;
+		if(!tim_cnt)
 		{
-			GC_rot_motor_struct.postion++;
-		}else
-		{
-			GC_rot_motor_struct.postion--;
+				if(GC_rot_motor_struct.dir==Front) //计算当前位置
+				{
+					GC_rot_motor_struct.postion++;
+				}else
+				{
+					GC_rot_motor_struct.postion--;
+				}
+				GC_rot_motor_struct.step++;//计算当前步数
+				
+				if(GC_rot_motor_struct.planSetpNumber==GC_rot_motor_struct.step) //到达指定步数,电机停止
+				{
+					TIM_Cmd(TIM5,DISABLE);
+					GC_rot_motor_struct.motion=Stop;
+					return;
+				}
 		}
-		GC_rot_motor_struct.step++;//计算当前步数
 		
-		if(GC_rot_motor_struct.planSetpNumber==GC_rot_motor_struct.step) //到达指定步数,电机停止
-		{
-			TIM_Cmd(TIM5,DISABLE);
-			GC_rot_motor_struct.motion=Stop;
-			return;
-		}
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
 		
 		
 		
 		/****/
-		
-		
-	
+
 		if(GC_rot_motor_struct.motion==ConstMove)//电机匀速运动
 		{
 			TIM_SetCompare1(TIM5,(TIM5->CNT+GC_rot_motor_struct.t_m)%0xffff);
@@ -515,15 +600,18 @@ if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
 			}
 			
 		}
-		
-		TIM_ClearITPendingBit(TIM5,TIM_IT_CC1);
+
 	}
+
 }
 
-void TIM8_CC_IRQHandler(void) //TIM8中断
+
+
+void TIM8_UP_IRQHandler(void) //TIM8中断
 {
-if(TIM_GetITStatus(TIM8,TIM_IT_CC1)!=RESET)
-	{
+if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET)
+{
+			TIM_ClearITPendingBit(TIM8,TIM_FLAG_Update);//清除更新中断标志位		
 		if(GP_motor_struct.dir==Front) //计算当前位置
 		{
 			GP_motor_struct.postion++;
@@ -545,30 +633,71 @@ if(TIM_GetITStatus(TIM8,TIM_IT_CC1)!=RESET)
 		
 		
 		/****/
-		
-		
-	
+
 		if(GP_motor_struct.motion==ConstMove)//电机匀速运动
 		{
-			TIM_SetCompare1(TIM8,(TIM8->CNT+GC_rot_motor_struct.t_m)%0xffff);
+			TIM_SetAutoreload(TIM8,GC_rot_motor_struct.t_m);//设定自动重装值	
+			TIM_SetCompare1(TIM8,GC_rot_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
 		}else
 		{
 			//加速运动
 			if(GP_motor_struct.step<=GP_motor_struct.accStepNumber)
 			{
-				TIM_SetCompare1(TIM8,(TIM8->CNT+GP_motor_struct.AccPeriodArray[GP_motor_struct.step])%0xffff);
+				TIM_SetAutoreload(TIM8,GP_motor_struct.AccPeriodArray[GP_motor_struct.step]);//设定自动重装值	
+				TIM_SetCompare1(TIM8,GP_motor_struct.AccPeriodArray[GP_motor_struct.step]/2); //匹配值2等于重装值一半，是以占空比为50%	
 			}//减速运动
 			else if(GP_motor_struct.step>=GP_motor_struct.planSetpNumber-GP_motor_struct.accStepNumber)
 			{
-				TIM_SetCompare1(TIM8,(TIM8->CNT+GP_motor_struct.AccPeriodArray[GP_motor_struct.planSetpNumber-GP_motor_struct.step])%0xffff);
+				TIM_SetAutoreload(TIM8,GP_motor_struct.AccPeriodArray[GP_motor_struct.planSetpNumber-GP_motor_struct.step]);//设定自动重装值	
+				TIM_SetCompare1(TIM8,GP_motor_struct.AccPeriodArray[GP_motor_struct.planSetpNumber-GP_motor_struct.step]); //匹配值2等于重装值一半，是以占空比为50%	
 			}//匀速运动
 			else
 			{
-				TIM_SetCompare1(TIM8,(TIM8->CNT+GP_motor_struct.t_m)%0xffff);
+					TIM_SetAutoreload(TIM8,GC_rot_motor_struct.t_m);//设定自动重装值	
+					TIM_SetCompare1(TIM8,GC_rot_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
 			}
 			
 		}
-		
-		TIM_ClearITPendingBit(TIM5,TIM_IT_CC1);
+	
 	}
 }
+
+//			///////////////////////////////////
+//			TIM_ClearITPendingBit(TIM1,TIM_FLAG_Update);//清除更新中断标志位		
+//			TIM_SetAutoreload(TIM1,1000);//设定自动重装值	
+//			TIM_SetCompare1(TIM1,500); //匹配值2等于重装值一半，是以占空比为50%	
+//			/////////////////////////////////
+
+//	u16 capture;
+//	if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
+//	{
+//		TIM_ClearITPendingBit(TIM5,TIM_IT_CC1);
+//		capture=TIM_GetCapture1(TIM5);
+//		TIM_SetCompare1(TIM5,capture+1000);
+//		
+//	}
+
+//	u16 capture;
+//	if(TIM_GetITStatus(TIM4,TIM_IT_CC1)!=RESET)
+//	{
+//		TIM_ClearITPendingBit(TIM4,TIM_IT_CC1);
+//		capture=TIM_GetCapture1(TIM4);
+//		TIM_SetCompare1(TIM4,capture+1000);
+//		
+//	}
+
+//	u16 capture=0;
+//	if(TIM_GetITStatus(TIM3,TIM_IT_CC1)!=RESET)
+//	{
+//		TIM_ClearITPendingBit(TIM3,TIM_IT_CC1);
+//		capture=TIM_GetCapture1(TIM3);
+//		TIM_SetCompare1(TIM3,capture+1000);
+//	}
+
+//		u16 capture_val=0;
+//	 if(TIM_GetITStatus(TIM2,TIM_IT_CC1)!=RESET)
+//	 {
+//		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
+//		 capture_val=TIM_GetCapture1(TIM2);
+//		 TIM_SetCompare1(TIM2,capture_val+1000);
+//	 }

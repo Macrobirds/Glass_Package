@@ -17,7 +17,7 @@ Library Manager: ArmAr.exe V5.06 update 7 (build 960)
 Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
 CPU DLL:         SARMCM3.DLL V5.34.0.0
 Dialog DLL:      DARMSTM.DLL V1.68.0.0
-Target DLL:      Segger\JL2CM3.dll V2.99.38.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
 Dialog DLL:      TARMSTM.DLL V1.66.0.0
  
 <h2>Project:</h2>
@@ -27,20 +27,28 @@ Project File Date:  03/23/2023
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil5\ARM\ARMCC\Bin'
 Build target 'UCOSII-1'
-compiling taskthread.c...
+compiling position.c...
 ..\HARDWARE\motor\motor.h(68): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\USER\Globalconfig.h(119): warning:  #1-D: last line of file ends without a newline
   #endif
 ..\TASK\taskthread.h(136): warning:  #1-D: last line of file ends without a newline
   #endif
-..\TASK\taskthread.c(56): warning:  #1-D: last line of file ends without a newline
-  }
-..\TASK\taskthread.c: 4 warnings, 0 errors
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.c(410): warning:  #1-D: last line of file ends without a newline
+  //		EXTI_ClearITPendingBit(EXTI_Line8);
+..\HARDWARE\pos_sensor\position.c: 5 warnings, 0 errors
+compiling pwm.c...
+..\SYSTEM\pwm\pwm.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\motor\motor.h(68): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\pwm\pwm.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=14024 RO-data=800 RW-data=812 ZI-data=1049772  
+Program Size: Code=17668 RO-data=828 RW-data=824 ZI-data=1049768  
 FromELF: creating hex file...
-"..\OBJ\UCOSII-1.axf" - 0 Error(s), 4 Warning(s).
+"..\OBJ\UCOSII-1.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -53,7 +61,7 @@ Package Vendor: Keil
   C:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>

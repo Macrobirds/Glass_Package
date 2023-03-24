@@ -30,3 +30,9 @@
 ..\obj\position.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\position.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\position.o: ..\SYSTEM\sys\sys.h
+..\obj\position.o: ..\SYSTEM\delay\delay.h
+..\obj\position.o: ..\TASK\taskthread.h
+..\obj\position.o: ..\HARDWARE\motor\motor.h
+..\obj\position.o: ..\USER\Globalconfig.h
+..\obj\position.o: ..\SYSTEM\usart\usart.h
+..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h

@@ -3,8 +3,9 @@
 #include "includes.h"
 #include "usart.h"
 #include "usmart.h"
- 
-
+#include "position.h"
+#include "pwm.h"
+#include "gpio.h"
 
 
 /////////////////////////UCOSII任务设置///////////////////////////////////
@@ -43,8 +44,11 @@ void led1_task(void *pdata);
  {	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置中断优先级分组为组2：2位抢占优先级，2位响应优先级
 	delay_init();	    //延时函数初始化	  
+	 ALL_GPIO_Init();
 	uart_init(115200);
 	usmart_dev.init(SystemCoreClock/1000000);
+	postions_sensor_Init();
+	Motor_PWM_Init();
 	OSInit();   
  	OSTaskCreate(start_task,(void *)0,(OS_STK *)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO );//创建起始任务
 	OSStart();	  	 

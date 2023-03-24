@@ -6,8 +6,8 @@
 
 
 #define GE_DIR PBout(4)
-#define GC_rot_DIR PAout(2)
-#define GC_ver_DIR PAout(7)
+#define GCR_DIR PAout(1)
+#define GCV_DIR PAout(7)
 #define GP_DIR PCout(7)
 #define GOH_DIR PBout(3)
 #define GOV_DIR PBout(7)
