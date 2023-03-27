@@ -3,30 +3,259 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: ¦ÌVision V5.34.0.0
-Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: test 396376922@qq.com, test, LIC=FYKYW-QNWRN-QD9KD-89QYL-UAXN7-FVDR5
+IDE-Version: ¦ÌVision V5.22.0.0
+Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: 1 2789169567@qq.com, 1, LIC=TIVNB-2IZ9L-Y8MFK-ZCPEX-G79GE-RVRHP
  
 Tool Versions:
-Toolchain:       MDK-ARM Plus  Version: 5.34.0.0
+Toolchain:       MDK-ARM Plus  Version: 5.22
 Toolchain Path:  D:\keil5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 update 7 (build 960)
-Assembler:       Armasm.exe V5.06 update 7 (build 960)
-Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
-Library Manager: ArmAr.exe V5.06 update 7 (build 960)
-Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
-CPU DLL:         SARMCM3.DLL V5.34.0.0
-Dialog DLL:      DARMSTM.DLL V1.68.0.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.8.0
+C Compiler:      Armcc.exe V5.06 update 4 (build 422)
+Assembler:       Armasm.exe V5.06 update 4 (build 422)
+Linker/Locator:  ArmLink.exe V5.06 update 4 (build 422)
+Library Manager: ArmAr.exe V5.06 update 4 (build 422)
+Hex Converter:   FromElf.exe V5.06 update 4 (build 422)
+CPU DLL:         SARMCM3.DLL V5.22
+Dialog DLL:      DARMSTM.DLL V1.67.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TARMSTM.DLL V1.66.0.0
  
 <h2>Project:</h2>
-D:\·âÆ¬»ú\Glass_Package\glass_package_project\USER\UCOSII-1.uvprojx
+C:\Users\27891\Desktop\glasspackage\Glass_Package\glass_package_project\USER\UCOSII-1.uvprojx
 Project File Date:  03/27/2023
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil5\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 4 (build 422)', folder: 'D:\keil5\ARM\ARMCC\Bin'
 Build target 'UCOSII-1'
+compiling led.c...
+compiling stm32f10x_it.c...
+compiling Globalconfig.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+Globalconfig.c(4): warning:  #188-D: enumerated type mixed with another type
+  enum sensor_index sensor_error_idx=0;
+Globalconfig.c(9): warning:  #1-D: last line of file ends without a newline
+  }
+Globalconfig.c: 7 warnings, 0 errors
+compiling position.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.c(451): warning:  #1-D: last line of file ends without a newline
+  //		EXTI_ClearITPendingBit(EXTI_Line8);
+..\HARDWARE\pos_sensor\position.c: 6 warnings, 0 errors
+compiling system_stm32f10x.c...
+compiling motor.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\delay\mydelay.h(8): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\motor\motor.c(205): warning:  #111-D: statement is unreachable
+  		break;
+..\HARDWARE\motor\motor.c(208): warning:  #111-D: statement is unreachable
+  		break;
+..\HARDWARE\motor\motor.c(211): warning:  #111-D: statement is unreachable
+  		break;
+..\HARDWARE\motor\motor.c(214): warning:  #111-D: statement is unreachable
+  		break;
+..\HARDWARE\motor\motor.c(217): warning:  #111-D: statement is unreachable
+  		break;
+..\HARDWARE\motor\motor.c(220): warning:  #111-D: statement is unreachable
+  		break;
+..\HARDWARE\motor\motor.c(223): warning:  #940-D: missing return statement at end of non-void function "motor_Get_Start_Sen" 
+  }
+..\HARDWARE\motor\motor.c: 13 warnings, 0 errors
+compiling main.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\pwm\pwm.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\GPIO\gpio.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\PF6847\p6847.h(12): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\adc\adc.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\ITV0011\ITV0011.h(11): warning:  #1295-D: Deprecated declaration ITV0011_IIC_Init - give arg types
+  void ITV0011_IIC_Init();
+..\HARDWARE\ITV0011\ITV0011.h(13): warning:  #1295-D: Deprecated declaration ITV0011_IIC_Disable - give arg types
+  void ITV0011_IIC_Disable();
+..\HARDWARE\ITV0011\ITV0011.h(14): warning:  #1295-D: Deprecated declaration ITV0011_IIC_GetPressure - give arg types
+  u32 ITV0011_IIC_GetPressure();
+..\HARDWARE\ITV0011\ITV0011.h(17): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\gas\gas.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+main.c: 14 warnings, 0 errors
+compiling ITV0011.c...
+..\SYSTEM\adc\adc.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\ITV0011\ITV0011.h(11): warning:  #1295-D: Deprecated declaration ITV0011_IIC_Init - give arg types
+  void ITV0011_IIC_Init();
+..\HARDWARE\ITV0011\ITV0011.h(13): warning:  #1295-D: Deprecated declaration ITV0011_IIC_Disable - give arg types
+  void ITV0011_IIC_Disable();
+..\HARDWARE\ITV0011\ITV0011.h(14): warning:  #1295-D: Deprecated declaration ITV0011_IIC_GetPressure - give arg types
+  u32 ITV0011_IIC_GetPressure();
+..\HARDWARE\ITV0011\ITV0011.h(17): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\ITV0011\ITV0011.c: 5 warnings, 0 errors
+compiling delay.c...
+compiling PCF8591.c...
+compiling p6847.c...
+..\HARDWARE\PF6847\p6847.h(12): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\adc\adc.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\PF6847\p6847.c(59): warning:  #1-D: last line of file ends without a newline
+  }
+..\HARDWARE\PF6847\p6847.c: 3 warnings, 0 errors
+compiling gas.c...
+..\HARDWARE\PF6847\p6847.h(12): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\adc\adc.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\ITV0011\ITV0011.h(11): warning:  #1295-D: Deprecated declaration ITV0011_IIC_Init - give arg types
+  void ITV0011_IIC_Init();
+..\HARDWARE\ITV0011\ITV0011.h(13): warning:  #1295-D: Deprecated declaration ITV0011_IIC_Disable - give arg types
+  void ITV0011_IIC_Disable();
+..\HARDWARE\ITV0011\ITV0011.h(14): warning:  #1295-D: Deprecated declaration ITV0011_IIC_GetPressure - give arg types
+  u32 ITV0011_IIC_GetPressure();
+..\HARDWARE\ITV0011\ITV0011.h(17): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\gas\gas.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\gas\gas.c(68): warning:  #1-D: last line of file ends without a newline
+  }
+..\HARDWARE\gas\gas.c: 13 warnings, 0 errors
+compiling sys.c...
+compiling usart.c...
+compiling core_cm3.c...
+compiling mydelay.c...
+..\SYSTEM\delay\mydelay.h(8): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\delay\mydelay.c(20): warning:  #1-D: last line of file ends without a newline
+  }
+..\SYSTEM\delay\mydelay.c: 2 warnings, 0 errors
+compiling malloc.c...
+compiling myiic.c...
+..\SYSTEM\delay\mydelay.h(8): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\IIC\myiic.c: 1 warning, 0 errors
+compiling gpio.c...
+..\SYSTEM\GPIO\gpio.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\GPIO\gpio.c: 1 warning, 0 errors
+compiling adc.c...
+..\SYSTEM\adc\adc.h(14): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\adc\adc.c(86): warning:  #1-D: last line of file ends without a newline
+  }
+..\SYSTEM\adc\adc.c: 2 warnings, 0 errors
+assembling startup_stm32f10x_hd.s...
+compiling pwm.c...
+..\SYSTEM\pwm\pwm.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\SYSTEM\pwm\pwm.c: 2 warnings, 0 errors
+compiling misc.c...
+compiling stm32f10x_dbgmcu.c...
+compiling stm32f10x_gpio.c...
+compiling stm32f10x_bkp.c...
+compiling stm32f10x_usart.c...
+compiling stm32f10x_adc.c...
+compiling stm32f10x_rcc.c...
+compiling stm32f10x_exti.c...
+compiling stm32f10x_cec.c...
+compiling stm32f10x_crc.c...
+compiling stm32f10x_dma.c...
+compiling stm32f10x_can.c...
+compiling stm32f10x_dac.c...
+compiling stm32f10x_flash.c...
+compiling stm32f10x_rtc.c...
+compiling stm32f10x_iwdg.c...
+compiling stm32f10x_i2c.c...
+compiling stm32f10x_sdio.c...
+compiling stm32f10x_pwr.c...
+compiling stm32f10x_spi.c...
+compiling stm32f10x_fsmc.c...
+compiling stm32f10x_wwdg.c...
+compiling os_mem.c...
+compiling os_mbox.c...
+compiling os_mutex.c...
+compiling stm32f10x_tim.c...
+compiling os_core.c...
+compiling os_flag.c...
+assembling os_cpu_a.asm...
+compiling os_tmr.c...
+compiling os_cpu_c.c...
+compiling os_q.c...
+compiling os_task.c...
+compiling os_time.c...
+compiling os_sem.c...
+compiling usmart.c...
+compiling glasspackage_task.c...
+compiling glassout_task.c...
+compiling usmart_config.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USMART\usmart_config.c: 1 warning, 0 errors
+compiling taskthread.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.c(56): warning:  #1-D: last line of file ends without a newline
+  }
+..\TASK\taskthread.c: 6 warnings, 0 errors
+compiling usmart_str.c...
 compiling glassenter_task.c...
 ..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
   #endif
@@ -41,23 +270,31 @@ compiling glassenter_task.c...
 glassenter_task.c(259): warning:  #1-D: last line of file ends without a newline
   }
 glassenter_task.c: 6 warnings, 0 errors
+compiling glassclaw_task.c...
+..\HARDWARE\motor\motor.h(71): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\HARDWARE\pos_sensor\position.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\USER\Globalconfig.h(142): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\TASK\taskthread.h(160): warning:  #1-D: last line of file ends without a newline
+  #endif
+glassclaw_task.c(226): warning:  #1-D: last line of file ends without a newline
+  }
+glassclaw_task.c: 6 warnings, 0 errors
 linking...
 Program Size: Code=17788 RO-data=860 RW-data=952 ZI-data=1049768  
 FromELF: creating hex file...
-"..\OBJ\UCOSII-1.axf" - 0 Error(s), 6 Warning(s).
-
-<h2>Software Packages used:</h2>
-
-Package Vendor: Keil
-                http://www.keil.com/pack/Keil.STM32F1xx_DFP.2.2.0.pack
-                Keil.STM32F1xx_DFP.2.2.0
-                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+"..\OBJ\UCOSII-1.axf" - 0 Error(s), 88 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include
+  C:\Users\27891\Desktop\glasspackage\Glass_Package\glass_package_project\USER\RTE\_UCOSII-1
+  D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:25
 </pre>
 </body>
 </html>

@@ -317,10 +317,11 @@ ARM Macro Assembler    Page 5
               00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=..\obj\os_cpu_a.d -o..\obj\os_cpu_a.o -IC:\Users\39637\AppData\Loc
-al\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include --predefine="__UVISION_VER
-SION SETA 534" --predefine="STM32F10X_HD SETA 1" --list=.\listings\os_cpu_a.lst
- ..\UCOSII\PORT\os_cpu_a.asm
+ork --depend=..\obj\os_cpu_a.d -o..\obj\os_cpu_a.o -IC:\Users\27891\Desktop\gla
+sspackage\Glass_Package\glass_package_project\USER\RTE\_UCOSII-1 -ID:\keil5\ARM
+\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include -ID:\keil5\ARM\CMSIS\Include --pr
+edefine="__UVISION_VERSION SETA 522" --predefine="STM32F10X_HD SETA 1" --list=.
+\listings\os_cpu_a.lst ..\UCOSII\PORT\os_cpu_a.asm
 
 
 
