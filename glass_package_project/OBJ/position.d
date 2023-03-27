@@ -36,3 +36,4 @@
 ..\obj\position.o: ..\USER\Globalconfig.h
 ..\obj\position.o: ..\SYSTEM\usart\usart.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\position.o: ..\HARDWARE\pos_sensor\position.h

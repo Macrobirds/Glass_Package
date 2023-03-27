@@ -35,3 +35,5 @@
 ..\obj\taskthread.o: ..\SYSTEM\delay\delay.h
 ..\obj\taskthread.o: ..\SYSTEM\usart\usart.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\taskthread.o: ..\HARDWARE\pos_sensor\position.h
+..\obj\taskthread.o: ..\TASK\taskthread.h

@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\USMART;..\SYSTEM\GPIO;..\SYSTEM\IIC;..\SYSTEM\pwm;..\HARDWARE\pos_sensor;..\HARDWARE\motor;..\SYSTEM\Malloc;..\HARDWARE\ITV0011;..\HARDWARE\PCF8591;..\HARDWARE\PF6847;..\SYSTEM\adc;..\TASK</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\USMART;..\SYSTEM\GPIO;..\SYSTEM\IIC;..\SYSTEM\pwm;..\HARDWARE\pos_sensor;..\HARDWARE\motor;..\SYSTEM\Malloc;..\HARDWARE\ITV0011;..\HARDWARE\PCF8591;..\HARDWARE\PF6847;..\SYSTEM\adc;..\TASK;..\HARDWARE\gas</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -775,6 +775,26 @@
               <FileName>taskthread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\TASK\taskthread.c</FilePath>
+            </File>
+            <File>
+              <FileName>glassenter_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\glassenter_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>glassclaw_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\glassclaw_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>glasspackage_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\glasspackage_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>glassout_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\glassout_task.c</FilePath>
             </File>
           </Files>
         </Group>

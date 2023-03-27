@@ -12,6 +12,16 @@ enum task_state
 	 Finish,
 };
 
+enum task_error
+{
+	Error_Slide_Glass=1<<0,
+	Error_Cover_Glass=1<<1,
+	Error_In_Box=1<<2,
+	Error_Out_Box=1<<3,
+	Error_Sensor=1<<4,
+	Error_Spray=1<<5,
+};
+
 //玻片进入槽任务流程序号
 enum glass_enter_task_index
 {
@@ -57,8 +67,8 @@ enum glass_package_task_index
 	GP_sucker_down, //吸盘下降
 	GP_suck_glass, //吸盘吸取盖玻片
 	GP_sucker_up, //吸盘上升
+	GP_move_spray, //移动到喷胶位置
 	GP_move_package, //移动到封片位置
-	GP_spray, //移动到喷胶位置
 	GP_package, //开始封片
 	GP_finish, 
   GP_error,//异常上报任务
@@ -73,7 +83,7 @@ enum glass_out_task_index
 	GO_reset_off,
 	GO_start, //玻片托盘移动到原点位置
 	GO_package, //玻片托盘移动到封片位置
-	GO_move_out, //玻片托盘移动到终点位置
+	GO_end, //玻片托盘移动到终点位置
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
 	GO_finish,
@@ -81,27 +91,35 @@ enum glass_out_task_index
 };
 
 struct glass_enter_struct{
-	enum glass_enter_task_index task;
-	enum task_state sta;
-	motor_struct * motor;
-	u32 GE_box_len;
-	u32 GE_box_dis;
+	enum glass_enter_task_index task; //任务序列
+	enum task_state sta; //任务状态
+	enum task_error error; //错误码
+	motor_struct * motor; //电机结构体指针
+	u32 running_tim; //运行时间 ms
+	u32 GE_box_len; //装载槽长度
+	u32 GE_box_dis; //装载槽间距
+	u8 box_Exist; //装载槽检测信号
+	u8 glass_Exist; //载玻片检测信号
 };
 
 struct glass_claw_struct{
 	enum glass_claw_task_index task;
 	enum task_state sta;
-	motor_struct * motor_v;
-	motor_struct * motor_h;
-	u16 GCR_hor_pos;
-	u16 GCR_ver_pos;
-	u32 GCV_down_pos;
-};
+	enum task_error error;
+	motor_struct * motor_v; //垂直电机
+	motor_struct * motor_r; //旋转电机
+	u32 running_tim; //运行时间
+	u16 GCR_hor_pos; //旋转水平位置
+	u16 GCR_ver_pos; //旋转垂直位置
+	u32 GCV_down_pos; //垂直下降位置
+}; 
 
 struct glass_package_struct{
 	enum glass_package_task_index task;
 	enum task_state sta;
+	enum task_error error;
 	motor_struct * motor;
+	u32 running_tim;
 	u16 delay_before;
 	u16 delay_after;
 	u16 sucker_delay;
@@ -115,8 +133,10 @@ struct glass_package_struct{
 struct glass_out_struct{
 	enum glass_out_task_index task;
 	enum task_state sta;
+	enum task_error error;
 	motor_struct * motor_h;
 	motor_struct * motor_v;
+	u32 running_tim;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;
 	u32 GOV_box_dis;
@@ -125,12 +145,16 @@ struct glass_out_struct{
 };
 
 
+
 extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
 extern struct glass_package_struct GP;
 extern struct glass_out_struct GO;
 
 void TaskThread_Init(void);
-
+void GE_TaskThread(void);
+void GC_TaskThread(void);
+void GP_TaskThread(void);
+void GO_TaksThread(void);
 
 #endif

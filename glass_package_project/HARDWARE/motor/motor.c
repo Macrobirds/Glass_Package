@@ -287,7 +287,7 @@ void stepperMotorStart(motor_struct * motor,u16 arr)
 		TIM_Cmd(motor->TIM,ENABLE);
 }
 
-// 匀速控制电机运行 电机结构体 电机状态 匀速运动频率
+// 匀速控制电机运行 电机结构体 电机状态 匀速运动频率 当速度频率为0时用默认匀速运动频率
 void motorGo(motor_struct * motor, long planPosition,u32 freq)
 {
 	enum motor_direction OldDirection=Front;
@@ -340,7 +340,13 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		motor->motion=ConstMove; //标记运动状态为匀速运动
 		motor->planSetpNumber=planStepNumber; //设置目标步数
 		motor->step=0; //设置当前步数
-		motor->t_m=motor->timerfeq/freq;//设置目标计数值
+		if(freq) 
+		{
+			motor->t_m=motor->timerfeq/freq;//设置目标计数值
+		}else 
+		{
+			motor->t_m=motor->timerfeq/motor->defaultfeq;//设置目标计数值
+		}
 		stepperMotorStart(motor,motor->t_m);
 		
 }
@@ -369,18 +375,7 @@ void setMixtureData(motor_struct * motor)
 		motor->t_m=motor->timerfeq/motor->defaultfeq;
 	}
 	
-//	switch(motor->name)
-//		{
-//			//TIM2-5
-//			case GC_ver_motor:
-//			case GC_rot_motor: 
-//			case GO_hor_motor:
-//			case GO_ver_motor: //将所有计数值除以2
-//			GetStepPeriodArrayCCX(motor->AccPeriodArray,motor->accStepNumber);
-//			break;
-//			default: break;
-//		}
-	
+
 }
 
 

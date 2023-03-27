@@ -64,5 +64,8 @@ extern motor_struct GO_hor_motor_struct;
 extern motor_struct GO_ver_motor_struct;
 
 void motor_parameter_Init(void);
+u8 motorGo_acc(motor_struct * motor, long planPosition);
+void motorGo(motor_struct * motor, long planPosition,u32 freq);
+void stepperMotorStop(motor_struct * motor);
 
 #endif

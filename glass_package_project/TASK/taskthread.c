@@ -11,7 +11,7 @@ struct glass_claw_struct GC={
 	.task=GC_none,
 	.sta=Ready,
 	.motor_v=&GC_ver_motor_struct,
-	.motor_h=&GC_rot_motor_struct,
+	.motor_r=&GC_rot_motor_struct,
 };
 
 

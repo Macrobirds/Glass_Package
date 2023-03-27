@@ -39,3 +39,7 @@
 ..\obj\gas.o: ..\SYSTEM\delay\delay.h
 ..\obj\gas.o: ..\SYSTEM\usart\usart.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\gas.o: ..\HARDWARE\pos_sensor\position.h
+..\obj\gas.o: ..\TASK\taskthread.h
+..\obj\gas.o: ..\HARDWARE\motor\motor.h
+..\obj\gas.o: ..\USER\Globalconfig.h

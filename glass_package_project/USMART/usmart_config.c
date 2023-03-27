@@ -20,6 +20,18 @@ static void Set_motor_dir(u8 dir)
 		
 }
 
+void gpio_test(u8 state,u8 pin)
+{
+	
+	if(state)
+	{
+		GPIO_SetBits(GPIOD,GPIO_Pin_0<<pin);
+	}else
+	{
+		GPIO_ResetBits(GPIOD,GPIO_Pin_0<<pin);
+	}
+}
+
 //函数名列表初始化(用户自己添加)
 //用户直接在这里输入要执行的函数名及其查找串
 struct _m_usmart_nametab usmart_nametab[]=
@@ -31,6 +43,7 @@ struct _m_usmart_nametab usmart_nametab[]=
 	(void*)delay_ms,"void delay_ms(u16 nms)",
 	(void*)delay_us,"void delay_us(u32 nus)",	
 	(void*)Set_motor_dir,"void Set_motor_dir(u8 dir)",
+	(void *)gpio_test,"void gpio_test(u8 state,u8 pin)"	,
 };						  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

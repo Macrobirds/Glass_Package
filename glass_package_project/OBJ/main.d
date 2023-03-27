@@ -47,5 +47,12 @@
 ..\obj\main.o: ..\TASK\taskthread.h
 ..\obj\main.o: ..\HARDWARE\motor\motor.h
 ..\obj\main.o: ..\USER\Globalconfig.h
+..\obj\main.o: ..\HARDWARE\pos_sensor\position.h
 ..\obj\main.o: ..\SYSTEM\pwm\pwm.h
 ..\obj\main.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\main.o: ..\HARDWARE\gas\gas.h
+..\obj\main.o: ..\HARDWARE\PCF8591\PCF8591.h
+..\obj\main.o: ..\SYSTEM\IIC\myiic.h
+..\obj\main.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\main.o: ..\HARDWARE\ITV0011\ITV0011.h
+..\obj\main.o: ..\SYSTEM\adc\adc.h

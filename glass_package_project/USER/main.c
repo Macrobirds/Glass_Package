@@ -6,6 +6,7 @@
 #include "position.h"
 #include "pwm.h"
 #include "gpio.h"
+#include "gas.h"
 
 
 /////////////////////////UCOSII»ŒŒÒ…Ë÷√///////////////////////////////////

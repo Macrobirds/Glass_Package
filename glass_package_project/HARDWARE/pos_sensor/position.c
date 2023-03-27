@@ -320,15 +320,17 @@ void EXTI9_5_IRQHandler(void)
 	//GE_down_Sen
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET)
 	{
-		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
-		{
-			delay_us(50);
-			if(GE_down_Sen==Sen_Block)
-			{
-				TIM_Cmd(TIM1,DISABLE);
-				GE_motor_struct.motion=Stop;
-			}
-		}
+		
+		printf("exit8 trigger\r\n");
+//		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
+//		{
+//			delay_us(50);
+//			if(GE_down_Sen==Sen_Block)
+//			{
+//				TIM_Cmd(TIM1,DISABLE);
+//				GE_motor_struct.motion=Stop;
+//			}
+//		}
 		
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
