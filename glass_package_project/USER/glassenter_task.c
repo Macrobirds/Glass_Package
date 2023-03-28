@@ -6,6 +6,18 @@ static u8 check_GC(void)
 	return (GC_ver_Sen==Sen_Block)&&(GC.motor_v->motion==Stop);
 }
 
+
+static void Error_Set(enum task_error error,u32 error_sen)
+{
+	GE.sta=Finish;
+	GE.task=GE_error;
+	GE.error|=error;
+	if(error_sen)
+	{
+		sensor_error_idx|=error_sen;
+	}
+}
+
 void GE_ReadyTask(void)
 {
 	switch(GE.task)
@@ -121,10 +133,7 @@ void GE_RunningTask(void)
 		{
 			if(GE.motor->motion==Stop) //GE原点传感器错误
 			{
-				GE.sta=Ready;
-				GE.task=GE_error;
-				GE.error|=Error_Sensor;
-				sensor_error_idx|=GE_start_sensor;
+				Error_Set(Error_Sensor,GE_start_sensor);
 			}
 		}
 		break;
@@ -145,9 +154,7 @@ void GE_RunningTask(void)
 					GE.task=GE_finish;
 				}else //缺少装载槽
 				{
-					GE.sta=Ready;
-					GE.task=GE_error;
-					GE.error|=Error_In_Box;
+					Error_Set(Error_In_Box,0);
 				}
 			}
 		}
@@ -162,10 +169,7 @@ void GE_RunningTask(void)
 		{
 			if(GE.motor->motion==Stop) //上下端传感器错误
 			{
-				GE.sta=Ready;
-				GE.task=GE_error;
-				sensor_error_idx|=GE_up_sensor;
-				sensor_error_idx|=GE_down_Sen;
+				Error_Set(Error_Sensor,GE_up_sensor|GE_down_sensor);
 			}
 		
 		}	
@@ -180,10 +184,7 @@ void GE_RunningTask(void)
 		{
 			if(GE.motor->motion==Stop) //上下端传感器错误
 			{
-				GE.sta=Ready;
-				GE.task=GE_error;
-				sensor_error_idx|=GE_up_sensor;
-				sensor_error_idx|=GE_down_sensor;
+				Error_Set(Error_Sensor,GE_up_sensor|GE_down_sensor);
 			}
 		}
 		break;
@@ -243,12 +244,18 @@ void GE_TaskThread(void)
 	{
 		GE_ReadyTask();
 		//重载计时
+		GE.running_tim=0;
 	}
 	
 	if(GE.task==Running)
 	{
 		GE_RunningTask();
 		//计时 若超时进行超时错误上报
+		GE.running_tim++;
+		if(GE.running_tim>OVERTIME)
+		{
+			Error_Set(Error_OverTime,0);
+		}
 	}
 	
 	if(GE.task==Finish)

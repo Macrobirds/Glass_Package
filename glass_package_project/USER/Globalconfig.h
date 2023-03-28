@@ -48,24 +48,24 @@
 
 enum sensor_index //总共17个传感器
 {
-GE_start_sensor=(1<<0),
-GE_up_sensor =(1<<1),
-GE_down_sensor =(1<<2),
-GC_rot_sensor =(1<<3),
-GC_ver_sensor =(1<<4),
-GP_start_sensor =(1<<5),
-GOH_start_sensor =(1<<6),
-GOH_mid_sensor =(1<<7),
-GOH_end_sensor =(1<<8),
-GOV_start_sensor =(1<<9),
-GOV_glass_sensor=(1<<10),
+	GE_start_sensor=(1<<0),
+	GE_up_sensor =(1<<1),
+	GE_down_sensor =(1<<2),
+	GC_rot_sensor =(1<<3),
+	GC_ver_sensor =(1<<4),
+	GP_start_sensor =(1<<5),
+	GOH_start_sensor =(1<<6),
+	GOH_mid_sensor =(1<<7),
+	GOH_end_sensor =(1<<8),
+	GOV_start_sensor =(1<<9),
+	GOV_glass_sensor=(1<<10),
 
-GP_sucker_sensor =(1<<11),
-GP_spray_sensor=(1<<12),
-GP_big_cyl_sensor =(1<<13),
-GP_small_cyl_sensor =(1<<14),
-GC_claw_sensor=(1<<15),
-GOV_box_sensor =(1<<16),
+	GP_sucker_sensor =(1<<11),
+	GP_spray_sensor=(1<<12),
+	GP_big_cyl_sensor =(1<<13),
+	GP_small_cyl_sensor =(1<<14),
+	GC_claw_sensor=(1<<15),
+	GOV_box_sensor =(1<<16),
 };
 
 

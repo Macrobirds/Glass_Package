@@ -176,7 +176,7 @@ static void Exti_Init_8_15(void)
 	{
 		//GPIOE.8
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOE, GPIO_PinSource8);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //Ë«±ßÑØ´¥·¢
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //ÉÏÉýÑØ´¥·¢
 		EXTI_InitStructure.EXTI_Line = EXTI_Line8;
 		EXTI_Init(&EXTI_InitStructure);
 	}

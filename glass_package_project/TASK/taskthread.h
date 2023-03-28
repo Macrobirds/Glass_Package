@@ -3,6 +3,8 @@
 #include "motor.h"
 #include "Globalconfig.h"
 
+#define OVERTIME 3000
+
 
 //任务运行状态
 enum task_state
@@ -20,6 +22,7 @@ enum task_error
 	Error_Out_Box=1<<3,
 	Error_Sensor=1<<4,
 	Error_Spray=1<<5,
+	Error_OverTime=1<<6,
 };
 
 //玻片进入槽任务流程序号
@@ -63,6 +66,7 @@ enum glass_package_task_index
 	GP_reset_on,
 	GP_reset_off,
 	GP_start, //封片初始化
+	GP_move_start, //移动到轨道原点
 	GP_move_glass, //移动到盖玻片位置
 	GP_sucker_down, //吸盘下降
 	GP_suck_glass, //吸盘吸取盖玻片
@@ -86,16 +90,17 @@ enum glass_out_task_index
 	GO_end, //玻片托盘移动到终点位置
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
+	GO_adjust,  //调整存储槽对准玻片
 	GO_finish,
   GO_error,//异常上报任务
 };
 
 struct glass_enter_struct{
-	enum glass_enter_task_index task; //任务序列
-	enum task_state sta; //任务状态
-	enum task_error error; //错误码
+	volatile enum glass_enter_task_index task; //任务序列
+	volatile enum task_state sta; //任务状态
+	volatile enum task_error error; //错误码
 	motor_struct * motor; //电机结构体指针
-	u32 running_tim; //运行时间 ms
+	volatile u32 running_tim; //运行时间 ms
 	u32 GE_box_len; //装载槽长度
 	u32 GE_box_dis; //装载槽间距
 	u8 box_Exist; //装载槽检测信号
@@ -103,23 +108,23 @@ struct glass_enter_struct{
 };
 
 struct glass_claw_struct{
-	enum glass_claw_task_index task;
-	enum task_state sta;
-	enum task_error error;
+	volatile enum glass_claw_task_index task;
+	volatile enum task_state sta;
+	volatile enum task_error error;
 	motor_struct * motor_v; //垂直电机
 	motor_struct * motor_r; //旋转电机
-	u32 running_tim; //运行时间
+	volatile u32 running_tim; //运行时间
 	u16 GCR_hor_pos; //旋转水平位置
 	u16 GCR_ver_pos; //旋转垂直位置
 	u32 GCV_down_pos; //垂直下降位置
 }; 
 
 struct glass_package_struct{
-	enum glass_package_task_index task;
-	enum task_state sta;
-	enum task_error error;
+	volatile enum glass_package_task_index task;
+	volatile enum task_state sta;
+	volatile enum task_error error;
 	motor_struct * motor;
-	u32 running_tim;
+	volatile u32 running_tim;
 	u16 delay_before;
 	u16 delay_after;
 	u16 sucker_delay;
@@ -128,15 +133,16 @@ struct glass_package_struct{
 	u32 spray_len;
 	u16 spray_speed;
 	u8 spray_pressure;
+	u8 subtask;
 };
 
 struct glass_out_struct{
-	enum glass_out_task_index task;
-	enum task_state sta;
-	enum task_error error;
+	volatile enum glass_out_task_index task;
+	volatile enum task_state sta;
+	volatile enum task_error error;
 	motor_struct * motor_h;
 	motor_struct * motor_v;
-	u32 running_tim;
+	volatile u32 running_tim;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;
 	u32 GOV_box_dis;
