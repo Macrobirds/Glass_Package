@@ -6,6 +6,7 @@
 #include "malloc.h"
 
 
+
 motor_struct GE_motor_struct={
 	.name=GE_motor,
 	.motion=Stop,
@@ -13,6 +14,7 @@ motor_struct GE_motor_struct={
 	.FRONT=1,
 	.TIM=TIM1,
 	.AccPeriodArray=NULL,
+	.postion=-1, //开机上电时位置未知
 	
 };
 motor_struct GC_rot_motor_struct={
@@ -22,6 +24,7 @@ motor_struct GC_rot_motor_struct={
 	.FRONT=1,
 	.TIM=TIM5,
 	.AccPeriodArray=NULL,
+	.postion=-1,	
 };
 motor_struct GC_ver_motor_struct={
 	.name=GC_ver_motor,
@@ -30,6 +33,7 @@ motor_struct GC_ver_motor_struct={
 	.FRONT=1,
 	.TIM=TIM3,
 	.AccPeriodArray=NULL,
+	.postion=-1,
 };
 motor_struct GP_motor_struct={
 	.name=GP_motor,
@@ -38,6 +42,7 @@ motor_struct GP_motor_struct={
 	.FRONT=1,
 	.TIM=TIM8,
 	.AccPeriodArray=NULL,
+	.postion=-1,
 };
 motor_struct GO_hor_motor_struct={
 	.name=GO_hor_motor,
@@ -46,6 +51,7 @@ motor_struct GO_hor_motor_struct={
 	.FRONT=1,
 	.TIM=TIM2,
 	.AccPeriodArray=NULL,
+	.postion=-1,
 };
 motor_struct GO_ver_motor_struct={
 	.name=GO_ver_motor,
@@ -54,6 +60,7 @@ motor_struct GO_ver_motor_struct={
 	.FRONT=1,
 	.TIM=TIM4,
 	.AccPeriodArray=NULL,
+	.postion=-1,
 };
 
 void motor_parameter_Init(void)
@@ -84,6 +91,7 @@ void motor_parameter_Init(void)
 	GC_rot_motor_struct.startfeq=Global_Parm.MOT.GCR_min_speed;
 	GC_rot_motor_struct.max_pos=Global_Parm.GCS.GCR_max_pos;
 	GC_rot_motor_struct.defaultfeq=200;
+	GC_rot_motor_struct.curvature=1;
 	GC_rot_motor_struct.t_m=(GC_rot_motor_struct.timerfeq/GC_rot_motor_struct.defaultfeq);
 	GC_rot_motor_struct.accStepNumber=GC_rot_motor_struct.pulse_1mm*10;
 	
@@ -303,9 +311,12 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 	else//目标位置在原点
 	{ 
 		motor->planpostion=0;
-		if(motor_Get_Start_Sen(motor->name)==Sen_Block)  //原点传感器感应
+		if(motor_Get_Start_Sen(motor->name)==Sen_Block)  //原点传感器感应 位置校准成功 直接返回
 		{
-			planStepNumber=0;
+			stepperMotorStop(motor);
+			motor->postion=0;
+			motor->planSetpNumber=0;
+			return;
 		}
 		else//位置未初始化成功
 		{
@@ -314,8 +325,6 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		}
 	
 	}
-	
-	
 		OldDirection=motor->dir;
 		if(planStepNumber>0)
 		{
@@ -342,10 +351,10 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		motor->step=0; //设置当前步数
 		if(freq) 
 		{
-			motor->t_m=motor->timerfeq/freq;//设置目标计数值
+			motor->t_m=motor->timerfeq/freq;//设置目标计数值设定频率
 		}else 
 		{
-			motor->t_m=motor->timerfeq/motor->defaultfeq;//设置目标计数值
+			motor->t_m=motor->timerfeq/motor->defaultfeq;//设置目标计数值为默认频率
 		}
 		stepperMotorStart(motor,motor->t_m);
 		
@@ -396,8 +405,10 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 		motor->planpostion=0;
 		if(motor_Get_Start_Sen(motor->name)==Sen_Block)
 		{
+			stepperMotorStop(motor);
+			motor->postion=0;
 			motor->planSetpNumber=0;
-			planStepNumber=0;
+			return;
 		}
 		else
 		{

@@ -96,7 +96,7 @@ static void Exti_Init_0_7(void)
 	{
 		//GPIOD 7
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, GPIO_PinSource7);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //上升沿触发
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; //下降沿触发
 		EXTI_InitStructure.EXTI_Line = EXTI_Line7;
 		EXTI_Init(&EXTI_InitStructure);
 	}
@@ -291,7 +291,7 @@ void EXTI9_5_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line5)!=RESET) //水平出料到达终点
 	{
 		delay_us(50);
-		if(GOH_end_Sen==Sen_Block)
+		if(GOH_end_Sen==Sen_Block) 
 		{
 			TIM_Cmd(TIM2,DISABLE);
 			GO_hor_motor_struct.postion=GO.GOH_end_pos;
@@ -312,40 +312,40 @@ void EXTI9_5_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line6);
 	}
 	//GOV_galss_Sen
-	if(EXTI_GetITStatus(EXTI_Line7)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //检测到存储槽空
 	{
 		delay_us(50);
-		if(GOV_glass_Sen==Sen_Block)
+		if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 		{
-			
+			TIM_Cmd(TIM4,DISABLE);
+			GO_ver_motor_struct.motion=Stop;
 		}
 		printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line7);
 	}
 	//GE_down_Sen
-	if(EXTI_GetITStatus(EXTI_Line8)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
 	{
 		
 		printf("exit8 trigger\r\n");
-//		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
-//		{
-//			delay_us(50);
-//			if(GE_down_Sen==Sen_Block)
-//			{
-//				TIM_Cmd(TIM1,DISABLE);
-//				GE_motor_struct.motion=Stop;
-//			}
-//		}
-		
+		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
+		{
+			delay_us(50);
+			if(GE_down_Sen==Sen_Block) //上升沿触发
+			{
+				TIM_Cmd(TIM1,DISABLE);
+				GE_motor_struct.motion=Stop;
+			}
+		}
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
 	//GE_up_Sen
-	if(EXTI_GetITStatus(EXTI_Line9)!=RESET)
+	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
 			delay_us(50);
-			if(GE_up_Sen==Sen_Block)
+			if(GE_up_Sen==Sen_Block) //上升沿触发
 			{
 				TIM_Cmd(TIM1,DISABLE);
 				GE_motor_struct.motion=Stop;
@@ -357,7 +357,7 @@ void EXTI9_5_IRQHandler(void)
 }
 void EXTI15_10_IRQHandler(void)
 {
-	//GP_start_Sen
+	//GE_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line10)!=RESET) //进料槽移动到原点
 	{
 			delay_us(50);

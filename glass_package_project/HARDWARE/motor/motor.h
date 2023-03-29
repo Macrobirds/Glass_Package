@@ -46,7 +46,7 @@ typedef struct{
 	u32 planpostion; //计划运行位置
 	u32 accStepNumber;
 	u32 max_pos; //最大轨道位置
-	volatile u32 postion; //电机位置
+	volatile int32_t postion; //电机位置
 	volatile u32 step; //电机单次运动步数
 	u16 timerfeq; //定时器频率
 	u16 * AccPeriodArray; //加减速数组

@@ -325,9 +325,13 @@ void TIM1_UP_IRQHandler(void) //TIM1中断
 		}
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		
-		
-		
+		if(GE_motor_struct.dir==Back&&GE_start_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM1,DISABLE);
+			GE_motor_struct.postion=0;
+			GE_motor_struct.motion=Stop;
+			return;
+		}
 		/****/
 		
 		
@@ -392,7 +396,25 @@ void TIM2_IRQHandler(void) //TIM2 中断 GO_hor_motor
 		}
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		
+		if(GO_hor_motor_struct.planpostion==0&&GOH_start_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			GO_hor_motor_struct.motion=Stop;
+			GO_hor_motor_struct.postion=0;
+			return;
+		}else if(GO_hor_motor_struct.planpostion==GO.GOH_mid_pos&&GOH_mid_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			GO_hor_motor_struct.motion=Stop;
+			GO_hor_motor_struct.postion=GO.GOH_mid_pos;
+			return;
+		}else if(GO_hor_motor_struct.planpostion==GO.GOH_end_pos&&GOH_end_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			GO_hor_motor_struct.motion=Stop;
+			GO_hor_motor_struct.postion=GO.GOH_end_pos;
+			return;
+		}
 		/****/
 		
 		if(GO_hor_motor_struct.motion==ConstMove)//电机匀速运动
@@ -421,7 +443,7 @@ void TIM2_IRQHandler(void) //TIM2 中断 GO_hor_motor
 
 
 
-void TIM3_IRQHandler(void) //TIM3 中断
+void TIM3_IRQHandler(void) //TIM3 中断 GC_ver_motor
 {
 	static u8 tim_cnt=0;
 	if(TIM_GetITStatus(TIM3,TIM_IT_CC1)!=RESET)
@@ -450,7 +472,14 @@ void TIM3_IRQHandler(void) //TIM3 中断
 		
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		
+		if(GC_ver_motor_struct.planpostion==0&&GC_ver_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM3,DISABLE);
+			GC_ver_motor_struct.motion=Stop;	
+			GC_ver_motor_struct.postion=0;
+			return;		
+
+		}
 		
 		
 		/****/
@@ -513,7 +542,13 @@ void TIM4_IRQHandler(void) //TIM4 中断
 	
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		
+		if(GOV_start_Sen==Sen_Block&&GO_ver_motor_struct.dir==Back)
+		{
+			TIM_Cmd(TIM4,DISABLE);
+			GO_ver_motor_struct.motion=Stop;
+			GO_ver_motor_struct.postion=0;
+			return;
+		}
 		
 		
 		/****/
@@ -546,7 +581,7 @@ void TIM4_IRQHandler(void) //TIM4 中断
 
 
 
-void TIM5_IRQHandler(void) //TIM5 中断
+void TIM5_IRQHandler(void) //TIM5 中断 GO_rot_motor
 {
 static u8 tim_cnt=0;
 if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
@@ -575,7 +610,13 @@ if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
 		
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		
+		if(GC_rot_motor_struct.dir==Back&&GC_rot_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM5,DISABLE);
+			GC_rot_motor_struct.motion=Stop;
+			GC_rot_motor_struct.postion=0;
+			return;
+		}
 		
 		
 		/****/
@@ -629,7 +670,14 @@ if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET)
 		}
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		
+		if(GP_motor_struct.dir==Back&&GP_start_Sen==Sen_Block)
+		{
+			TIM_Cmd(TIM8,DISABLE);
+			GP_motor_struct.motion=Stop;
+			GP_motor_struct.postion=0;
+			return;
+
+		}
 		
 		
 		/****/

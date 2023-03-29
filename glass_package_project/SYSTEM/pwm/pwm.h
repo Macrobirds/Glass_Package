@@ -1,6 +1,7 @@
 #ifndef __PWM_H
 #define __PWM_H
 #include "stm32f10x_conf.h"
+#include "Globalconfig.h"
 
 #define APB2_PSC_FEQ 72
 #define APB1_PSC_FEQ 36
