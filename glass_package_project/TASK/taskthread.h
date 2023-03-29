@@ -105,6 +105,8 @@ struct glass_enter_struct{
 	u32 GE_box_dis; //装载槽间距
 	u8 box_Exist; //装载槽检测信号
 	u8 glass_Exist; //载玻片检测信号
+	u8 subtask; //子任务
+	enum glass_enter_task_index resume_task; //恢复任务序列
 };
 
 struct glass_claw_struct{
@@ -117,6 +119,8 @@ struct glass_claw_struct{
 	u16 GCR_hor_pos; //旋转水平位置
 	u16 GCR_ver_pos; //旋转垂直位置
 	u32 GCV_down_pos; //垂直下降位置
+	u8 subtask; //子任务
+	enum glass_claw_task_index resume_task;//恢复任务序列
 }; 
 
 struct glass_package_struct{
@@ -133,7 +137,8 @@ struct glass_package_struct{
 	u32 spray_len;
 	u16 spray_speed;
 	u8 spray_pressure;
-	u8 subtask;
+	u8 subtask; 
+	enum glass_package_task_index resume_task;//恢复任务序列
 };
 
 struct glass_out_struct{
@@ -148,19 +153,32 @@ struct glass_out_struct{
 	u32 GOV_box_dis;
 	u32 GOV_slot_dis;
 	u32 GOV_box_len;
+	u8 subtask; //子任务
+	volatile u8 glass_num;
+	volatile u8 box_num;
+	enum glass_out_task_index resume_task;//恢复任务序列
 };
 
+//任务准备状态
+u8 Task_IsReady=FALSE;
 
 
 extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
 extern struct glass_package_struct GP;
 extern struct glass_out_struct GO;
-
-void TaskThread_Init(void);
+//任务线程结构体初始化 任务定时器TIM6初始化
+void TaskThread_Init(void); 
+//检测机器是否可以准备运行
+void TaskThread_IsReady(void); 
 void GE_TaskThread(void);
 void GC_TaskThread(void);
 void GP_TaskThread(void);
 void GO_TaksThread(void);
+
+void Pause_TaskThread(void);
+void Resume_TaskThread(void);
+
+
 
 #endif

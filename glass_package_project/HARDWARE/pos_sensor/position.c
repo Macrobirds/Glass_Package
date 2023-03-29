@@ -314,6 +314,11 @@ void EXTI9_5_IRQHandler(void)
 	//GOV_galss_Sen
 	if(EXTI_GetITStatus(EXTI_Line7)!=RESET)
 	{
+		delay_us(50);
+		if(GOV_glass_Sen==Sen_Block)
+		{
+			
+		}
 		printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line7);
 	}

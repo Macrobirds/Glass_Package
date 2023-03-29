@@ -1,8 +1,9 @@
 #include "taskthread.h"
-#define DELAY_MS 1000
+#define DELAY_MS 100
 
 static void Error_Set(enum task_error error,u32 error_sen)
 {
+	GC.subtask=0;
 	GC.sta=Finish;
 	GC.task=GC_error;
 	GC.error|=error;
@@ -19,7 +20,38 @@ void GC_ReadyTask(void)
 	{
 		case GC_none:break;
 		case GC_reset_on:break;
-		case GC_reset_off:break;
+		////////////////夹手关机复位//////////////////
+		case GC_reset_off:
+		if(GC.subtask==0)
+		{
+			GC_claw_Cyl=GAS_DISABLE; //夹手释放
+			GC.sta=Running;
+		}else if(GC.subtask==1)
+		{
+			if(GC_ver_Sen==Sen_Block)
+			{
+				GC.subtask=2;
+			}else
+			{
+				motorGo_acc(GC.motor_v,0);
+				GC.sta=Running;
+			}
+		}else if(GC.subtask==2)
+		{
+			if(GC_rot_Sen==Sen_Block)
+			{
+				GC.subtask=3;
+			}else
+			{
+				motorGo_acc(GC.motor_r,0);
+				GC.sta=Running;
+			}
+		}else if(GC.subtask==3)
+		{
+			motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
+			GC.sta=Running;
+		}
+		break;
 		///////////////////垂直方向复位到原点/////////////////////
 		case GC_ver_start:
 		if(GC_ver_Sen==Sen_Block) //垂直原点感应
@@ -92,7 +124,7 @@ void GC_ReadyTask(void)
 		case GC_rot_hor:
 		if((GOH_mid_Sen==Sen_Block)&&(GO.motor_h->motion=Stop)) //玻片托盘处于封片工作点静止
 		{
-			if((GP.task>GP_start)&&(GP.task<GP_move_spray)) //封片工作未开始
+			if(GP.task<=GP_sucker_up) //封片工作未开始
 			{
 				motorGo(GC.motor_r,GC.GCR_hor_pos,0);
 				GC.sta=Running;
@@ -101,11 +133,8 @@ void GC_ReadyTask(void)
 		break;
 		////////////////////夹手释放////////////////////////////
 		case GC_release:
-		if((GP_big_cyl_Sen==Sen_Block)&&(GP_small_cyl_Sen==Sen_Block))
-		{
-			GC_claw_Cyl=GAS_DISABLE; //夹手释放
-			GC.sta=Running;
-		}
+		GC_claw_Cyl=GAS_DISABLE; //夹手释放
+		GC.sta=Running;
 		break;
 		case GC_finish:break;
 		case GC_error:break;
@@ -119,7 +148,54 @@ void GC_RunningTask(void)
 	{
 		case GC_none:break;
 		case GC_reset_on:break;
-		case GC_reset_off:break;
+		////////////////////////夹手关机复位/////////////////
+		case GC_reset_off:
+		if(GC.subtask==0)
+		{
+			if(GC.running_tim>DELAY_MS)
+			{
+				GC.sta=Ready;
+				GC.subtask=1;
+			}
+		}else if(GC.subtask==1)
+		{
+			if(GC_ver_Sen==Sen_Block)
+			{
+				stepperMotorStop(GC.motor_v);
+				GC.motor_v->postion=0;
+				GC.sta=Ready;
+				GC.subtask=2;
+			}else
+			{
+				if(GC.motor_v->motion==Stop) //垂直传感器错误 或电机错误
+				{
+					Error_Set(Error_Sensor,GC_ver_sensor);
+				}
+			}
+		}else if(GC.subtask==2)
+		{
+			if(GC_rot_Sen==Sen_Block)
+			{
+				stepperMotorStop(GC.motor_r);
+				GC.motor_r->postion=0;
+				GC.sta=Ready;
+				GC.subtask=3;
+			}else
+			{
+				if(GC.motor_r->motion==Stop)
+				{
+					Error_Set(Error_Sensor,GC_rot_sensor);
+				}
+			}
+		}else if(GC.subtask==3)
+		{
+			if(GC.motor_r->motion==Stop)
+			{
+				GC.sta=Finish;
+				GC.subtask=0;
+			}
+		}
+		break;
 		case GC_ver_start:
 		////////////夹手复位至垂直原点////////////////
 		if(GC_ver_Sen==Sen_Block)
@@ -227,7 +303,10 @@ void GC_FinishTask(void)
 	{
 		case GC_none:break;
 		case GC_reset_on:break;
-		case GC_reset_off:break;
+		case GC_reset_off:
+		GC.sta=Ready;
+		GC.task=GC_none;
+		break;
 		case GC_ver_start:
 		GC_claw_Cyl=GAS_DISABLE;
 		if(GC_claw_Sen!=Sen_Block) //等待夹手释放
@@ -252,13 +331,17 @@ void GC_FinishTask(void)
 			{
 				GC.sta=Ready;
 				GC.task=GC_move_down;
+			}else if(GE.task==GE_finish)//检测是否还存在玻片未处理 若处理完成 则结束任务
+			{
+				GC.sta=Finish;
+				GC.task=GC_finish;
 			}
 		}
 		break;
 		case GC_move_down:
-			GC.sta=Ready;
-			GC.task=GC_grab;
-			break;
+		GC.sta=Ready;
+		GC.task=GC_grab;
+		break;
 		case GC_grab:
 		if(GC_claw_Sen==Sen_Block) //等待夹手夹紧
 		{
@@ -281,7 +364,7 @@ void GC_FinishTask(void)
 		}
 		break;
 		case GC_rot_hor:
-		if((GP.task==GP_start)&&(GP.sta==Finish)) //等待封片工作完成
+		if(GP.task<=GP_sucker_up) //等待封片工作完成 开始下一任务
 		{
 			GC.sta=Ready;
 			GC.task=GC_release;
@@ -290,8 +373,13 @@ void GC_FinishTask(void)
 		case GC_release:
 		if(GC_claw_Sen!=Sen_Block)
 		{
+			if(GE.task==GE_finish) 
+			{
+				GC.task=GC_finish;
+				GC.sta=Finish;
+			}
 			GC.sta=Ready;
-			GC.task=GC_ver_start;
+			GC.task=GC_rot_down;
 		}
 		break;
 		case GC_finish:break;
