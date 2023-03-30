@@ -5,18 +5,6 @@
 #define DELAY_SMALL_CYLIDER 2000
 
 
-static void Error_Set(enum task_error error,u32 error_sen)
-{
-	GP.subtask=0;
-	GP.sta=Finish;
-	GP.task=GP_error;
-	GP.error|=error;
-	if(error_sen)
-	{
-		sensor_error_idx|=error_sen;
-	}
-}
-
 void GP_ReadyTask(void)
 {
 	switch(GP.task)
@@ -33,6 +21,19 @@ void GP_ReadyTask(void)
 		GP_small_Cyl=GAS_ENABLE;
 		GP_big_Cyl=GAS_ENABLE;
 		GP.sta=Running;
+		break;
+		case GP_lack_glass:
+		if(GP.subtask==0) //大小气缸上升
+		{
+			GP_big_Cyl=GAS_ENABLE;
+			GP_small_Cyl=GAS_DISABLE;
+			GP.sta=Running;
+		}else if(GP.subtask==1)//复位回原点
+		{
+			motorGo_acc(GP.motor,0);
+			GP.sta=Running;
+		}
+
 		break;
 		////////////大小气缸复位///////////////
 		case GP_start:
@@ -84,6 +85,7 @@ void GP_ReadyTask(void)
 			GP.sta=Running;
 		}else
 		{
+			///缺少盖玻片
 			Error_Set(Error_Cover_Glass,0);
 		}
 		break;
@@ -153,6 +155,33 @@ void GP_RunningTask(void)
 			GP.sta=Finish;
 		}
 		break;
+		case GP_lack_glass:
+		if(GP.subtask==0)
+		{
+			if(GP.running_tim>DELAY_BIG_CYLIDER*2)
+			{
+				if(GP_big_cyl_Sen==Sen_Block&&GP_small_cyl_Sen==Sen_Block)
+				{
+					GP.sta=Ready;
+					GP.subtask=1;
+				}
+			}
+		}else if(GP.subtask==1)
+		{
+			if(GP_start_Sen==Sen_Block)
+			{
+				stepperMotorStop(GP.motor);
+				GP.motor->postion=0;
+				GP.subtask=0;
+				GP.sta=Finish;
+			}else
+			{
+				Error_Set(Error_Sensor,GP_start_sensor);
+			}
+		}
+
+		break;
+
 		////////////////大小气缸复位/////////////////
 		case GP_start:
 		if(GP.running_tim>DELAY_BIG_CYLIDER)
@@ -305,6 +334,11 @@ void GP_FinishTask(void)
 		GP.sta=Ready;
 		GP.task=GP_none;
 		break;
+		case GP_lack_glass:
+		GP.task=GP_start; //保存当前状态为原点复位状态
+		Error_Set(Error_Cover_Glass,0); //复位完成 报错 缺少盖玻片
+		break;
+
 		case GP_start:
 		GP.sta=Ready;
 		GP.task=GP_move_start;

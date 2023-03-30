@@ -265,9 +265,9 @@ void Timer7_Init(u16 arr,u16 psc)
 //sysclk:系统时钟（Mhz）
 void usmart_init(u8 sysclk)
 {
-#if USMART_ENTIMX_SCAN==1
-	Timer7_Init(1000,(u32)sysclk*100-1);//分频,时钟为10K ,100ms中断一次,注意,计数频率必须为10Khz,以和runtime单位(0.1ms)同步.
-#endif
+//#if USMART_ENTIMX_SCAN==1
+//	Timer7_Init(1000,(u32)sysclk*100-1);//分频,时钟为10K ,100ms中断一次,注意,计数频率必须为10Khz,以和runtime单位(0.1ms)同步.
+//#endif
 	usmart_dev.sptype=1;	//十六进制显示参数
 }		
 //从str中获取函数名,id,及参数信息

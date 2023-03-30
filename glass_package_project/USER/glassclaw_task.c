@@ -1,17 +1,6 @@
 #include "taskthread.h"
 #define DELAY_MS 100
 
-static void Error_Set(enum task_error error,u32 error_sen)
-{
-	GC.subtask=0;
-	GC.sta=Finish;
-	GC.task=GC_error;
-	GC.error|=error;
-	if(error_sen)
-	{
-		sensor_error_idx|=error_sen;
-	}
-}
 
 
 void GC_ReadyTask(void)
@@ -19,7 +8,10 @@ void GC_ReadyTask(void)
 	switch(GC.task)
 	{
 		case GC_none:break;
-		case GC_reset_on:break;
+		///////////////开机复位//////////////////////
+		case GC_reset_on:
+		GC_claw_Cyl=GAS_DISABLE; //夹手释放
+		break;
 		////////////////夹手关机复位//////////////////
 		case GC_reset_off:
 		if(GC.subtask==0)
@@ -56,6 +48,8 @@ void GC_ReadyTask(void)
 		case GC_ver_start:
 		if(GC_ver_Sen==Sen_Block) //垂直原点感应
 		{
+			stepperMotorStop(GC.motor_v);
+			GC.motor_v->postion=0;
 			GC.sta=Finish;
 		}else
 		{
@@ -68,6 +62,8 @@ void GC_ReadyTask(void)
 		case GC_rot_start:
 		if(GC_rot_Sen==Sen_Block) //旋转原点感应
 		{
+			stepperMotorStop(GC.motor_r);
+			GC.motor_r->postion=0;			
 			GC.sta=Finish;
 		}else
 		{
@@ -147,7 +143,18 @@ void GC_RunningTask(void)
 	switch(GC.task)
 	{
 		case GC_none:break;
-		case GC_reset_on:break;
+		case GC_reset_on:
+		if(GC.running_tim>DELAY_MS)
+		{
+			if(GC_claw_Sen!=Sen_Block)
+			{
+				GC.sta=Finish;
+			}else
+			{
+				Error_Set(Error_Sensor,GC_claw_sensor);
+			}
+		}
+		break;
 		////////////////////////夹手关机复位/////////////////
 		case GC_reset_off:
 		if(GC.subtask==0)
@@ -244,7 +251,14 @@ void GC_RunningTask(void)
 		case GC_grab:
 		if(GC.running_tim>DELAY_MS) //等待延时超时 夹手夹紧
 		{
-			GC.sta=Finish;
+			if(GC_claw_Sen==Sen_Block)
+			{
+				GC.sta=Finish;
+			}else
+			{
+				Error_Set(Error_Sensor,GC_claw_sensor);
+			}
+			
 		}
 		break;
 		////////////夹手上升至垂直原点////////////////
@@ -302,7 +316,10 @@ void GC_FinishTask(void)
 	switch(GC.task)
 	{
 		case GC_none:break;
-		case GC_reset_on:break;
+		case GC_reset_on:
+		GC.sta=Ready;
+		GC.task=GC_ver_start;
+		break;
 		case GC_reset_off:
 		GC.sta=Ready;
 		GC.task=GC_none;
@@ -320,7 +337,7 @@ void GC_FinishTask(void)
 		if(GC_claw_Sen!=Sen_Block) //等待夹手释放
 		{
 			GC.sta=Ready;
-			GC.task=GC_rot_down;
+			GC.task=GC_none;
 		}
 		break;
 		case GC_rot_down:

@@ -204,7 +204,7 @@ static void Exti_Init_8_15(void)
 	}
 }
 
-
+//位置传感器外部中断初始化
 void postions_sensor_Init(void)
 {
 	 NVIC_InitTypeDef NVIC_InitStructure;

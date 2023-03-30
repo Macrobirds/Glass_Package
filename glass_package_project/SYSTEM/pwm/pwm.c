@@ -291,6 +291,8 @@ void TIM2_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
+
+//步进电机PWM初始化
 void Motor_PWM_Init(void)
 {
 	TIM1_PWM_Init(APB2_PSC_FEQ);

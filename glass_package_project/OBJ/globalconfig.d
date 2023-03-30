@@ -37,3 +37,15 @@
 ..\obj\globalconfig.o: ..\TASK\taskthread.h
 ..\obj\globalconfig.o: ..\HARDWARE\motor\motor.h
 ..\obj\globalconfig.o: ..\USER\Globalconfig.h
+..\obj\globalconfig.o: ..\SYSTEM\pwm\pwm.h
+..\obj\globalconfig.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\globalconfig.o: ..\HARDWARE\gas\gas.h
+..\obj\globalconfig.o: ..\HARDWARE\PCF8591\PCF8591.h
+..\obj\globalconfig.o: ..\SYSTEM\IIC\myiic.h
+..\obj\globalconfig.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\globalconfig.o: ..\HARDWARE\ITV0011\ITV0011.h
+..\obj\globalconfig.o: ..\SYSTEM\adc\adc.h
+..\obj\globalconfig.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\globalconfig.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h

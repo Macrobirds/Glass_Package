@@ -7,27 +7,19 @@ static u8 check_GC(void)
 }
 
 
-static void Error_Set(enum task_error error,u32 error_sen)
-{
-	GE.subtask=0;
-	GE.sta=Finish;
-	GE.task=GE_error;
-	GE.error|=error;
-	if(error_sen)
-	{
-		sensor_error_idx|=error_sen;
-	}
-}
 
 void GE_ReadyTask(void)
 {
 	switch(GE.task)
 	{
 		case GE_none:break;
+		/////////////////开机复位//////////////////////////////
 		/////////////////装载槽进入//////////////////////////////
 		case GE_reset_on:
 		if(GE_start_Sen==Sen_Block)
 		{
+			stepperMotorStop(GE.motor);
+			GE.motor->postion=0;
 			GE.sta=Finish;
 		}else
 		{
@@ -155,6 +147,7 @@ void GE_RunningTask(void)
 	switch(GE.task)
 	{
 		case GE_none:break;
+		break;
 		/////////////////装载槽进入//////////////////////////////		
 		case GE_reset_on:
 		if(GE_start_Sen==Sen_Block)

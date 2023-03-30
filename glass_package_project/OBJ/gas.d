@@ -43,3 +43,10 @@
 ..\obj\gas.o: ..\TASK\taskthread.h
 ..\obj\gas.o: ..\HARDWARE\motor\motor.h
 ..\obj\gas.o: ..\USER\Globalconfig.h
+..\obj\gas.o: ..\SYSTEM\pwm\pwm.h
+..\obj\gas.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\gas.o: ..\HARDWARE\gas\gas.h
+..\obj\gas.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\gas.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h

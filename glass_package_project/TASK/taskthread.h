@@ -5,8 +5,23 @@
 
 #define OVERTIME 3000
 
+//任务线程状态
+enum taskthread_state
+{
+	taskthread_boost,//启动状态
+	taskthread_ready,//运行准备状态
+	taskthread_running,//运行进行状态
+	taskthread_finsih, //运行结束状态
+	taskthread_pause,//暂停状态
+	taskthread_close,//关机状态
+	taskthread_debug,//调试状态
+	taskthread_error,//错误状态
+	
+	
+};
 
-//任务运行状态
+
+//具体任务运行状态
 enum task_state
 {
 	 Ready,
@@ -16,6 +31,7 @@ enum task_state
 
 enum task_error
 {
+	Error_none=0,
 	Error_Slide_Glass=1<<0,
 	Error_Cover_Glass=1<<1,
 	Error_In_Box=1<<2,
@@ -23,14 +39,15 @@ enum task_error
 	Error_Sensor=1<<4,
 	Error_Spray=1<<5,
 	Error_OverTime=1<<6,
+	
 };
 
 //玻片进入槽任务流程序号
 enum glass_enter_task_index
 {
 	GE_none,// none 空任务 
-	GE_reset_on,//开机复位 进缸
-	GE_reset_off,//关机复位 出缸
+	GE_reset_on,// 进缸 开机复位
+	GE_reset_off,// 出缸
 	GE_move_start, //移动到原点位置
 	GE_move_front, //移动到装载槽前端
 	GE_move_glass, //移动到载玻片
@@ -44,6 +61,7 @@ enum glass_enter_task_index
 enum glass_claw_task_index
 {
 	GC_none,
+	GC_reset,
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
 	GC_ver_start, //夹手复位到垂直原点位置
@@ -56,15 +74,16 @@ enum glass_claw_task_index
 	GC_rot_hor, //夹手旋转到水平位置
 	GC_release, //夹手松开释放
 	GC_finish, 
-  GC_error,//异常上报任务
+  	GC_error,//异常上报任务
 };
 
 //玻片封装任务流程序号
 enum glass_package_task_index
 {
 	GP_none,
-	GP_reset_on,
-	GP_reset_off,
+	GP_reset_on,//开机复位
+	GP_reset_off,//关机复位
+	GP_lack_glass, //缺少盖玻片复位 
 	GP_start, //封片初始化
 	GP_move_start, //移动到轨道原点
 	GP_move_glass, //移动到盖玻片位置
@@ -75,7 +94,7 @@ enum glass_package_task_index
 	GP_move_package, //移动到封片位置
 	GP_package, //开始封片
 	GP_finish, 
-  GP_error,//异常上报任务
+  	GP_error,//异常上报任务
 };
 
 
@@ -83,22 +102,23 @@ enum glass_package_task_index
 enum glass_out_task_index
 {
 	GO_none,
-	GO_reset_on,
-	GO_reset_off,
+	GO_reset,
+	GO_reset_on,//进槽
+	GO_reset_off,//出槽
 	GO_start, //玻片托盘移动到原点位置
 	GO_package, //玻片托盘移动到封片位置
 	GO_end, //玻片托盘移动到终点位置
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
 	GO_adjust,  //调整存储槽对准玻片
+	GO_glass_check, //检测当前槽内是否存在玻片
 	GO_finish,
-  GO_error,//异常上报任务
+  	GO_error,//异常上报任务
 };
 
 struct glass_enter_struct{
 	volatile enum glass_enter_task_index task; //任务序列
 	volatile enum task_state sta; //任务状态
-	volatile enum task_error error; //错误码
 	motor_struct * motor; //电机结构体指针
 	volatile u32 running_tim; //运行时间 ms
 	u32 GE_box_len; //装载槽长度
@@ -112,7 +132,6 @@ struct glass_enter_struct{
 struct glass_claw_struct{
 	volatile enum glass_claw_task_index task;
 	volatile enum task_state sta;
-	volatile enum task_error error;
 	motor_struct * motor_v; //垂直电机
 	motor_struct * motor_r; //旋转电机
 	volatile u32 running_tim; //运行时间
@@ -120,13 +139,12 @@ struct glass_claw_struct{
 	u16 GCR_ver_pos; //旋转垂直位置
 	u32 GCV_down_pos; //垂直下降位置
 	u8 subtask; //子任务
-	enum glass_claw_task_index resume_task;//恢复任务序列
+	enum glass_claw_task_index resume_task; //恢复任务序列
 }; 
 
 struct glass_package_struct{
 	volatile enum glass_package_task_index task;
 	volatile enum task_state sta;
-	volatile enum task_error error;
 	motor_struct * motor;
 	volatile u32 running_tim;
 	u16 delay_before;
@@ -137,14 +155,13 @@ struct glass_package_struct{
 	u32 spray_len;
 	u16 spray_speed;
 	u8 spray_pressure;
-	u8 subtask; 
-	enum glass_package_task_index resume_task;//恢复任务序列
+	u8 subtask;
+	enum glass_package_task_index resume_task; //恢复任务序列 
 };
 
 struct glass_out_struct{
 	volatile enum glass_out_task_index task;
 	volatile enum task_state sta;
-	volatile enum task_error error;
 	motor_struct * motor_h;
 	motor_struct * motor_v;
 	volatile u32 running_tim;
@@ -156,13 +173,23 @@ struct glass_out_struct{
 	u8 subtask; //子任务
 	volatile u8 glass_num;
 	volatile u8 box_num;
-	enum glass_out_task_index resume_task;//恢复任务序列
+	enum glass_out_task_index resume_task; //恢复任务序列
 };
 
-//任务准备状态
-u8 Task_IsReady=FALSE;
+//机器任务状态
+// struct taskthread_struct
+// {
+// 	u8 gas_ready;
+// 	u8 position_ready;
+// 	u8 Spray_ready;
+// 	u8 out_box_ready;
+// 	u8 Debug_mode;
 
+// };
 
+extern volatile enum task_error error_type;
+extern enum taskthread_state TaskThread_State; //任务线程运行状态 运行/暂停
+extern enum taskthread_state OldTaskThread_State;
 extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
 extern struct glass_package_struct GP;
@@ -174,9 +201,21 @@ void TaskThread_IsReady(void);
 void GE_TaskThread(void);
 void GC_TaskThread(void);
 void GP_TaskThread(void);
-void GO_TaksThread(void);
+void GO_TaskThread(void);
 
+
+void Error_Set(enum task_error error,u32 error_sen);
+
+//开机复位任务
+void Boot_ResetTaskThread(void);
+//开始运行任务
+void Start_TaskThread(void);
+//关闭运行任务
+void Close_TaskThread(void);
+
+//暂停任务
 void Pause_TaskThread(void);
+//恢复任务
 void Resume_TaskThread(void);
 
 

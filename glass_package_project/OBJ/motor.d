@@ -38,5 +38,16 @@
 ..\obj\motor.o: ..\HARDWARE\pos_sensor\position.h
 ..\obj\motor.o: ..\TASK\taskthread.h
 ..\obj\motor.o: ..\USER\Globalconfig.h
-..\obj\motor.o: ..\SYSTEM\delay\mydelay.h
+..\obj\motor.o: ..\SYSTEM\pwm\pwm.h
+..\obj\motor.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\motor.o: ..\HARDWARE\gas\gas.h
+..\obj\motor.o: ..\HARDWARE\PCF8591\PCF8591.h
+..\obj\motor.o: ..\SYSTEM\IIC\myiic.h
+..\obj\motor.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\motor.o: ..\HARDWARE\ITV0011\ITV0011.h
+..\obj\motor.o: ..\SYSTEM\adc\adc.h
 ..\obj\motor.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\motor.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\motor.o: ..\SYSTEM\delay\mydelay.h

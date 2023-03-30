@@ -37,3 +37,17 @@
 ..\obj\position.o: ..\SYSTEM\usart\usart.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\position.o: ..\HARDWARE\pos_sensor\position.h
+..\obj\position.o: ..\SYSTEM\pwm\pwm.h
+..\obj\position.o: ..\USER\Globalconfig.h
+..\obj\position.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\position.o: ..\HARDWARE\gas\gas.h
+..\obj\position.o: ..\HARDWARE\PCF8591\PCF8591.h
+..\obj\position.o: ..\SYSTEM\IIC\myiic.h
+..\obj\position.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\position.o: ..\HARDWARE\ITV0011\ITV0011.h
+..\obj\position.o: ..\SYSTEM\adc\adc.h
+..\obj\position.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\position.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\position.o: ..\TASK\taskthread.h

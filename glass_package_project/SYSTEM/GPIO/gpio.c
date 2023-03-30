@@ -4,8 +4,8 @@
 #define Relay_3 	PEout(4)
 #define Relay_4 	PEout(5)
 #define Relay_ON 	1
-//#include "GlobalInclude.h"
 
+//IO 输入输出初始化
 void ALL_GPIO_Init(void)
 {
 LED_GPIO_Init();

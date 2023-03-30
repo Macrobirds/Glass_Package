@@ -37,3 +37,16 @@
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\glassenter_task.o: ..\HARDWARE\pos_sensor\position.h
 ..\obj\glassenter_task.o: ..\TASK\taskthread.h
+..\obj\glassenter_task.o: ..\SYSTEM\pwm\pwm.h
+..\obj\glassenter_task.o: ..\USER\Globalconfig.h
+..\obj\glassenter_task.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\glassenter_task.o: ..\HARDWARE\gas\gas.h
+..\obj\glassenter_task.o: ..\HARDWARE\PCF8591\PCF8591.h
+..\obj\glassenter_task.o: ..\SYSTEM\IIC\myiic.h
+..\obj\glassenter_task.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\glassenter_task.o: ..\HARDWARE\ITV0011\ITV0011.h
+..\obj\glassenter_task.o: ..\SYSTEM\adc\adc.h
+..\obj\glassenter_task.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\glassenter_task.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h

@@ -300,7 +300,10 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 {
 	enum motor_direction OldDirection=Front;
 	long planStepNumber=0;
-	
+	if(TaskThread_State==taskthread_pause) //暂停状态 电机不启动
+	{
+		return;
+	}
 	
 	if(planPosition>0) //目标位置不在原点
 	{
@@ -394,6 +397,11 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 	enum motor_direction OldDirection=Front;
 	long planStepNumber=0;
 	
+	if(TaskThread_State==taskthread_pause) //暂停状态 电机不启动
+	{
+		return FALSE;
+	}
+
 	OldDirection=motor->dir;
 	if(planPosition>0)
 	{
@@ -408,7 +416,7 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 			stepperMotorStop(motor);
 			motor->postion=0;
 			motor->planSetpNumber=0;
-			return;
+			return TRUE;
 		}
 		else
 		{

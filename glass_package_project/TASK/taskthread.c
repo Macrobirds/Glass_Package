@@ -29,6 +29,41 @@ struct glass_out_struct GO={
 	.motor_v=&GO_ver_motor_struct,
 };
 
+enum taskthread_state TaskThread_State=taskthread_boost; //任务线程运行状态 
+enum taskthread_state OldTaskThread_State=taskthread_boost; //
+volatile enum task_error error_type=Error_none;
+
+
+void Error_Set(enum task_error error,u32 error_sen)
+{
+
+	//暂停当前任务
+	Pause_TaskThread();
+
+	//进入报错程序
+	GE.subtask=0;
+	GE.sta=Finish;
+	GE.task=GC_error;
+
+	GC.subtask=0;
+	GC.sta=Finish;
+	GC.task=GC_error;
+
+	GP.subtask=0;
+	GP.sta=Finish;
+	GP.task=GC_error;
+
+	GO.subtask=0;
+	GO.sta=Finish;
+	GP.task=GC_error;
+
+	error_type|=error;
+	if(error_sen)
+	{
+		sensor_error_idx|=error_sen;
+	}
+}
+
 void TaskThread_Init(void)
 {
 	//Init TIM6 Interrupt  1ms
@@ -81,14 +116,22 @@ void TIM6_IRQHandler(void) //TIM6中断
 {
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update)!=RESET)
 	{
-		//GE 玻片入料任务线程
-		GE_TaskThread();
-		//GC 玻片夹手任务线程
-		GC_TaskThread();
-		//GP 玻片封装任务线程
-		GP_TaskThread();
-		//GO 玻片存储任务线程
-		GO_TaksThread();
+		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
+		
+		if(TaskThread_State!=taskthread_pause) //不等于暂停状态
+		{
+			//GE 玻片入料任务线程
+			GE_TaskThread();
+			//GC 玻片夹手任务线程
+			GC_TaskThread();
+			//GP 玻片封装任务线程
+			GP_TaskThread();
+			//GO 玻片存储任务线程
+			GO_TaskThread();		
+		}
+
+		
+
 	}
 
 }
@@ -97,48 +140,114 @@ void TIM6_IRQHandler(void) //TIM6中断
 void Pause_TaskThread(void)
 {
 	//pause all step motor
+	OldTaskThread_State=TaskThread_State; //保存当前运行模式
+	TaskThread_State=taskthread_pause;
 	stepperMotorStop(&GE_motor_struct);
 	stepperMotorStop(&GC_ver_motor_struct);
 	stepperMotorStop(&GC_rot_motor_struct);
 	stepperMotorStop(&GP_motor_struct);
 	stepperMotorStop(&GO_hor_motor_struct);
 	stepperMotorStop(&GO_ver_motor_struct);
-
+	//保存当前运行状态
 	GE.resume_task=GE.task;
 	GC.resume_task=GC.task;
 	GP.resume_task=GP.task;
 	GO.resume_task=GO.task;
 
-	GE.task=GE_none;
-	GC.task=GC_none;
-	GP.task=GP_none;
-	GO.task=GO_none;
 
 }
-//恢复运行
+//暂停恢复运行
 void Resume_TaskThread(void)
 {
-	GE.task=GE.resume_task;
 	GE.sta=Ready;
-
-	GC.task=GC.resume_task;
 	GC.sta=Ready;
-
-	GP.task=GP.resume_task;
 	GP.sta=Ready;
-
-	GO.task=GO.resume_task;
 	GO.sta=Ready;
+	TaskThread_State=OldTaskThread_State; //恢复之前的运行模式
+
 }
 
-void TaskThread_IsReady(void);
+void TaskThread_IsReady(void)
 {
+	
 	//检测是否存在存储盒
-
-	//检测存储槽是否检测到玻片
-
+	if(GOV_box_Sen!=Sen_Block)
+	{
+		error_type|=Error_Out_Box; 
+	}
+	//检测存储槽是否检测到玻片 存储槽是否正确放置
+	if(GOV_glass_Sen==Sen_Block)
+	{
+		error_type|=Error_Sensor;
+		sensor_error_idx|=GOV_glass_sensor; 
+	}
 	//检测是否存在滴胶头
+	if(GP_spray_Sen!=Sen_Block)
+	{
+		error_type|=Error_Spray;
+	}
 
 	//检测气压是否达到工作状态
+
+	//检测各个电机位置是否校准
+
+}
+
+//开机复位任务
+void Boot_ResetTaskThread(void)
+{
+	GE.sta=Ready;
+	GE.task=GE_reset_on;
+	
+	GC.sta=Ready;
+	GC.task=GC_reset;
+	
+	GP.sta=Ready;
+	GP.task=GP_reset_on;
+	
+	GO.sta=Ready;
+	GO.task=GO_reset;
+}
+
+//开始运行任务
+void Start_TaskThread(void)
+{
+	if(TaskThread_State==taskthread_ready)
+	{
+		GE.sta=Ready;
+		GE.task=GE_move_start;
+
+		GC.sta=Ready;
+		GC.task=GC_rot_down;
+
+		GP.sta=Ready;
+		GP.task=GP_start;
+
+		GO.sta=Ready;
+		GO.task=GO_start;
+
+		TaskThread_State=taskthread_running;
+	}
+
+}
+//关闭运行任务
+void Close_TaskThread(void)
+{
+	if(TaskThread_State==taskthread_finsih) //如果运行结束 直接关机复位
+	{
+		GE.sta=Ready;
+		GE.task=GE_none;
+
+		GC.sta=Ready;
+		GC.task=GC_reset_off;
+
+		GP.sta=Ready;
+		GP.task=GP_reset_off;
+
+		GO.sta=Ready;
+		GO.task=GO_none;
+	}
+
+	TaskThread_State=taskthread_close;
 
 }

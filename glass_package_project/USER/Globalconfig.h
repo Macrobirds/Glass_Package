@@ -4,12 +4,23 @@
 #include "delay.h"
 #include "usart.h"
 #include "position.h"
+#include "pwm.h"
+#include "gpio.h"
+#include "gas.h"
+#include "motor.h"
+#include "malloc.h"
+#include "RingBuffer.h"
+#include "taskthread.h"
 
 #define TRUE 1
 #define FALSE 0
 
 #define GAS_ENABLE 0
 #define GAS_DISABLE 1
+
+
+#define LED1 						PCout(4)
+#define LED2 						PCout(5)
 
 //映射位置传感器输入端口
 
@@ -124,6 +135,7 @@ typedef struct{
 }Glass_In_Out_Date;
 
 
+/////////////////Golbal Parameter///////////////////
 struct Global_Parameter_struct{
 	Motor_Data MOT;
 	Glass_ClawSupport__data GCS;
@@ -132,11 +144,10 @@ struct Global_Parameter_struct{
 };
 
 extern struct Global_Parameter_struct Global_Parm; 
-
+extern enum sensor_index sensor_error_idx;
 void Set_Global_Parameter_Default(void);
 
 
-extern enum sensor_index sensor_error_idx;
 
 
 #endif

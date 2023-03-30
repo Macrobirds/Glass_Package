@@ -37,3 +37,16 @@
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\glassclaw_task.o: ..\HARDWARE\pos_sensor\position.h
 ..\obj\glassclaw_task.o: ..\TASK\taskthread.h
+..\obj\glassclaw_task.o: ..\SYSTEM\pwm\pwm.h
+..\obj\glassclaw_task.o: ..\USER\Globalconfig.h
+..\obj\glassclaw_task.o: ..\SYSTEM\GPIO\gpio.h
+..\obj\glassclaw_task.o: ..\HARDWARE\gas\gas.h
+..\obj\glassclaw_task.o: ..\HARDWARE\PCF8591\PCF8591.h
+..\obj\glassclaw_task.o: ..\SYSTEM\IIC\myiic.h
+..\obj\glassclaw_task.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\glassclaw_task.o: ..\HARDWARE\ITV0011\ITV0011.h
+..\obj\glassclaw_task.o: ..\SYSTEM\adc\adc.h
+..\obj\glassclaw_task.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\glassclaw_task.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
