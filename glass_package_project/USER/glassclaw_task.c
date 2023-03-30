@@ -16,18 +16,25 @@ void GC_ReadyTask(void)
 		case GC_reset_off:
 		if(GC.subtask==0)
 		{
-			GC_claw_Cyl=GAS_DISABLE; //夹手释放
-			GC.sta=Running;
-		}else if(GC.subtask==1)
-		{
 			if(GC_ver_Sen==Sen_Block)
 			{
-				GC.subtask=2;
+				GC.subtask=1;
 			}else
 			{
 				motorGo_acc(GC.motor_v,0);
 				GC.sta=Running;
 			}
+		}else if(GC.subtask==1)
+		{
+			if(GC.motor_r->postion==GC.GCR_ver_pos)
+			{
+				GC.subtask=2;
+			}else
+			{
+				motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
+				GC.sta=Running;
+			}
+
 		}else if(GC.subtask==2)
 		{
 			if(GC_rot_Sen==Sen_Block)
@@ -35,13 +42,31 @@ void GC_ReadyTask(void)
 				GC.subtask=3;
 			}else
 			{
-				motorGo_acc(GC.motor_r,0);
-				GC.sta=Running;
+				if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop)
+				{
+					motorGo_acc(GC.motor_r,0);
+					GC.sta=Running;
+				}
 			}
 		}else if(GC.subtask==3)
 		{
-			motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
-			GC.sta=Running;
+			if(GOH_mid_Sen==Sen_Block&&GO.motor_h->motion==Stop)
+			{
+				motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
+				GC.sta=Running;
+			}
+		}else if(GC.subtask==4)
+		{
+			GC_claw_Cyl=GAS_DISABLE;
+
+		}else if(GC.subtask==5)
+		{
+			if(GC_claw_Sen!=Sen_Block)
+			{
+				motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
+				GC.sta=Running;
+			}
+
 		}
 		break;
 		///////////////////垂直方向复位到原点/////////////////////
@@ -159,19 +184,12 @@ void GC_RunningTask(void)
 		case GC_reset_off:
 		if(GC.subtask==0)
 		{
-			if(GC.running_tim>DELAY_MS)
-			{
-				GC.sta=Ready;
-				GC.subtask=1;
-			}
-		}else if(GC.subtask==1)
-		{
 			if(GC_ver_Sen==Sen_Block)
 			{
 				stepperMotorStop(GC.motor_v);
 				GC.motor_v->postion=0;
 				GC.sta=Ready;
-				GC.subtask=2;
+				GC.subtask=1;
 			}else
 			{
 				if(GC.motor_v->motion==Stop) //垂直传感器错误 或电机错误
@@ -179,6 +197,14 @@ void GC_RunningTask(void)
 					Error_Set(Error_Sensor,GC_ver_sensor);
 				}
 			}
+		}else if(GC.subtask==1)
+		{
+			if(GC.motor_r->motion==Stop)
+			{
+				GC.sta=Ready;
+				GC.subtask=2;
+			}
+
 		}else if(GC.subtask==2)
 		{
 			if(GC_rot_Sen==Sen_Block)
@@ -198,10 +224,30 @@ void GC_RunningTask(void)
 		{
 			if(GC.motor_r->motion==Stop)
 			{
-				GC.sta=Finish;
-				GC.subtask=0;
+				GC.sta=Ready;
+				GC.subtask=4;
 			}
+		}else if(GC.subtask==4)
+		{
+			if(GC.running_tim>DELAY_MS)
+			{
+				GC.sta=Ready;
+				GC.subtask=5;
+			}
+
+		}else if(GC.subtask==5)
+		{
+			if(GC_claw_Sen!=Sen_Block)
+			{
+				if(GC.motor_r->motion==Stop)
+				{
+					GC.sta=Finish;
+					GC.subtask=0;
+				}
+			}
+
 		}
+		
 		break;
 		case GC_ver_start:
 		////////////夹手复位至垂直原点////////////////

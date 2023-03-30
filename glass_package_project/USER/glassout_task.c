@@ -5,14 +5,13 @@ static enum glass_out_task_index next_task=GO_none; //调整
 
 
 
-
 void GO_ReadyTask(void)	
 {
 	switch(GO.task)
 	{
 		case GO_none:break;
 		////////////////////开机复位///////////////
-		case GO_reset:
+		case GO_reset_on:
 		if(GO.subtask==0)
 		{
 			if(GOH_start_Sen==Sen_Block)
@@ -39,8 +38,44 @@ void GO_ReadyTask(void)
 			}
 		}
 		break;
+		//////////////////关机复位/////////////////
+		case GO_reset_off:
+		if(GO.subtask==0) //回到水平原点
+		{
+			if(GOH_start_Sen==Sen_Block)
+			{
+				GO.sta=Ready;
+				GO.subtask=1;
+			}else
+			{
+				if(GC.motor_r->motion==Stop&&GC.motor_r->postion!=GC.GCR_hor_pos)
+				{
+					motorGo_acc(GO.motor_h,0);
+					GO.sta=Running;
+				}
+			}
+		}else if(GO.subtask==1) //到工作点
+		{
+			if(GOH_mid_Sen==Sen_Block)
+			{
+				GO.sta=Ready;
+				GO.subtask=2;
+			}else
+			{
+				motorGo_acc(GO.motor_h,GO.GOH_mid_pos);
+				GO.sta=Running;
+			}
+		}else if (GO.subtask==2)
+		{
+			if(GC.motor_r->postion!=GC.GCR_hor_pos)
+			{
+				motorGo_acc(GO.motor_h,0);
+				GO.sta=Running;
+			}
+		}
+		break;
 		//////////////////存储器推出////////////////
-		case GO_reset_on:
+		case GO_Box_Out:
 		if(GO.subtask==0)
 		{
 			if(GOH_start_Sen==Sen_Block)
@@ -59,7 +94,7 @@ void GO_ReadyTask(void)
 		}		
 		break;
 		/////////////////存储器进入////////////////
-		case GO_reset_off:
+		case GO_Box_In:
 		if(GO.subtask==0)
 		{
 			if(GOH_start_Sen==Sen_Block)
@@ -172,7 +207,7 @@ void GO_RunningTask(void)
 	{
 		case GO_none:break;
 		////////////////开机复位///////////////////////////
-		case GO_reset:
+		case GO_reset_on:
 		if(GO.subtask==0)
 		{
 			if(GOH_start_Sen==Sen_Block)
@@ -204,10 +239,58 @@ void GO_RunningTask(void)
 				}
 			}
 		}
-		
+		break;
+		////////////////关机复位///////////////////////
+		case GO_reset_off:
+		if(GO.subtask==0) //回到水平原点
+		{
+			if(GOH_start_Sen==Sen_Block)
+			{
+				stepperMotorStop(GO.motor_h);
+				GO.motor_h->postion=0;
+				GO.sta=Ready;
+				GO.subtask=1;
+			}else
+			{
+				if(GO.motor_h->motion==Stop)
+				{
+					Error_Set(Error_Sensor,GOH_start_sensor);
+				}
+			}
+		}else if(GO.subtask==1) //到工作点
+		{
+			if(GOH_mid_Sen==Sen_Block)
+			{
+				stepperMotorStop(GO.motor_h);
+				GO.motor_h->postion=GO.GOH_mid_pos;
+				GO.sta=Ready;
+				GO.subtask=2;
+			}else
+			{
+				if(GO.motor_h->motion==Stop)
+				{
+					Error_Set(Error_Sensor,GOH_mid_sensor);
+				}			
+			}
+		}else if (GO.subtask==2)
+		{
+			if(GOH_start_Sen==Sen_Block)
+			{
+				stepperMotorStop(GO.motor_h);
+				GO.motor_h->postion=0;
+				GO.sta=Finish;
+				GO.subtask=0;
+			}else
+			{
+				if(GO.motor_h->motion==Stop)
+				{
+					Error_Set(Error_Sensor,GOH_start_sensor);
+				}
+			}
+		}
 		break;
 		///////////////出槽////////////////////////////
-		case GO_reset_on:
+		case GO_Box_Out:
 		if(GO.subtask==0)
 		{
 			if(GOH_start_Sen==Sen_Block)
@@ -232,7 +315,7 @@ void GO_RunningTask(void)
 		}
 		break;
 		////////////////////进槽/////////////////////
-		case GO_reset_off:
+		case GO_Box_In:
 		if(GO.subtask==0)
 		{
 			if(GOH_start_Sen==Sen_Block)
@@ -371,16 +454,21 @@ void GO_FinishTask(void)
 	switch(GO.task)
 	{
 		case GO_none:break;
-		case GO_reset:
+		case GO_reset_on:
 		GO.sta=Ready;
 		GO.task=GO_none;
 		GO.subtask=0;
 		break;
-		case GO_reset_on:break;
+		case GO_reset_off:
 		GO.sta=Ready;
 		GO.task=GO_none;
 		GO.subtask=0;
-		case GO_reset_off:
+		break;
+		case GO_Box_Out:break;
+		GO.sta=Ready;
+		GO.task=GO_none;
+		GO.subtask=0;
+		case GO_Box_In:
 		next_task=GO_none;
 		GO.sta=Ready;
 		GO.task=GO_adjust; //微调到槽下端

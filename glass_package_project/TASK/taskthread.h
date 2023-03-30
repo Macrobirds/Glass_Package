@@ -61,7 +61,6 @@ enum glass_enter_task_index
 enum glass_claw_task_index
 {
 	GC_none,
-	GC_reset,
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
 	GC_ver_start, //夹手复位到垂直原点位置
@@ -102,9 +101,10 @@ enum glass_package_task_index
 enum glass_out_task_index
 {
 	GO_none,
-	GO_reset,
-	GO_reset_on,//进槽
-	GO_reset_off,//出槽
+	GO_reset_on,//开机复位
+	GO_reset_off, //关机复位
+	GO_Box_In,//进槽
+	GO_Box_Out,//出槽
 	GO_start, //玻片托盘移动到原点位置
 	GO_package, //玻片托盘移动到封片位置
 	GO_end, //玻片托盘移动到终点位置
