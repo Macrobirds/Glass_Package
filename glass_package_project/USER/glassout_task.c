@@ -61,13 +61,17 @@ void GO_ReadyTask(void)
 				GO.sta=Ready;
 				GO.subtask=2;
 			}else
-			{
-				motorGo_acc(GO.motor_h,GO.GOH_mid_pos);
-				GO.sta=Running;
+			{	
+				if(GC.motor_r->motion==Stop&&GC.motor_r->postion!=GC.GCR_hor_pos)
+				{
+					motorGo_acc(GO.motor_h,GO.GOH_mid_pos);
+					GO.sta=Running;
+				}
+
 			}
 		}else if (GO.subtask==2)
 		{
-			if(GC.motor_r->postion!=GC.GCR_hor_pos)
+			if(GC.motor_r->postion==GC.GCR_ver_pos)
 			{
 				motorGo_acc(GO.motor_h,0);
 				GO.sta=Running;
@@ -95,7 +99,7 @@ void GO_ReadyTask(void)
 		break;
 		/////////////////存储器进入////////////////
 		case GO_Box_In:
-		if(GO.subtask==0)
+		if(GO.subtask==0) //水平复位到原点
 		{
 			if(GOH_start_Sen==Sen_Block)
 			{
@@ -106,17 +110,21 @@ void GO_ReadyTask(void)
 				motorGo_acc(GO.motor_h,0);
 				GO.sta=Running;
 			}
-		}else if(GO.subtask==1)
+		}else if(GO.subtask==1) //存储盒进入
 		{
-			if(GOV_box_Sen==Sen_Block&&GOV_glass_Sen!=Sen_Block)
+			if(GOV_box_Sen==Sen_Block)
 			{
-				GO.sta=Finish;
-				GO.subtask=0;
+				motorGo_acc(GO.motor_v,0);
+				GO.sta=Running;
 			}else
 			{
-				motorGo(GO.motor_v,0,0);
-				GO.sta=Running;
+				Error_Set(Error_Out_Box,0); //报错没有存储盒
 			}
+		}else if(GO.subtask==2) //向上运动到玻片槽
+		{
+			motorGo(GO.motor_v,GO.motor_v->postion+GO.GOV_box_dis,0);
+			GO.sta=Running;
+			
 		}		
 		break;
 		///////////////复位至水平原点///////////////////
@@ -161,14 +169,13 @@ void GO_ReadyTask(void)
 			{
 				GO.sta=Running;
 				motorGo_acc(GO.motor_h,GO.GOH_end_pos);
-			}else
+			}else if(GOV_box_Sen==Sen_Block&&GOV_glass_Sen==Sen_Block) //存储槽满
 			{
-				//是否需要自动运动到下一存储槽?
-				Error_Set(Error_Sensor,GOV_glass_sensor|GOV_box_sensor); //报错 传感器
+				Error_Set(Error_Out_Box,0);
 			}
 		}
 		break;
-		///////////将玻片移出托盘前进一格存储槽///////////////
+		///////////将玻片移出托盘,放入存储槽///////////////
 		case GO_out:
 		if(GOV_glass_Sen==Sen_Block)
 		{
@@ -184,7 +191,7 @@ void GO_ReadyTask(void)
 		case GO_next:
 		if(GOV_glass_Sen==Sen_Block)
 		{
-			GO.sta=Running;
+			GO.sta=Running; 
 			motorGo(GO.motor_v,GO.GOV_box_dis,0);
 		}else
 		{
@@ -333,23 +340,16 @@ void GO_RunningTask(void)
 			}
 		}else if(GO.subtask==1)
 		{
-			if(GOV_start_Sen!=Sen_Block)
+			if(GOV_start_Sen==Sen_Block||GOV_box_Sen!=Sen_Block)
 			{
-				if(GOV_box_Sen==Sen_Block&&GOV_glass_Sen!=Sen_Block)
-				{
-					GO.sta=Finish;
-					GO.subtask=0;
-				}else
-				{
-					if(GOV_box_Sen!=Sen_Block)
-					{
-						Error_Set(Error_Sensor,GOV_box_sensor);
-					}
-				}
-			}else
+				stepperMotorStop(GO.motor_v);
+				GO.subtask=2;
+				GO.sta=Ready;
+			}
+		}else if(GO.subtask==2)
+		{
+			if(GO.motor_v->motion==Stop)
 			{
-				stepperMotorStop(GO.motor_h);
-				GO.motor_h->postion=GO.GOH_mid_pos;
 				GO.sta=Finish;
 			}
 		}
@@ -426,14 +426,16 @@ void GO_RunningTask(void)
 		{
 			if(GO.motor_v->motion==Stop)
 			{
-				if(GO.motor_v->postion>GO.GOV_box_len)
+				if(GO.motor_v->postion<GO.motor_v->max_pos)
 				{
 					GO.sta=Ready;
 					GO.task=GO_finish;
 				}else
 				{
-					Error_Set(Error_Sensor,GOV_glass_sensor);
+					GO.box_num++; //槽个数加1
+					Error_Set(Error_Out_Box,0); //报错 存储槽满
 				}
+				
 			}
 		}
 		break;
@@ -543,7 +545,11 @@ void GO_TaskThread(void)
 	}
 	if(GO.sta==Finish)
 	{
-		GO_FinishTask();
+		if(TaskThread_State!=taskthread_debug) //debug 模式下不进行任务跳转
+		{
+			GO_FinishTask();
+		}
+		
 	}
 	
 }

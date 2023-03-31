@@ -2,7 +2,9 @@
 
 
 #define PRESSURE_MAX 320
-#define PRESSURE_MIN 300
+#define PRESSURE_MIN 250
+
+ enum gas_state Gas_State=gas_pumping; //Ö÷ÆøÂ·×´Ì¬
 
 void Gas_Init(void)
 {
@@ -31,6 +33,7 @@ enum gas_state Gas_pump_Func(u8 ITV_value)
 	if(Pressure>PRESSURE_MAX)
 	{
 		Main_in_Cyl=GAS_DISABLE;
+		delay_ms(100);
 		Main_Pump=GAS_DISABLE;
 		return gas_pumped;
 	}

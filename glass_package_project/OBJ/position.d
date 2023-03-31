@@ -51,3 +51,11 @@
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\position.o: ..\TASK\taskthread.h
+..\obj\position.o: ..\UCOSII\CONFIG\includes.h
+..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\position.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\position.o: ..\UCOSII\CONFIG\includes.h
+..\obj\position.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\position.o: ..\UCOSII\PORT\os_cpu.h

@@ -13,6 +13,8 @@ enum gas_state{
 	gas_released=3,//放气完成
 };
 
+extern enum gas_state Gas_State;
+
 void Gas_Init(void);
 enum gas_state Gas_pump_Func(u8 ITV_value);
 enum gas_state Gas_release_Func(void);

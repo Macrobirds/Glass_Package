@@ -49,3 +49,11 @@
 ..\obj\globalconfig.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\globalconfig.o: ..\UCOSII\CONFIG\includes.h
+..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\globalconfig.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\globalconfig.o: ..\UCOSII\CONFIG\includes.h
+..\obj\globalconfig.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\globalconfig.o: ..\UCOSII\PORT\os_cpu.h

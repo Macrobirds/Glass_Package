@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\USMART;..\SYSTEM\GPIO;..\SYSTEM\IIC;..\SYSTEM\pwm;..\HARDWARE\pos_sensor;..\HARDWARE\motor;..\SYSTEM\Malloc;..\HARDWARE\ITV0011;..\HARDWARE\PCF8591;..\HARDWARE\PF6847;..\SYSTEM\adc;..\TASK;..\HARDWARE\gas;..\SYSTEM\ringbuf</IncludePath>
+              <IncludePath>..\USER;..\CORE;..\STM32F10x_FWLib\inc;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\UCOSII\CONFIG;..\UCOSII\CORE;..\UCOSII\PORT;..\USMART;..\SYSTEM\GPIO;..\SYSTEM\IIC;..\SYSTEM\pwm;..\HARDWARE\pos_sensor;..\HARDWARE\motor;..\SYSTEM\Malloc;..\HARDWARE\ITV0011;..\HARDWARE\PCF8591;..\HARDWARE\PF6847;..\SYSTEM\adc;..\TASK;..\HARDWARE\gas;..\SYSTEM\ringbuf;..\SCREENUART;..\HARDWARE\Rtc;..\HARDWARE\SpiFlash</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -418,6 +418,16 @@
               <FileType>5</FileType>
               <FilePath>.\stm32f10x.h</FilePath>
             </File>
+            <File>
+              <FileName>codeGuard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\codeGuard.c</FilePath>
+            </File>
+            <File>
+              <FileName>codeGuard.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\codeGuard.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -457,6 +467,21 @@
               <FileName>gas.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\gas\gas.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\SpiFlash\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\SpiFlash\w25qxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\Rtc\rtc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -800,6 +825,16 @@
               <FileName>glassout_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\glassout_task.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SCREENUART</GroupName>
+          <Files>
+            <File>
+              <FileName>uart3_dataHandle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SCREENUART\uart3_dataHandle.c</FilePath>
             </File>
           </Files>
         </Group>

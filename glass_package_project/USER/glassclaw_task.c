@@ -11,10 +11,11 @@ void GC_ReadyTask(void)
 		///////////////开机复位//////////////////////
 		case GC_reset_on:
 		GC_claw_Cyl=GAS_DISABLE; //夹手释放
+		GC.sta=Running;
 		break;
 		////////////////夹手关机复位//////////////////
 		case GC_reset_off:
-		if(GC.subtask==0)
+		if(GC.subtask==0) //复位至垂直原点
 		{
 			if(GC_ver_Sen==Sen_Block)
 			{
@@ -24,46 +25,50 @@ void GC_ReadyTask(void)
 				motorGo_acc(GC.motor_v,0);
 				GC.sta=Running;
 			}
-		}else if(GC.subtask==1)
+		}else if(GC.subtask==1) //旋转到旋转垂直点
 		{
 			if(GC.motor_r->postion==GC.GCR_ver_pos)
 			{
 				GC.subtask=2;
 			}else
 			{
-				motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
-				GC.sta=Running;
+				if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片托盘回到原点
+				{
+					motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
+					GC.sta=Running;
+				}
+
 			}
 
-		}else if(GC.subtask==2)
+		}else if(GC.subtask==2) //旋转到旋转原点
 		{
 			if(GC_rot_Sen==Sen_Block)
 			{
 				GC.subtask=3;
 			}else
 			{
-				if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop)
+				if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片托盘回到原点
 				{
 					motorGo_acc(GC.motor_r,0);
 					GC.sta=Running;
 				}
 			}
-		}else if(GC.subtask==3)
+		}else if(GC.subtask==3) //旋转到旋转水平点
 		{
-			if(GOH_mid_Sen==Sen_Block&&GO.motor_h->motion==Stop)
+			if(GOH_mid_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片托盘到工作点
 			{
 				motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
 				GC.sta=Running;
 			}
-		}else if(GC.subtask==4)
+		}else if(GC.subtask==4) //夹手释放
 		{
 			GC_claw_Cyl=GAS_DISABLE;
 
-		}else if(GC.subtask==5)
+		}else if(GC.subtask==5) //旋转到旋转垂直点
 		{
-			if(GC_claw_Sen!=Sen_Block)
+			if(GC_claw_Sen!=Sen_Block) 
 			{
-				motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
+				motorGo_acc(GC.motor_r,GC.GCR_ver_pos); 
 				GC.sta=Running;
 			}
 
@@ -154,8 +159,12 @@ void GC_ReadyTask(void)
 		break;
 		////////////////////夹手释放////////////////////////////
 		case GC_release:
-		GC_claw_Cyl=GAS_DISABLE; //夹手释放
-		GC.sta=Running;
+		if(GP.task<=GP_sucker_up) //封片工作未开始
+		{
+			GC_claw_Cyl=GAS_DISABLE; //夹手释放
+			GC.sta=Running;
+		}
+
 		break;
 		case GC_finish:break;
 		case GC_error:break;
@@ -168,8 +177,9 @@ void GC_RunningTask(void)
 	switch(GC.task)
 	{
 		case GC_none:break;
+		///////////////开机复位///////////////////////////////
 		case GC_reset_on:
-		if(GC.running_tim>DELAY_MS)
+		if(GC.running_tim>DELAY_MS) //延时 等待夹手释放
 		{
 			if(GC_claw_Sen!=Sen_Block)
 			{
@@ -182,7 +192,7 @@ void GC_RunningTask(void)
 		break;
 		////////////////////////夹手关机复位/////////////////
 		case GC_reset_off:
-		if(GC.subtask==0)
+		if(GC.subtask==0) //等待复位到垂直原点
 		{
 			if(GC_ver_Sen==Sen_Block)
 			{
@@ -197,7 +207,7 @@ void GC_RunningTask(void)
 					Error_Set(Error_Sensor,GC_ver_sensor);
 				}
 			}
-		}else if(GC.subtask==1)
+		}else if(GC.subtask==1) //等待旋转的旋转垂直位置
 		{
 			if(GC.motor_r->motion==Stop)
 			{
@@ -205,7 +215,7 @@ void GC_RunningTask(void)
 				GC.subtask=2;
 			}
 
-		}else if(GC.subtask==2)
+		}else if(GC.subtask==2) //等待旋转到旋转原点
 		{
 			if(GC_rot_Sen==Sen_Block)
 			{
@@ -220,30 +230,31 @@ void GC_RunningTask(void)
 					Error_Set(Error_Sensor,GC_rot_sensor);
 				}
 			}
-		}else if(GC.subtask==3)
+		}else if(GC.subtask==3) //等待旋转到旋转水平
 		{
 			if(GC.motor_r->motion==Stop)
 			{
 				GC.sta=Ready;
 				GC.subtask=4;
 			}
-		}else if(GC.subtask==4)
+		}else if(GC.subtask==4) //等待夹手释放
 		{
 			if(GC.running_tim>DELAY_MS)
 			{
-				GC.sta=Ready;
-				GC.subtask=5;
+				if(GC_claw_Sen!=Sen_Block) //夹手释放
+				{
+					GC.sta=Ready;
+					GC.subtask=5;
+				}
+
 			}
 
-		}else if(GC.subtask==5)
+		}else if(GC.subtask==5) //等待旋转到旋转垂直位置
 		{
-			if(GC_claw_Sen!=Sen_Block)
+			if(GC.motor_r->motion==Stop)
 			{
-				if(GC.motor_r->motion==Stop)
-				{
-					GC.sta=Finish;
-					GC.subtask=0;
-				}
+				GC.sta=Finish;
+				GC.subtask=0;
 			}
 
 		}
@@ -304,7 +315,6 @@ void GC_RunningTask(void)
 			{
 				Error_Set(Error_Sensor,GC_claw_sensor);
 			}
-			
 		}
 		break;
 		////////////夹手上升至垂直原点////////////////
@@ -436,11 +446,6 @@ void GC_FinishTask(void)
 		case GC_release:
 		if(GC_claw_Sen!=Sen_Block)
 		{
-			if(GE.task==GE_finish) 
-			{
-				GC.task=GC_finish;
-				GC.sta=Finish;
-			}
 			GC.sta=Ready;
 			GC.task=GC_rot_down;
 		}
@@ -470,6 +475,10 @@ void GC_TaskThread(void)
 	}
 	if(GC.sta==Finish)
 	{
-		GC_FinishTask();
+		if(TaskThread_State!=taskthread_debug) //debug 模式下不进行任务自动跳转
+		{
+			GC_FinishTask();
+		}
+		
 	}
 }

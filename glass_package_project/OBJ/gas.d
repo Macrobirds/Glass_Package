@@ -50,3 +50,11 @@
 ..\obj\gas.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\gas.o: ..\UCOSII\CONFIG\includes.h
+..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\gas.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\gas.o: ..\UCOSII\CONFIG\includes.h
+..\obj\gas.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\gas.o: ..\UCOSII\PORT\os_cpu.h

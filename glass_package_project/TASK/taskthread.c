@@ -34,27 +34,43 @@ enum taskthread_state OldTaskThread_State=taskthread_boost; //
 volatile enum task_error error_type=Error_none;
 
 
+u8 TaskThread_CheckIdle(void)
+{
+	if(GE.task==GE_none&&GC.task==GC_none&&
+		GP.task==GP_none&&GO.task==GO_none)
+		{
+			return TRUE;
+		}
+	else if(GE.task==GE_finish&&GC.task==GC_finish&&
+		GP.task==GP_finish&&GO.task==GO_finish)
+		{
+			return TRUE;
+		}
+
+		return FALSE;
+}
+
 void Error_Set(enum task_error error,u32 error_sen)
 {
 
 	//暂停当前任务
 	Pause_TaskThread();
 
-	//进入报错程序
+	//进入报错程序 处理
 	GE.subtask=0;
-	GE.sta=Finish;
+	GE.sta=Running;
 	GE.task=GC_error;
 
 	GC.subtask=0;
-	GC.sta=Finish;
+	GC.sta=Running;
 	GC.task=GC_error;
 
 	GP.subtask=0;
-	GP.sta=Finish;
+	GP.sta=Running;
 	GP.task=GC_error;
 
 	GO.subtask=0;
-	GO.sta=Finish;
+	GO.sta=Running;
 	GP.task=GC_error;
 
 	error_type|=error;
@@ -128,6 +144,12 @@ void TIM6_IRQHandler(void) //TIM6中断
 			GP_TaskThread();
 			//GO 玻片存储任务线程
 			GO_TaskThread();		
+		}else
+		{
+			if(error_type) //因为发生错误而暂停 运行错误处理程序
+			{
+				TaskThread_State=taskthread_error; 
+			}
 		}
 
 		
@@ -159,15 +181,23 @@ void Pause_TaskThread(void)
 //暂停恢复运行
 void Resume_TaskThread(void)
 {
-	GE.sta=Ready;
-	GC.sta=Ready;
-	GP.sta=Ready;
-	GO.sta=Ready;
-	TaskThread_State=OldTaskThread_State; //恢复之前的运行模式
+	if(error_type<Error_Slide_Glass) //未发生元器件机构错误
+	{
+		GE.sta=Ready;
+		GE.task=GE.resume_task;
+		GC.sta=Ready;
+		GC.task=GC.resume_task;
+		GP.sta=Ready;
+		GP.task=GP.resume_task;
+		GO.sta=Ready;
+		GP.task=GP.resume_task;
+		TaskThread_State=OldTaskThread_State; //恢复之前的运行模式
+	}
+
 
 }
 
-void TaskThread_IsReady(void)
+enum taskthread_state TaskThread_IsReady(void)
 {
 	
 	//检测是否存在存储盒
@@ -186,11 +216,28 @@ void TaskThread_IsReady(void)
 	{
 		error_type|=Error_Spray;
 	}
+	if(error_type)
+	{
+		Error_Set(0,0); //上报错误
+		return taskthread_error;
+	}
 
 	//检测气压是否达到工作状态
-
+	if(Gas_State==gas_pumped)
+	{
+		return taskthread_boost;
+	}
 	//检测各个电机位置是否校准
+	if(GE_motor_struct.postion<0&&GC_rot_motor_struct.postion<0&&
+		GC_ver_motor_struct.postion<0&&GP_motor_struct.postion<0&&
+		GO_hor_motor_struct.postion<0&&GO_ver_motor_struct.postion<0)
+		{
 
+			return taskthread_boost;
+		}
+
+	return taskthread_ready;
+	
 }
 
 //开机复位任务
@@ -200,13 +247,21 @@ void Boot_ResetTaskThread(void)
 	GE.task=GE_reset_on;
 	
 	GC.sta=Ready;
-	GC.task=GC_reset;
+	GC.task=GC_reset_on;
 	
 	GP.sta=Ready;
 	GP.task=GP_reset_on;
 	
 	GO.sta=Ready;
-	GO.task=GO_reset;
+	GO.task=GO_reset_on;
+
+	//等待校准任务完成
+	while(GE.task==GE_none&&GC.task==GC_none
+		&&GP.task==GP_none&&GO.task==GO_none)
+	{
+		OSTimeDlyHMSM(0,0,0,200);
+	}
+
 }
 
 //开始运行任务

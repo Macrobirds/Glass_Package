@@ -28,11 +28,23 @@
 //1,增加了对UCOSII的支持
 #define USART_REC_LEN  			200  	//定义最大接收字节数 200
 #define EN_USART1_RX 			1		//使能（1）/禁止（0）串口1接收
-	  	
+#define USART2_REC_LEN  		250  	//定义最大接收字节数 200
+#define MaxProtocolLength  		100		// 串口2、3 接收缓冲大小 
+extern u8 USART2_RX_BUF[USART2_REC_LEN];     //接收缓冲,最大USART_REC_LEN个字节.
 extern u8  USART_RX_BUF[USART_REC_LEN]; //接收缓冲,最大USART_REC_LEN个字节.末字节为换行符 
 extern u16 USART_RX_STA;         		//接收状态标记	
+extern u8 screenUart_RecvCompleteBuf[MaxProtocolLength];
+extern u8 screenUart_RecvCompleteBufLength;
+extern u8 screenUart_lastRecvIndex;
+extern volatile unsigned char screenUart_RecvCompleteFlag;
+
 //如果想串口中断接收，请不要注释以下宏定义
+void dmaRecv_makeProtocol_uart2(void);
 void uart_init(u32 bound);
+void uart2_init(u32 bound);
+void MYDMA_Enable(DMA_Channel_TypeDef*DMA_CHx);
+void MYDMA_Config_Usart2(DMA_Channel_TypeDef* DMA_CHx,u32 cpar,u32 cmar,u16 cndtr);
+
 #endif
 
 

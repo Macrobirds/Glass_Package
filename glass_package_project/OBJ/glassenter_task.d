@@ -50,3 +50,11 @@
 ..\obj\glassenter_task.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\glassenter_task.o: ..\UCOSII\CONFIG\includes.h
+..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\glassenter_task.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\glassenter_task.o: ..\UCOSII\CONFIG\includes.h
+..\obj\glassenter_task.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\glassenter_task.o: ..\UCOSII\PORT\os_cpu.h

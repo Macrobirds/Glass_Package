@@ -3,7 +3,7 @@
 #include "usart.h"
 #include "usmart.h"
 #include "Globalconfig.h"
-#include "includes.h"
+
 
 /////////////////////////UCOSII任务设置///////////////////////////////////
 //START 任务
@@ -74,10 +74,16 @@ void uart_sendtask(void *pdata);
 	delay_init();	    //延时函数初始化	  
 	ALL_GPIO_Init();
 	uart_init(115200);
-	usmart_dev.init(SystemCoreClock/1000000); //不使用定时器中断 在主函数中扫描
+	uart2_init(115200);
+	MYDMA_Config_Usart2(DMA1_Channel6,(u32)&USART2->DR,(u32)USART2_RX_BUF,USART2_REC_LEN);
+	delay_ms(1000);
 	postions_sensor_Init(); //位置传感器外部中断检测
 	Gas_Init();  //气阀气泵气压传感器初始化
+	delay_ms(100);
 	Motor_PWM_Init(); //步进电机初始化
+	delay_ms(100);
+	
+	usmart_dev.init(SystemCoreClock/1000000); //不使用定时器中断 在主函数中扫描
 	my_mem_init(SRAMIN); //初始化内存池
 	delay_ms(100);
 	//初始化系统运行参数 
@@ -85,7 +91,7 @@ void uart_sendtask(void *pdata);
 
 	//设置为默认参数
 	motor_parameter_Init(); //初始化电机参数
-	TaskThread_Init(); //初始化运行任务定时器 任务参数
+	
 	OSInit();   
  	OSTaskCreate(gas_task,(void *)0,(OS_STK *)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO );//创建起始任务
 	OSStart();	  	 
@@ -94,13 +100,14 @@ void uart_sendtask(void *pdata);
 //开始任务
 void start_task(void *pdata)
 {
-   OS_CPU_SR cpu_sr=0;
+  OS_CPU_SR cpu_sr=0;
 	pdata = pdata; 
-  	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)    
+  OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)    
  	OSTaskCreate(main_task,(void *)0,(OS_STK*)&MAIN_TASK_STK[MAIN_STK_SIZE-1],MAIN_TASK_PRIO);						   
  	OSTaskCreate(gas_task,(void *)0,(OS_STK*)&GAS_TASK_STK[GAS_STK_SIZE-1],GAS_TASK_PRIO);	 	
 	OSTaskCreate(uart_receivetask,(void *)0,(OS_STK*)&UART_RECEIVE_TASK_STK[UART_RECEIVE_STK_SIZE-1],UART_RECEIVE_TASK_PRIO);
  	OSTaskCreate(uart_sendtask,(void *)0,(OS_STK*)&UART_SEND_TASK_STK[UART_SEND_STK_SIZE-1],UART_SEND_TASK_PRIO);		
+	TaskThread_Init(); //初始化运行任务定时器 任务参数
 	OSTaskSuspend(START_TASK_PRIO);	//挂起起始任务.
 	OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
 }
@@ -109,34 +116,45 @@ void start_task(void *pdata)
 
 void main_task(void *pdata)
 {
+	OS_CPU_SR cpu_sr=0;
 	static u32 delay_20ms=0;
 	//等待气压稳定
-	while(Gas_pump_Func(Global_Parm.GP.spray_pressure)!=gas_pumped)
+	while(Gas_State==gas_pumping)
 	{
 		OSTimeDlyHMSM(0,0,0,200);
 	}
-	//允许设备运行
-	TaskThread_State=TRUE;
-	//各电机轴复位 校准初始位置
+
+	//开机自动复位任务 各电机轴复位 校准初始位置
 	Boot_ResetTaskThread();
-	//等待校准任务完成
-	while(GE.task==GE_none&&GC.task==GC_none
-		&&GP.task==GP_none&&GO.task==GO_none)
-	{
-		OSTimeDlyHMSM(0,0,0,200);
-	}
-	//检查系统是否处于可运行状态
-	TaskThread_IsReady();
+
+	//检查系统状态 等待系统处于可运行状态
+	// while(TaskThread_IsReady()!=taskthread_ready)
+	// {
+	// 	OSTimeDlyHMSM(0,0,0,200);
+	// }
 	
+	// OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  
+	// //允许设备运行
+	// TaskThread_State=taskthread_ready;
+	// OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
+
 	//开始系统运行
 	while(1)
 	{
 		delay_20ms++;
 		if(delay_20ms>=30) //1s间隔
 		{
+			//检查系统是否存在错误
+			if(TaskThread_State==taskthread_running)
+			{
+				TaskThread_IsReady();
+			}
 			delay_20ms=0;
 			//usmart 扫描
 			usmart_dev.scan(); 
+			//串口解析任务
+
+			//盗版检测任务
 		}
 		
 		
@@ -149,16 +167,41 @@ void main_task(void *pdata)
 
 void gas_task(void *pdata)
 {
+	while (1)
+	{
+		if(TaskThread_State<taskthread_close)
+		{
+			Gas_State=Gas_pump_Func(GP.spray_pressure);
+		}else //关机放气
+		{
+			if(TaskThread_CheckIdle()) //等待任务空闲后进行放气
+			{
+				Gas_State=Gas_release_Func();
+			}
+			
+		}
+
+
+		OSTimeDlyHMSM(0,0,0,400);
+	}
+	
 	
 
 
 }
 
+//串口接受任务
 void uart_receivetask(void *pdata)
 {
-
+    while(1)
+    {
+    OSTimeDlyHMSM(0, 0, 0, 10);
+	  dmaRecv_makeProtocol_uart2();
+	  OSTimeDlyHMSM(0, 0, 0, 10);
+	}
 }
 
+//串口发送任务
 void uart_sendtask(void *pdata)
 {
 

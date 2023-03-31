@@ -12,16 +12,17 @@ void GP_ReadyTask(void)
 		case GP_none:break;
 		/////////////开机大小气缸复位///////////////
 		case GP_reset_on:
-		GP_small_Cyl=GAS_DISABLE;
-		GP_big_Cyl=GAS_ENABLE;
-		GP.sta=Running;
+		GP_small_Cyl=GAS_DISABLE; //小气缸失能
+		GP_big_Cyl=GAS_ENABLE; //大气缸使能
+		GP.sta=Running; 
 		break;
 		/////////////关机大小气缸复位//////////////
 		case GP_reset_off:
-		GP_small_Cyl=GAS_ENABLE;
-		GP_big_Cyl=GAS_ENABLE;
+		GP_small_Cyl=GAS_ENABLE; //小气缸使能
+		GP_big_Cyl=GAS_DISABLE; //大气缸失能
 		GP.sta=Running;
 		break;
+		////////////缺少盖玻片是封片机构复位回原点等待/////////////
 		case GP_lack_glass:
 		if(GP.subtask==0) //大小气缸上升
 		{
@@ -179,7 +180,6 @@ void GP_RunningTask(void)
 				Error_Set(Error_Sensor,GP_start_sensor);
 			}
 		}
-
 		break;
 
 		////////////////大小气缸复位/////////////////
@@ -335,8 +335,8 @@ void GP_FinishTask(void)
 		GP.task=GP_none;
 		break;
 		case GP_lack_glass:
-		GP.task=GP_start; //保存当前状态为原点复位状态
-		Error_Set(Error_Cover_Glass,0); //复位完成 报错 缺少盖玻片
+		GP.task=GP_none; 
+		GP.sta=Ready;
 		break;
 
 		case GP_start:
@@ -350,7 +350,7 @@ void GP_FinishTask(void)
 			GP.task=GP_move_glass;
 		}else
 		{
-			GP.task=GP_finish; //当抓手任务出错 或结束时 封片任务也结束
+			GP.task=GP_finish; //当抓手任务出错或结束时 封片任务也结束
 			GP.sta=Finish;
 		}
 		break;
@@ -426,7 +426,11 @@ void GP_TaskThread(void)
 	}
 	if(GP.sta==Finish)
 	{
-		GP_FinishTask();
+		if(TaskThread_State!=taskthread_debug) //debug 模式下不进行任务跳转
+		{
+			GP_FinishTask();
+		}
+		
 	}
 
 }

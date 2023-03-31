@@ -50,3 +50,11 @@
 ..\obj\pwm.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\pwm.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\pwm.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\pwm.o: ..\UCOSII\CONFIG\includes.h
+..\obj\pwm.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\pwm.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\pwm.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\pwm.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\pwm.o: ..\UCOSII\CONFIG\includes.h
+..\obj\pwm.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\pwm.o: ..\UCOSII\PORT\os_cpu.h

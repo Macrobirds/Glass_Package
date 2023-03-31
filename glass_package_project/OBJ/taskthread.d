@@ -50,3 +50,11 @@
 ..\obj\taskthread.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\taskthread.o: ..\UCOSII\CONFIG\includes.h
+..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\taskthread.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\taskthread.o: ..\UCOSII\CONFIG\includes.h
+..\obj\taskthread.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\taskthread.o: ..\UCOSII\PORT\os_cpu.h

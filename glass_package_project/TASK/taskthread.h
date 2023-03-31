@@ -9,14 +9,13 @@
 enum taskthread_state
 {
 	taskthread_boost,//启动状态
+	taskthread_pause,//暂停状态
+	taskthread_debug,//调试状态
+	taskthread_error,//错误状态
 	taskthread_ready,//运行准备状态
 	taskthread_running,//运行进行状态
 	taskthread_finsih, //运行结束状态
-	taskthread_pause,//暂停状态
 	taskthread_close,//关机状态
-	taskthread_debug,//调试状态
-	taskthread_error,//错误状态
-	
 	
 };
 
@@ -32,13 +31,13 @@ enum task_state
 enum task_error
 {
 	Error_none=0,
-	Error_Slide_Glass=1<<0,
-	Error_Cover_Glass=1<<1,
-	Error_In_Box=1<<2,
-	Error_Out_Box=1<<3,
-	Error_Sensor=1<<4,
-	Error_Spray=1<<5,
-	Error_OverTime=1<<6,
+	Error_Cover_Glass=1<<0, //缺少盖玻片
+	Error_Spray=1<<1, //缺少滴胶头
+	Error_Slide_Glass=1<<2, //缺少载玻片
+	Error_In_Box=1<<3, //缺少进料槽
+	Error_Out_Box=1<<4, //缺少装载槽或装载槽已满
+	Error_Sensor=1<<5, //传感器错误
+	Error_OverTime=1<<6, //任务超时错误
 	
 };
 
@@ -53,7 +52,7 @@ enum glass_enter_task_index
 	GE_move_glass, //移动到载玻片
 	GE_move_back, //移动到装载槽后端
 	GE_finish, //结束任务
-  GE_error,//异常上报任务
+  	GE_error,//异常上报任务
     
 };
 
@@ -176,20 +175,12 @@ struct glass_out_struct{
 	enum glass_out_task_index resume_task; //恢复任务序列
 };
 
-//机器任务状态
-// struct taskthread_struct
-// {
-// 	u8 gas_ready;
-// 	u8 position_ready;
-// 	u8 Spray_ready;
-// 	u8 out_box_ready;
-// 	u8 Debug_mode;
 
-// };
 
 extern volatile enum task_error error_type;
 extern enum taskthread_state TaskThread_State; //任务线程运行状态 运行/暂停
 extern enum taskthread_state OldTaskThread_State;
+
 extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
 extern struct glass_package_struct GP;
@@ -197,7 +188,7 @@ extern struct glass_out_struct GO;
 //任务线程结构体初始化 任务定时器TIM6初始化
 void TaskThread_Init(void); 
 //检测机器是否可以准备运行
-void TaskThread_IsReady(void); 
+enum taskthread_state TaskThread_IsReady(void);
 void GE_TaskThread(void);
 void GC_TaskThread(void);
 void GP_TaskThread(void);
@@ -205,6 +196,9 @@ void GO_TaskThread(void);
 
 
 void Error_Set(enum task_error error,u32 error_sen);
+
+//任务是否处于空闲状态
+u8 TaskThread_CheckIdle(void);
 
 //开机复位任务
 void Boot_ResetTaskThread(void);

@@ -11,6 +11,21 @@
 #include "malloc.h"
 #include "RingBuffer.h"
 #include "taskthread.h"
+#include "includes.h"
+#include "codeGuard.h"
+#include "rtc.h"
+#include "w25qxx.h"
+
+
+//SPI Flash 参数
+#define SpiFlashAddr_initFlag 				0x0000			// 首次初始化标志位
+#define SpiFlashAddr_DeviceType 				0x0001			// 设备类型
+#define SpiFlashAddr_motorPositionData 		0x0100			// 储存电机脉冲参数
+#define SpiFlashAddr_hardwareState 			0x0600			// 储存开关状态
+#define SpiFlashAddr_printfParam 			0x0700			// 储存打印参数
+#define FlashSIZE_printfParam  			40
+#define SpiFlashAddr_bakParam 			0x0800			// 备用参数
+#define FlashSIZE_bakParam  			60
 
 #define TRUE 1
 #define FALSE 0
@@ -47,14 +62,32 @@
 //映射气阀气泵控制端口
 #define Main_Pump PDout(8)
 #define Main_in_Cyl PDout(9)
-#define GP_sucker_Pump PDout(10)
-#define GP_sucker1_Cyl PDout(11)
-#define GP_sucker2_Cyl PDout(12)
-#define GP_big_Cyl PDout(13)
-#define GP_small_Cyl PDout(14)
-#define GP_spray_Cyl PDout(15)
-#define GC_claw_Cyl PBout(12)
-#define Main_out_Cyl PEout(7)
+#define Main_out_Cyl PDout(10)
+
+#define GP_sucker1_Cyl PDout(14)
+#define GP_sucker2_Cyl PDout(15)
+#define GP_sucker_Pump PBout(0)
+
+#define GP_big_Cyl PDout(11)
+#define GP_small_Cyl PDout(12)
+#define GC_claw_Cyl PDout(13)
+
+#define GP_spray_Cyl PBout(1)
+
+#define DeveiceType_package 3
+
+// 默认设备选择 
+#define DeviceType_Default								DeveiceType_package	// 默认先不设置设备类型
+#define Program_Versions									5						// 程序版本号
+#define Enable_Check_ProgramPirate				1						// 程序盗版检测开关
+
+//加密保护宏定义
+#define Developer_QQ  										396376922   // 用于代码加密
+#define RomFlashAddr_codeGuard	 					0x0807F000	// 储存代码保护密文,对于512K Flash储存器芯片有效
+#define Enable_AutoOpen_FlashReadProtect	0						// 自动开启Flash读保护
+#define ReadyZero_moveDistance						2						// 单位mm，复位时的准备回零位置
+#define OvershootDistance									50					// 单位mm，复位、去终点时的过冲距离，用于确保到达光电位
+#define BoxChannel												6						// 料槽数量
 
 
 enum sensor_index //总共17个传感器

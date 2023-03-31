@@ -50,4 +50,12 @@
 ..\obj\motor.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\motor.o: ..\UCOSII\CONFIG\includes.h
+..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\motor.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\motor.o: ..\UCOSII\CONFIG\includes.h
+..\obj\motor.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\motor.o: ..\UCOSII\PORT\os_cpu.h
 ..\obj\motor.o: ..\SYSTEM\delay\mydelay.h

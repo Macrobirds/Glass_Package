@@ -50,3 +50,11 @@
 ..\obj\glassclaw_task.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\includes.h
+..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
+..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+..\obj\glassclaw_task.o: ..\UCOSII\CORE\ucos_ii.h
+..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\includes.h
+..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\os_cfg.h
+..\obj\glassclaw_task.o: ..\UCOSII\PORT\os_cpu.h

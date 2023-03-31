@@ -314,11 +314,20 @@ void EXTI9_5_IRQHandler(void)
 	//GOV_galss_Sen
 	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //¼ì²âµ½´æ´¢²Û¿Õ
 	{
-		delay_us(50);
-		if(GOV_glass_Sen!=Sen_Block) //ÏÂ½µÑØ´¥·¢
+		if(GO.task>GO_Box_Out)
 		{
-			TIM_Cmd(TIM4,DISABLE);
-			GO_ver_motor_struct.motion=Stop;
+			if(GOV_glass_Sen!=Sen_Block) //ÏÂ½µÑØ´¥·¢
+			{
+				TIM_Cmd(TIM4,DISABLE);
+				GO_ver_motor_struct.motion=Stop;
+			}
+		}else if(GO.task==GO_Box_In&&GO.subtask==2)
+		{
+			if(GOV_glass_Sen!=Sen_Block) //ÏÂ½µÑØ´¥·¢
+			{
+				TIM_Cmd(TIM4,DISABLE);
+				GO_ver_motor_struct.motion=Stop;
+			}
 		}
 		printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line7);
@@ -330,7 +339,6 @@ void EXTI9_5_IRQHandler(void)
 		printf("exit8 trigger\r\n");
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
-			delay_us(50);
 			if(GE_down_Sen==Sen_Block) //ÉÏÉýÑØ´¥·¢
 			{
 				TIM_Cmd(TIM1,DISABLE);
@@ -344,7 +352,6 @@ void EXTI9_5_IRQHandler(void)
 	{
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
-			delay_us(50);
 			if(GE_up_Sen==Sen_Block) //ÉÏÉýÑØ´¥·¢
 			{
 				TIM_Cmd(TIM1,DISABLE);
