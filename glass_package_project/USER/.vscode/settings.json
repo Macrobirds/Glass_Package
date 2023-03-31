@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "gas.h": "c",
+        "taskthread.h": "c",
+        "globalconfig.h": "c",
+        "usart.h": "c"
+    }
+}
