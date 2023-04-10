@@ -442,7 +442,7 @@ void GO_RunningTask(void)
 		case GO_adjust:
 		if(GO.motor_v->motion==Stop)
 		{
-			GO.sta=Stop;
+			GO.sta=Finish;
 		}
 		break;
 		case GO_finish:break;

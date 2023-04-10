@@ -58,3 +58,6 @@
 ..\obj\pwm.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\pwm.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\pwm.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\pwm.o: ..\USER\codeGuard.h
+..\obj\pwm.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\pwm.o: ..\HARDWARE\SpiFlash\w25qxx.h

@@ -15,14 +15,17 @@
 #include "codeGuard.h"
 #include "rtc.h"
 #include "w25qxx.h"
+#include "RingBuffer.h"
+
 
 
 //SPI Flash 参数
 #define SpiFlashAddr_initFlag 				0x0000			// 首次初始化标志位
 #define SpiFlashAddr_DeviceType 				0x0001			// 设备类型
-#define SpiFlashAddr_motorPositionData 		0x0100			// 储存电机脉冲参数
-#define SpiFlashAddr_hardwareState 			0x0600			// 储存开关状态
-#define SpiFlashAddr_printfParam 			0x0700			// 储存打印参数
+#define SpiFlashAddr_motorData 		0x0100			// 储存电机脉冲参数
+#define SpiFlashAddr_clawsupportData 			0x0600			// 储存夹手封片托盘参数
+#define SpiFlashAddr_packageData 			0x0700			// 储存封片参数
+#define SpiFlashAddr_inoutData				0x0800 			//存储出入槽参数
 #define FlashSIZE_printfParam  			40
 #define SpiFlashAddr_bakParam 			0x0800			// 备用参数
 #define FlashSIZE_bakParam  			60
@@ -36,7 +39,7 @@
 
 #define LED1 						PCout(4)
 #define LED2 						PCout(5)
-
+#define LED_ON 					0
 //映射位置传感器输入端口
 
 #define GE_start_Sen PEin(8) // read the 封片资源.md 
@@ -89,9 +92,16 @@
 #define OvershootDistance									50					// 单位mm，复位、去终点时的过冲距离，用于确保到达光电位
 #define BoxChannel												6						// 料槽数量
 
+enum Carrier_Versions {BMH = 1, BP = 2};
+// 打标机-紫外-包埋盒
+#define	DeviceType_dbj_zw_bmh 1
+#define	DeviceType_dbj_zw_bp 2
+// 机型未设置
+#define	DeviceType_none 0
 
 enum sensor_index //总共17个传感器
 {
+	GE_sensor_none=0,
 	GE_start_sensor=(1<<0),
 	GE_up_sensor =(1<<1),
 	GE_down_sensor =(1<<2),
@@ -115,22 +125,22 @@ enum sensor_index //总共17个传感器
 
 typedef struct{
 	u16 GE_1mm;
-	u32 GE_max_speed;
-	u32 GE_min_speed;
+	u8 GE_max_speed;
+	u8 GE_min_speed;
 	u16 GCV_1mm;
-	u32 GCV_max_speed;
-	u32 GCV_min_speed;
+	u8 GCV_max_speed;
+	u8 GCV_min_speed;
 	u16 GCR_max_speed;
 	u16 GCR_min_speed;
 	u16 GP_1mm;
-	u32 GP_max_speed;
-	u32 GP_min_speed;
+	u8 GP_max_speed;
+	u8 GP_min_speed;
 	u16 GOH_1mm;
-	u32 GOH_max_speed;
-	u32 GOH_min_speed;
+	u8 GOH_max_speed;
+	u8 GOH_min_speed;
 	u16 GOV_1mm;
-	u32 GOV_max_speed;
-	u32 GOV_min_speed;
+	u8 GOV_max_speed;
+	u8 GOV_min_speed;
 }Motor_Data; 
 
 
@@ -178,8 +188,13 @@ struct Global_Parameter_struct{
 
 extern struct Global_Parameter_struct Global_Parm; 
 extern enum sensor_index sensor_error_idx;
-void Set_Global_Parameter_Default(void);
 
+extern RingBuffer * RingBuf_Send;
+extern u32 deviceSnNumber;
+extern u8 DeviceType ;
+extern volatile u32 nowRtcTime;
+void Set_Global_Parameter_Default(void);
+void setBCC(u8 *data, u8 dataLength);
 
 
 

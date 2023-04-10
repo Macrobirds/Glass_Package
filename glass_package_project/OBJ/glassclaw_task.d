@@ -58,3 +58,6 @@
 ..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\glassclaw_task.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\glassclaw_task.o: ..\USER\codeGuard.h
+..\obj\glassclaw_task.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\glassclaw_task.o: ..\HARDWARE\SpiFlash\w25qxx.h

@@ -37,10 +37,12 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include "malloc.h"
+#include "includes.h"
 
 /* Macro definitions ---------------------------------------------------------*/
-#define RING_BUFFER_MALLOC(size)  malloc(size)
-#define RING_BUFFER_FREE(block)   free(block)
+#define RING_BUFFER_MALLOC(size)  mymalloc(SRAMIN,size)
+#define RING_BUFFER_FREE(block)   myfree(SRAMIN,block)
 
 /* Type definitions ----------------------------------------------------------*/
 typedef struct

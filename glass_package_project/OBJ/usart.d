@@ -31,6 +31,7 @@
 ..\obj\usart.o: ..\STM32F10x_FWLib\inc\misc.h
 ..\obj\usart.o: ..\SYSTEM\usart\usart.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\usart.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\usart.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h

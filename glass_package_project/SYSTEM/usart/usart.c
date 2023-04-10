@@ -1,6 +1,4 @@
-#include "sys.h"
-#include "usart.h"	
-#include "malloc.h"  
+#include "Globalconfig.h"
 ////////////////////////////////////////////////////////////////////////////////// 	 
 //如果使用ucos,则包括下面的头文件即可.
 #if SYSTEM_SUPPORT_OS
@@ -45,6 +43,8 @@ u8 screenUart_RecvCompleteBuf[MaxProtocolLength] = {0};
 u8 screenUart_RecvCompleteBufLength = 0;
 u8 screenUart_lastRecvIndex = 0;
 volatile unsigned char screenUart_RecvCompleteFlag = 0;
+
+RingBuffer * RingBuf_Send=0;
 //////////////////////////////////////////////////////////////////
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB	 
 
@@ -139,6 +139,8 @@ void uart_init(u32 bound){
   USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);//开启串口接受中断
   USART_Cmd(USART1, ENABLE);                    //使能串口1 
 
+
+
 }
 
 void USART1_IRQHandler(void)                	//串口1中断服务程序
@@ -204,6 +206,9 @@ void uart2_init(u32 bound)
 	
 	USART_Init(USART2, &USART_InitStructure); //初始化串口2
 	USART_DMACmd(USART2,USART_DMAReq_Rx,ENABLE); //使能串口2的DMA接收
+
+	//初始化发送环形数组
+	RingBuf_Send=RingBuffer_Malloc(512);
 }
 
 void MYDMA_Config_Usart2(DMA_Channel_TypeDef* DMA_CHx,u32 cpar,u32 cmar,u16 cndtr)
@@ -346,6 +351,33 @@ void dmaRecv_makeProtocol_uart2(void)
 					}
 			}
 	}
+}
+void screenUart_sendByte(unsigned char data)
+{
+    while((USART2->SR&0X40)==0);//循环发送,直到发送完毕
+    USART2->DR = (u8) data;
+}
+
+
+void screenUart_sendStr(const char Str[], u8 length)
+{
+//    unsigned char n = 0;
+//    for(; n < length; n++)
+//        screenUart_sendByte(Str[n]);
+	
+	//放入发送环形数组中等待串口发送
+	RingBuffer_In(RingBuf_Send,Str,length);
+}
+
+u8 checkBCC(u8 *data, u8 dataLength)
+{
+    u8 i = 0, tmpU8 = 0;
+    for(i = 0; i < dataLength - 2; i++)
+        tmpU8 = tmpU8 ^ data[i];
+    if(tmpU8 == data[dataLength - 2])
+        return 1;
+    else
+        return 0;
 }
 
 #endif	

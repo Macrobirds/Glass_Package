@@ -110,7 +110,6 @@ enum glass_out_task_index
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
 	GO_adjust,  //调整存储槽对准玻片
-	GO_glass_check, //检测当前槽内是否存在玻片
 	GO_finish,
   	GO_error,//异常上报任务
 };
@@ -211,7 +210,8 @@ void Close_TaskThread(void);
 void Pause_TaskThread(void);
 //恢复任务
 void Resume_TaskThread(void);
-
+//任务参数初始化
+void TaskThread_Parm_Init(void);
 
 
 #endif

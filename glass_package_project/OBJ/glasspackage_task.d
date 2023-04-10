@@ -58,3 +58,6 @@
 ..\obj\glasspackage_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glasspackage_task.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\glasspackage_task.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\glasspackage_task.o: ..\USER\codeGuard.h
+..\obj\glasspackage_task.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\glasspackage_task.o: ..\HARDWARE\SpiFlash\w25qxx.h

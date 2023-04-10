@@ -58,3 +58,6 @@
 ..\obj\taskthread.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\taskthread.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\taskthread.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\taskthread.o: ..\USER\codeGuard.h
+..\obj\taskthread.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\taskthread.o: ..\HARDWARE\SpiFlash\w25qxx.h

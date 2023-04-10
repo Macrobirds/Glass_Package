@@ -103,10 +103,13 @@ void RingBuffer_Free(RingBuffer *fifo)
   */
 uint32_t RingBuffer_In(RingBuffer *fifo, const void *in, uint32_t len)
 {
+	OS_CPU_SR cpu_sr=0;
+	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  
   len = min(len, RingBuffer_Avail(fifo));
 
   /* First put the data starting from fifo->in to buffer end. */
   uint32_t l = min(len, fifo->size - (fifo->in & (fifo->size - 1)));
+	OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
   memcpy(fifo->buffer + (fifo->in & (fifo->size - 1)), in, l);
 
   /* Then put the rest (if any) at the beginning of the buffer. */
@@ -128,10 +131,13 @@ uint32_t RingBuffer_In(RingBuffer *fifo, const void *in, uint32_t len)
   */
 uint32_t RingBuffer_Out(RingBuffer *fifo, void *out, uint32_t len)
 {
+	OS_CPU_SR cpu_sr=0;
+	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  	
   len = min(len, RingBuffer_Len(fifo));
 
   /* First get the data from fifo->out until the end of the buffer. */
   uint32_t l = min(len, fifo->size - (fifo->out & (fifo->size - 1)));
+	OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
   memcpy(out, fifo->buffer + (fifo->out & (fifo->size - 1)), l);
 
   /* Then get the rest (if any) from the beginning of the buffer. */

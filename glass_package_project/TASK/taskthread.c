@@ -59,7 +59,7 @@ void Error_Set(enum task_error error,u32 error_sen)
 	//进入报错程序 处理
 	GE.subtask=0;
 	GE.sta=Running;
-	GE.task=GC_error;
+	GE.task=GE_error;
 
 	GC.subtask=0;
 	GC.sta=Running;
@@ -67,17 +67,43 @@ void Error_Set(enum task_error error,u32 error_sen)
 
 	GP.subtask=0;
 	GP.sta=Running;
-	GP.task=GC_error;
+	GP.task=GP_error;
 
 	GO.subtask=0;
 	GO.sta=Running;
-	GP.task=GC_error;
+	GO.task=GO_error;
 
 	error_type|=error;
 	if(error_sen)
 	{
 		sensor_error_idx|=error_sen;
 	}
+}
+
+void TaskThread_Parm_Init(void)
+{
+	//set GE task parm
+	GE.GE_box_dis=Global_Parm.GIO.GE_box_dis;
+	GE.GE_box_len=Global_Parm.GIO.GE_box_len;
+	//set GC task parm
+	GC.GCR_hor_pos=Global_Parm.GCS.GCR_hor_pos;
+	GC.GCR_ver_pos=Global_Parm.GCS.GCR_ver_pos;
+	GC.GCV_down_pos=Global_Parm.GCS.GCV_down_pos;
+	//set GP parm
+	GP.delay_after=Global_Parm.GP.delay_after;
+	GP.delay_before=Global_Parm.GP.delay_before;
+	GP.sucker_delay=Global_Parm.GP.sucker_delay;
+	GP.sucker_pos=Global_Parm.GP.sucker_pos;
+	GP.spray_pos=Global_Parm.GP.spray_pos;
+	GP.spray_len=Global_Parm.GP.spray_len;
+	GP.spray_speed=Global_Parm.GP.spray_speed;
+	GP.spray_pressure=Global_Parm.GP.spray_pressure;
+	//set GO parm
+	GO.GOH_end_pos=Global_Parm.GCS.GOH_end_pos;
+	GO.GOH_mid_pos=Global_Parm.GCS.GOH_mid_pos;
+	GO.GOV_box_dis=Global_Parm.GIO.GOV_box_dis;
+	GO.GOV_slot_dis=Global_Parm.GIO.GOV_slot_dis;
+	GO.GOV_box_len=Global_Parm.GIO.GOV_box_len;
 }
 
 void TaskThread_Init(void)
@@ -104,28 +130,8 @@ void TaskThread_Init(void)
 	NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
 
 	TIM_Cmd(TIM6,ENABLE);
-	//set GE task parm
-	GE.GE_box_dis=Global_Parm.GIO.GE_box_dis;
-	GE.GE_box_len=Global_Parm.GIO.GE_box_len;
-	//set GC task parm
-	GC.GCR_hor_pos=Global_Parm.GCS.GCR_hor_pos;
-	GC.GCR_ver_pos=Global_Parm.GCS.GCR_ver_pos;
-	GC.GCV_down_pos=Global_Parm.GCS.GCV_down_pos;
-	//set GP parm
-	GP.delay_after=Global_Parm.GP.delay_after;
-	GP.delay_before=Global_Parm.GP.delay_before;
-	GP.sucker_delay=Global_Parm.GP.sucker_delay;
-	GP.sucker_pos=Global_Parm.GP.sucker_pos;
-	GP.spray_pos=Global_Parm.GP.spray_pos;
-	GP.spray_len=Global_Parm.GP.spray_len;
-	GP.spray_speed=Global_Parm.GP.spray_speed;
-	GP.spray_pressure=Global_Parm.GP.spray_pressure;
-	//set GO parm
-	GO.GOH_end_pos=Global_Parm.GCS.GOH_end_pos;
-	GO.GOH_mid_pos=Global_Parm.GCS.GOH_mid_pos;
-	GO.GOV_box_dis=Global_Parm.GIO.GOV_box_dis;
-	GO.GOV_slot_dis=Global_Parm.GIO.GOV_slot_dis;
-	GO.GOV_box_len=Global_Parm.GIO.GOV_box_len;
+	TaskThread_Parm_Init();
+	
 }
 
 void TIM6_IRQHandler(void) //TIM6中断
@@ -218,7 +224,7 @@ enum taskthread_state TaskThread_IsReady(void)
 	}
 	if(error_type)
 	{
-		Error_Set(0,0); //上报错误
+		Error_Set(Error_none,0); //上报错误
 		return taskthread_error;
 	}
 

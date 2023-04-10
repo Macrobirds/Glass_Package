@@ -2,7 +2,7 @@
 #include "delay.h"
 #include "usart.h"
 #include "rtc.h" 		    
-#include "GlobalInclude.h"
+#include "Globalconfig.h"
 //Mini STM32开发板
 //RTC实时时钟 驱动代码			 
 //正点原子@ALIENTEK

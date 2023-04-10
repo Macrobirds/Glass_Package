@@ -58,3 +58,6 @@
 ..\obj\gas.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\gas.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\gas.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\gas.o: ..\USER\codeGuard.h
+..\obj\gas.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\gas.o: ..\HARDWARE\SpiFlash\w25qxx.h

@@ -209,7 +209,7 @@ u8 motor_Get_Start_Sen(enum motor_index motor_name)
 	switch(motor_name)
 	{
 		case GE_motor:
-		return GE_start_Sen;
+			return GE_start_Sen;
 		break;
 		case GC_rot_motor:
 		return GC_rot_Sen;	
@@ -228,6 +228,7 @@ u8 motor_Get_Start_Sen(enum motor_index motor_name)
 		break;
 		default: break;
 	}
+	return 0;
 }
 
 

@@ -3,7 +3,12 @@
 #include "sys.h" 
 #include <stdbool.h>
 /* *************************************** 函数声明 *********************************** */
+//屏幕串口协议解析
 void screenUart_protocolParse(void);
+//屏幕串口协议发送
+void screenUart_protocolSend(void);
+
+
 void ack(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte);
 void ack_0data(u8 Index, u8 TYPE, u8 FC, u8 Extra);
 void ack_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte, u8 ackByte_2);
@@ -18,6 +23,7 @@ bool queryAck_data_1step(u8* data, u8 dataLength);
 void query_param_printf(u8 Index);
 void query_param_bak(u8 Index);
 bool set_param_bak(u8* data, u8 dataLength);
+
 
 //协议类型
 enum Type
@@ -73,9 +79,9 @@ enum Debug
 {
 	Extra_debug_reset = 1,
 	Extra_debug_GE=2,
-	Extra_debug_GC=2,
-	Extra_debug_GP=2,
-	Extra_debug_GO=2,
+	Extra_debug_GC=3,
+	Extra_debug_GP=4,
+	Extra_debug_GO=5,
 	
 
 };
@@ -87,15 +93,22 @@ enum Run
 	Extra_run_GEOut=3,
 	Extra_run_GOIn=4,
 	Extra_run_GOOut=5,
-	Extra_run
+	Extra_run_Start=6,
+	Extra_run_Pause=7,
+	Extar_run_Finish=8,
+	Extra_run_Close=9,
 };
 
 //警报
 enum Error
 {
-	Extra_error_tempSensor = 1,
-//	Extra_error_doorIsOpen = 2,
-//	Extra_error_coverNotExist = 3,
+	Extra_error_slideglass = 1,
+	Extra_error_coverglass=2,
+	Extra_error_InBox=3,
+	Extra_error_OutBox=4,
+	Extra_error_sen=5,
+	Extra_error_spray=6,
+	Extra_error_overtime=7,
 };
 
 // 开关状态
@@ -118,8 +131,6 @@ enum Reason
 {
 	Reason_deviceBusy = 0,
 	Reason_timeOut = 1,
-//	Reason_GSL_withoutBox = 2,
-	Reason_XEG_withoutBox = 3,
 };
 
 #endif

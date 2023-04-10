@@ -4,7 +4,7 @@
 #define PRESSURE_MAX 320
 #define PRESSURE_MIN 250
 
- enum gas_state Gas_State=gas_pumping; //主气路状态
+enum gas_state Gas_State=gas_pumping; //主气路状态
 
 void Gas_Init(void)
 {
@@ -45,6 +45,7 @@ enum gas_state Gas_pump_Func(u8 ITV_value)
 		return gas_pumping;
 	}
 	 ITV0011_IIC_Enable(ITV_value);
+	return 0;
 }
 
 

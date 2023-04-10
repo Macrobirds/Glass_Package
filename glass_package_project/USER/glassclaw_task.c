@@ -148,7 +148,7 @@ void GC_ReadyTask(void)
 		break;
 		////////////////夹手旋转至水平位置/////////////////////
 		case GC_rot_hor:
-		if((GOH_mid_Sen==Sen_Block)&&(GO.motor_h->motion=Stop)) //玻片托盘处于封片工作点静止
+		if((GOH_mid_Sen==Sen_Block)&&(GO.motor_h->motion==Stop)) //玻片托盘处于封片工作点静止
 		{
 			if(GP.task<=GP_sucker_up) //封片工作未开始
 			{

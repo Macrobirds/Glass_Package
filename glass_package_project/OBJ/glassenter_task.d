@@ -58,3 +58,6 @@
 ..\obj\glassenter_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassenter_task.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\glassenter_task.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\glassenter_task.o: ..\USER\codeGuard.h
+..\obj\glassenter_task.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\glassenter_task.o: ..\HARDWARE\SpiFlash\w25qxx.h

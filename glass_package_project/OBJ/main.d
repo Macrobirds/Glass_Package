@@ -59,3 +59,6 @@
 ..\obj\main.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\main.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\main.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\main.o: codeGuard.h
+..\obj\main.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\main.o: ..\HARDWARE\SpiFlash\w25qxx.h

@@ -57,3 +57,6 @@
 ..\obj\globalconfig.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\globalconfig.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\globalconfig.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\globalconfig.o: codeGuard.h
+..\obj\globalconfig.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\globalconfig.o: ..\HARDWARE\SpiFlash\w25qxx.h

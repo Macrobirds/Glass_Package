@@ -58,4 +58,7 @@
 ..\obj\motor.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\motor.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\motor.o: ..\UCOSII\PORT\os_cpu.h
+..\obj\motor.o: ..\USER\codeGuard.h
+..\obj\motor.o: ..\HARDWARE\Rtc\rtc.h
+..\obj\motor.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\motor.o: ..\SYSTEM\delay\mydelay.h

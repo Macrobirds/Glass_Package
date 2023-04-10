@@ -44,6 +44,9 @@ void uart_init(u32 bound);
 void uart2_init(u32 bound);
 void MYDMA_Enable(DMA_Channel_TypeDef*DMA_CHx);
 void MYDMA_Config_Usart2(DMA_Channel_TypeDef* DMA_CHx,u32 cpar,u32 cmar,u16 cndtr);
+void screenUart_sendByte(unsigned char data);
+void screenUart_sendStr(const char Str[], u8 length);
+u8 checkBCC(u8 *data, u8 dataLength);
 
 #endif
 
