@@ -42,40 +42,40 @@
 #define LED_ON 					0
 //映射位置传感器输入端口
 
-#define GE_start_Sen PEin(8) // read the 封片资源.md 
-#define GE_up_Sen PEin(9)
-#define GE_down_Sen PEin(10)
-#define GC_rot_Sen PEin(11)
-#define GC_ver_Sen PEin(12)
-#define GP_start_Sen PEin(13)
-#define GOH_start_Sen PEin(14)
-#define GOH_mid_Sen PEin(15)
-#define GOH_end_Sen PDin(5)
-#define GOV_start_Sen PDin(6)
-#define GOV_glass_Sen PDin(7)
+#define GE_start_Sen PEin(8) // 玻片进盒轨道起点传感器
+#define GE_up_Sen PEin(9) //玻片进盒玻片检测上端传感器
+#define GE_down_Sen PEin(10) //玻片进盒玻片检测下端传感器
+#define GC_rot_Sen PEin(11) //玻片夹手旋转传感器 
+#define GC_ver_Sen PEin(12) //玻片夹手垂直传感器
+#define GP_start_Sen PEin(13) //玻片封片起点传感器
+#define GOH_start_Sen PEin(14) //玻片承载起点传感器
+#define GOH_mid_Sen PEin(15) //玻片承载封片传感器
+#define GOH_end_Sen PDin(5)  //片承载终点传感器
+#define GOV_start_Sen PDin(6) //玻片出盒轨道原点传感器
+#define GOV_glass_Sen PDin(7) //玻片出盒玻片传感器
 
-#define GP_sucker_Sen PDin(0)
-#define GP_spray_Sen PDin(1)
-#define GP_big_cyl_Sen PDin(3)
-#define GP_small_cyl_Sen PDin(4)
-#define GC_claw_Sen PEin(0)
-#define GOV_box_Sen PBin(5)
+#define GP_sucker_Sen PDin(0) //玻片封片玻片吸取检测传感器
+#define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
+#define GP_big_cyl_Sen PDin(3) //大气缸传感器
+#define GP_small_cyl_Sen PDin(4) //小气缸传感器
+#define GC_claw_Sen PEin(0) //玻片夹手夹手状态传感器
+#define GOV_box_Sen PBin(5)  //玻片出盒玻片盒传感器
 
 
 //映射气阀气泵控制端口
-#define Main_Pump PDout(8)
-#define Main_in_Cyl PDout(9)
-#define Main_out_Cyl PDout(10)
+#define Main_Pump PDout(8)  //主气泵
+#define Main_in_Cyl PDout(9) //主气泵打气阀
+#define Main_out_Cyl PDout(10) //主气泵出气阀
 
-#define GP_sucker1_Cyl PDout(14)
-#define GP_sucker2_Cyl PDout(15)
-#define GP_sucker_Pump PBout(0)
+#define GP_sucker1_Cyl PDout(14) //吸盘1阀 
+#define GP_sucker2_Cyl PDout(15) //吸盘2阀
+#define GP_sucker_Pump PBout(0) //吸盘阀
 
-#define GP_big_Cyl PDout(11)
-#define GP_small_Cyl PDout(12)
-#define GC_claw_Cyl PDout(13)
+#define GP_big_Cyl PDout(11) //大气缸
+#define GP_small_Cyl PDout(12) //小气缸
+#define GC_claw_Cyl PDout(13) //夹手
 
-#define GP_spray_Cyl PBout(1)
+#define GP_spray_Cyl PBout(1) //喷头
 
 #define DeveiceType_package 3
 

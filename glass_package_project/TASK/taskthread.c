@@ -261,12 +261,7 @@ void Boot_ResetTaskThread(void)
 	GO.sta=Ready;
 	GO.task=GO_reset_on;
 
-	//等待校准任务完成
-	while(GE.task==GE_none&&GC.task==GC_none
-		&&GP.task==GP_none&&GO.task==GO_none)
-	{
-		OSTimeDlyHMSM(0,0,0,200);
-	}
+
 
 }
 

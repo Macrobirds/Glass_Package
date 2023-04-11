@@ -126,17 +126,23 @@ void main_task(void *pdata)
 
 	//开机自动复位任务 各电机轴复位 校准初始位置
 	Boot_ResetTaskThread();
+	//等待复位任务完成
+	while (!TaskThread_CheckIdle())
+	{
+		OSTimeDlyHMSM(0,0,0,200);
+	}
+	
 
-	//检查系统状态 等待系统处于可运行状态
+	// //检查系统状态 等待系统处于可运行状态
 	// while(TaskThread_IsReady()!=taskthread_ready)
 	// {
 	// 	OSTimeDlyHMSM(0,0,0,200);
 	// }
 	
-	// OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  
-	// //允许设备运行
-	// TaskThread_State=taskthread_ready;
-	// OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
+	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  
+	//允许设备运行
+	TaskThread_State=taskthread_ready;
+	OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
 
 	//开始系统运行
 	while(1)

@@ -16,6 +16,7 @@ enum taskthread_state
 	taskthread_running,//运行进行状态
 	taskthread_finsih, //运行结束状态
 	taskthread_close,//关机状态
+	taskthread_reset,//复位状态
 	
 };
 
@@ -47,6 +48,8 @@ enum glass_enter_task_index
 	GE_none,// none 空任务 
 	GE_reset_on,// 进缸 开机复位
 	GE_reset_off,// 出缸
+	GE_Box_In,
+	GE_BOx_Out,
 	GE_move_start, //移动到原点位置
 	GE_move_front, //移动到装载槽前端
 	GE_move_glass, //移动到载玻片
@@ -125,6 +128,8 @@ struct glass_enter_struct{
 	u8 glass_Exist; //载玻片检测信号
 	u8 subtask; //子任务
 	enum glass_enter_task_index resume_task; //恢复任务序列
+	u8 Index;
+	u8 WaitAck;
 };
 
 struct glass_claw_struct{
@@ -172,6 +177,8 @@ struct glass_out_struct{
 	volatile u8 glass_num;
 	volatile u8 box_num;
 	enum glass_out_task_index resume_task; //恢复任务序列
+	u8 Index;
+	u8 WaitAck;
 };
 
 
