@@ -1,5 +1,6 @@
 #include "Globalconfig.h"
 
+OS_CPU_SR cpu_sr = 0;
 struct Global_Parameter_struct Global_Parm={0};
 enum sensor_index sensor_error_idx=0;
 volatile u32 nowRtcTime = 0;

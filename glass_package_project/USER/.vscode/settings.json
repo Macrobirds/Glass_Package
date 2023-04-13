@@ -3,6 +3,7 @@
         "gas.h": "c",
         "taskthread.h": "c",
         "globalconfig.h": "c",
-        "usart.h": "c"
+        "usart.h": "c",
+        "position.h": "c"
     }
 }

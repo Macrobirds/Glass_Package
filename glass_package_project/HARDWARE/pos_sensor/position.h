@@ -5,7 +5,7 @@
 #include "delay.h"
 #include "taskthread.h"
 
-#define IoInput_0_Enable					0
+#define IoInput_0_Enable					1
 #define IoInput_1_Enable					0
 #define IoInput_2_Enable					0
 #define IoInput_3_Enable					0
@@ -20,7 +20,7 @@
 #define IoInput_12_Enable					1
 #define IoInput_13_Enable					1
 #define IoInput_14_Enable					1
-#define IoInput_15_Enable					1
+#define IoInput_15_Enable					0
 
 
 

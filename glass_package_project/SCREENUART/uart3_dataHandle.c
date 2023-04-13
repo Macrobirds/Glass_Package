@@ -209,7 +209,7 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 }
 
 // 查询-参数-电机参数
-static void query_param_motor(const u8 *bufptr)
+static void query_param_motor(u8 *bufptr)
 {
 	u8 *tmpptr = bufptr;
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GE_1mm, sizeof(Global_Parm.MOT.GE_1mm));
@@ -232,7 +232,7 @@ static void query_param_motor(const u8 *bufptr)
 	tmpptr = 0;
 }
 
-static void query_param_calw(const u8 *bufptr)
+static void query_param_calw(u8 *bufptr)
 {
 
 	u8 *tempptr = bufptr;
@@ -247,7 +247,7 @@ static void query_param_calw(const u8 *bufptr)
 	tempptr = 0;
 }
 
-static void query_param_package(const u8 *bufptr)
+static void query_param_package(u8 *bufptr)
 {
 	u8 *tempptr = bufptr;
 
@@ -263,7 +263,7 @@ static void query_param_package(const u8 *bufptr)
 	tempptr = 0;
 }
 
-static void query_param_outin(const u8 *bufptr)
+static void query_param_outin(u8 *bufptr)
 {
 	u8 *tempptr = bufptr;
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.delay_before, sizeof(Global_Parm.GP.delay_before));

@@ -46,10 +46,10 @@ enum task_error
 enum glass_enter_task_index
 {
 	GE_none,// none 空任务 
-	GE_reset_on,// 进缸 开机复位
-	GE_reset_off,// 出缸
-	GE_Box_In,
-	GE_BOx_Out,
+	GE_reset_on,//  开机复位
+	GE_reset_off,// 关机复位
+	GE_Box_In, //进缸
+	GE_BOx_Out, //出缸
 	GE_move_start, //移动到原点位置
 	GE_move_front, //移动到装载槽前端
 	GE_move_glass, //移动到载玻片

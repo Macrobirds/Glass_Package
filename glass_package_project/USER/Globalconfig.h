@@ -42,23 +42,24 @@
 #define LED_ON 					0
 //映射位置传感器输入端口
 
-#define GE_start_Sen PEin(8) // 玻片进盒轨道起点传感器
+#define GE_start_Sen PEin(10) // 玻片进盒轨道起点传感器
 #define GE_up_Sen PEin(9) //玻片进盒玻片检测上端传感器
-#define GE_down_Sen PEin(10) //玻片进盒玻片检测下端传感器
+#define GE_down_Sen PEin(8) //玻片进盒玻片检测下端传感器
 #define GC_rot_Sen PEin(11) //玻片夹手旋转传感器 
 #define GC_ver_Sen PEin(12) //玻片夹手垂直传感器
 #define GP_start_Sen PEin(13) //玻片封片起点传感器
 #define GOH_start_Sen PEin(14) //玻片承载起点传感器
-#define GOH_mid_Sen PEin(15) //玻片承载封片传感器
+#define GOH_mid_Sen PDin(0) //玻片承载封片传感器
 #define GOH_end_Sen PDin(5)  //片承载终点传感器
 #define GOV_start_Sen PDin(6) //玻片出盒轨道原点传感器
 #define GOV_glass_Sen PDin(7) //玻片出盒玻片传感器
 
-#define GP_sucker_Sen PDin(0) //玻片封片玻片吸取检测传感器
+#define GP_sucker_Sen  PEin(15)//玻片封片玻片吸取检测传感器
 #define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
+#define GC_claw_Sen PCin(2) //玻片夹手夹手状态传感器
 #define GP_big_cyl_Sen PDin(3) //大气缸传感器
 #define GP_small_cyl_Sen PDin(4) //小气缸传感器
-#define GC_claw_Sen PEin(0) //玻片夹手夹手状态传感器
+
 #define GOV_box_Sen PBin(5)  //玻片出盒玻片盒传感器
 
 
@@ -189,13 +190,13 @@ struct Global_Parameter_struct{
 extern struct Global_Parameter_struct Global_Parm; 
 extern enum sensor_index sensor_error_idx;
 
-extern RingBuffer * RingBuf_Send;
+
 extern u32 deviceSnNumber;
 extern u8 DeviceType ;
 extern volatile u32 nowRtcTime;
 void Set_Global_Parameter_Default(void);
 void setBCC(u8 *data, u8 dataLength);
 
-
+extern OS_CPU_SR cpu_sr;
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef __USMART_H
 #define __USMART_H	  		  
 #include "usmart_str.h"
+#include "Globalconfig.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32开发板	   
@@ -70,11 +71,11 @@
 #define PARM_LEN 			200	//所有参数之和的长度不超过PARM_LEN个字节,注意串口接收部分要与之对应(不小于PARM_LEN)
 
 
-#define USMART_ENTIMX_SCAN 	1	//使用TIM的定时中断来扫描SCAN函数,如果设置为0,需要自己实现隔一段时间扫描一次scan函数.
+#define USMART_ENTIMX_SCAN 	0	//使用TIM的定时中断来扫描SCAN函数,如果设置为0,需要自己实现隔一段时间扫描一次scan函数.
 								//注意:如果要用runtime统计功能,必须设置USMART_ENTIMX_SCAN为1!!!!
 								
 #define USMART_USE_HELP		1	//使用帮助，该值设为0，可以节省近700个字节，但是将导致无法显示帮助信息。
-#define USMART_USE_WRFUNS	1	//使用读写函数,使能这里,可以读取任何地址的值,还可以写寄存器的值.
+#define USMART_USE_WRFUNS	0	//使用读写函数,使能这里,可以读取任何地址的值,还可以写寄存器的值.
 ///////////////////////////////////////////////END///////////////////////////////////////////////////////////
 
 #define USMART_OK 			0  //无错误

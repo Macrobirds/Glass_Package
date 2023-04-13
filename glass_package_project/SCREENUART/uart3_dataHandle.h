@@ -16,13 +16,13 @@ void ack_3data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte, u8 ackByte_2, u8 
 void screenUart_ack_array(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 *data, u8 dataLength);
 void sendProtocol_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 data1, u8 data2);
 void control_debug(u8 Index, u8 Extra);
-void query_param_motor(u8 Index);
-bool set_param_motor(u8* data, u8 dataLength);
-bool set_param_printf(u8* data, u8 dataLength);
-bool queryAck_data_1step(u8* data, u8 dataLength);
-void query_param_printf(u8 Index);
-void query_param_bak(u8 Index);
-bool set_param_bak(u8* data, u8 dataLength);
+//void query_param_motor(u8 Index);
+//bool set_param_motor(u8* data, u8 dataLength);
+//bool set_param_printf(u8* data, u8 dataLength);
+//bool queryAck_data_1step(u8* data, u8 dataLength);
+//void query_param_printf(u8 Index);
+//void query_param_bak(u8 Index);
+//bool set_param_bak(u8* data, u8 dataLength);
 
 
 //协议类型

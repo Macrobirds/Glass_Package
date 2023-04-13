@@ -331,7 +331,7 @@ void usmart_exe(void)
 		if(i!=pnum-1)printf(",");
 	}
 	printf(")");
-	usmart_reset_runtime();	//计时器清零,开始计时
+//	usmart_reset_runtime();	//计时器清零,开始计时
 	switch(usmart_dev.pnum)
 	{
 		case 0://无参数(void类型)											  
@@ -373,7 +373,7 @@ void usmart_exe(void)
 			temp[5],temp[6],temp[7],temp[8],temp[9]);
 			break;
 	}
-	usmart_get_runtime();//获取函数执行时间
+//	usmart_get_runtime();//获取函数执行时间
 	if(rval==1)//需要返回值.
 	{
 		if(usmart_dev.sptype==SP_TYPE_DEC)printf("=%lu;\r\n",res);//输出执行结果(10进制参数显示)

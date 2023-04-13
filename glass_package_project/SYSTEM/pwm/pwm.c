@@ -319,12 +319,19 @@ void TIM1_UP_IRQHandler(void) //TIM1中断
 		}
 		GE_motor_struct.step++;//计算当前步数
 		
-		if(GE_motor_struct.planSetpNumber==GO_hor_motor_struct.step) //到达指定步数,电机停止
+		if(GE_motor_struct.planSetpNumber<GE_motor_struct.step) //到达指定步数,电机停止
 		{
 			TIM_Cmd(TIM1,DISABLE);
 			GE_motor_struct.motion=Stop;
 			return;
 		}
+		if(GE_motor_struct.max_pos<GE_motor_struct.postion) //到达轨道最大距离
+		{
+			TIM_Cmd(TIM1,DISABLE);
+			GE_motor_struct.motion=Stop;
+			return;
+		}
+		
 		//在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
 		if(GE_motor_struct.dir==Back&&GE_start_Sen==Sen_Block)
@@ -342,7 +349,7 @@ void TIM1_UP_IRQHandler(void) //TIM1中断
 		{
 			TIM_SetAutoreload(TIM1,GE_motor_struct.t_m);//设定自动重装值	
 			TIM_SetCompare1(TIM1,GE_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
-		}else
+		}else if(GE_motor_struct.motion==AccMove)
 		{
 			//加速运动
 			if(GE_motor_struct.step<=GE_motor_struct.accStepNumber)
@@ -389,7 +396,7 @@ void TIM2_IRQHandler(void) //TIM2 中断 GO_hor_motor
 					GO_hor_motor_struct.postion--;
 				}
 				GO_hor_motor_struct.step++;//计算当前步数
-				if(GO_hor_motor_struct.planSetpNumber==GO_hor_motor_struct.step) //到达指定步数,电机停止
+				if(GO_hor_motor_struct.planSetpNumber<GO_hor_motor_struct.step) //到达指定步数,电机停止
 				{
 					TIM_Cmd(TIM2,DISABLE);
 					GO_hor_motor_struct.motion=Stop;
@@ -464,7 +471,7 @@ void TIM3_IRQHandler(void) //TIM3 中断 GC_ver_motor
 				}
 				GC_ver_motor_struct.step++;//计算当前步数
 				
-				if(GC_ver_motor_struct.planSetpNumber==GC_ver_motor_struct.step) //到达指定步数,电机停止
+				if(GC_ver_motor_struct.planSetpNumber<GC_ver_motor_struct.step) //到达指定步数,电机停止
 				{
 					TIM_Cmd(TIM3,DISABLE);
 					GC_ver_motor_struct.motion=Stop;
@@ -500,7 +507,7 @@ void TIM3_IRQHandler(void) //TIM3 中断 GC_ver_motor
 			}//减速运动
 			else if(GC_ver_motor_struct.step>=GC_ver_motor_struct.planSetpNumber-GC_ver_motor_struct.accStepNumber)
 			{
-				TIM_SetCompare1(TIM3,(TIM1->CNT+GC_ver_motor_struct.AccPeriodArray[GC_ver_motor_struct.planSetpNumber-GC_ver_motor_struct.step])%0xffff);
+				TIM_SetCompare1(TIM3,(TIM3->CNT+GC_ver_motor_struct.AccPeriodArray[GC_ver_motor_struct.planSetpNumber-GC_ver_motor_struct.step])%0xffff);
 			}//匀速运动
 			else
 			{
@@ -515,7 +522,7 @@ void TIM3_IRQHandler(void) //TIM3 中断 GC_ver_motor
 }
 
 
-void TIM4_IRQHandler(void) //TIM4 中断
+void TIM4_IRQHandler(void) //TIM4 中断 GO_ver_motor
 {
 	static u8 tim_cnt;
 	if(TIM_GetITStatus(TIM4,TIM_IT_CC1)!=RESET)
@@ -534,7 +541,7 @@ void TIM4_IRQHandler(void) //TIM4 中断
 					}
 					GO_ver_motor_struct.step++;//计算当前步数
 					
-					if(GO_ver_motor_struct.planSetpNumber==GO_ver_motor_struct.step) //到达指定步数,电机停止
+					if(GO_ver_motor_struct.planSetpNumber<GO_ver_motor_struct.step) //到达指定步数,电机停止
 					{
 						TIM_Cmd(TIM4,DISABLE);
 						GO_ver_motor_struct.motion=Stop;
@@ -583,7 +590,7 @@ void TIM4_IRQHandler(void) //TIM4 中断
 
 
 
-void TIM5_IRQHandler(void) //TIM5 中断 GO_rot_motor
+void TIM5_IRQHandler(void) //TIM5 中断 GC_rot_motor
 {
 static u8 tim_cnt=0;
 if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
@@ -602,7 +609,7 @@ if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
 				}
 				GC_rot_motor_struct.step++;//计算当前步数
 				
-				if(GC_rot_motor_struct.planSetpNumber==GC_rot_motor_struct.step) //到达指定步数,电机停止
+				if(GC_rot_motor_struct.planSetpNumber<GC_rot_motor_struct.step) //到达指定步数,电机停止
 				{
 					TIM_Cmd(TIM5,DISABLE);
 					GC_rot_motor_struct.motion=Stop;
@@ -635,7 +642,7 @@ if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
 			}//减速运动
 			else if(GC_rot_motor_struct.step>=GC_rot_motor_struct.planSetpNumber-GC_rot_motor_struct.accStepNumber)
 			{
-				TIM_SetCompare1(TIM5,(TIM4->CNT+GC_rot_motor_struct.AccPeriodArray[GC_rot_motor_struct.planSetpNumber-GC_rot_motor_struct.step])%0xffff);
+				TIM_SetCompare1(TIM5,(TIM5->CNT+GC_rot_motor_struct.AccPeriodArray[GC_rot_motor_struct.planSetpNumber-GC_rot_motor_struct.step])%0xffff);
 			}//匀速运动
 			else
 			{
@@ -650,7 +657,7 @@ if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
 
 
 
-void TIM8_UP_IRQHandler(void) //TIM8中断
+void TIM8_UP_IRQHandler(void) //TIM8中断 GP_motor
 {
 if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET)
 {
@@ -664,7 +671,7 @@ if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET)
 		}
 		GP_motor_struct.step++;//计算当前步数
 		
-		if(GP_motor_struct.planSetpNumber==GP_motor_struct.step) //到达指定步数,电机停止
+		if(GP_motor_struct.planSetpNumber<GP_motor_struct.step) //到达指定步数,电机停止
 		{
 			TIM_Cmd(TIM8,DISABLE);
 			GP_motor_struct.motion=Stop;
@@ -686,8 +693,8 @@ if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET)
 
 		if(GP_motor_struct.motion==ConstMove)//电机匀速运动
 		{
-			TIM_SetAutoreload(TIM8,GC_rot_motor_struct.t_m);//设定自动重装值	
-			TIM_SetCompare1(TIM8,GC_rot_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
+			TIM_SetAutoreload(TIM8,GP_motor_struct.t_m);//设定自动重装值	
+			TIM_SetCompare1(TIM8,GP_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
 		}else
 		{
 			//加速运动
@@ -703,8 +710,8 @@ if(TIM_GetITStatus(TIM8,TIM_IT_Update)!=RESET)
 			}//匀速运动
 			else
 			{
-					TIM_SetAutoreload(TIM8,GC_rot_motor_struct.t_m);//设定自动重装值	
-					TIM_SetCompare1(TIM8,GC_rot_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
+					TIM_SetAutoreload(TIM8,GP_motor_struct.t_m);//设定自动重装值	
+					TIM_SetCompare1(TIM8,GP_motor_struct.t_m/2); //匹配值2等于重装值一半，是以占空比为50%	
 			}
 			
 		}

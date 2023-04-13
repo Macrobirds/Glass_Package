@@ -29,6 +29,7 @@ enum gas_state Gas_pump_Func(u8 ITV_value)
 {
 	static float Pressure=0;
 	Pressure=P6847_adc_GetPressure();
+	//printf("pressure %f",Pressure);
 	//达到最大气压关闭气泵
 	if(Pressure>PRESSURE_MAX)
 	{

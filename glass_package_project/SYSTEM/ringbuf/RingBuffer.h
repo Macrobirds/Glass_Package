@@ -38,7 +38,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 #include "malloc.h"
-#include "includes.h"
+#include "Globalconfig.h"
 
 /* Macro definitions ---------------------------------------------------------*/
 #define RING_BUFFER_MALLOC(size)  mymalloc(SRAMIN,size)

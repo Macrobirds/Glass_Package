@@ -34,7 +34,7 @@
 ..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\main.o: ..\USMART\usmart.h
 ..\obj\main.o: ..\USMART\usmart_str.h
-..\obj\main.o: Globalconfig.h
+..\obj\main.o: ..\USER\Globalconfig.h
 ..\obj\main.o: ..\HARDWARE\pos_sensor\position.h
 ..\obj\main.o: ..\TASK\taskthread.h
 ..\obj\main.o: ..\HARDWARE\motor\motor.h
@@ -59,6 +59,6 @@
 ..\obj\main.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\main.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\main.o: ..\UCOSII\PORT\os_cpu.h
-..\obj\main.o: codeGuard.h
+..\obj\main.o: ..\USER\codeGuard.h
 ..\obj\main.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\main.o: ..\HARDWARE\SpiFlash\w25qxx.h

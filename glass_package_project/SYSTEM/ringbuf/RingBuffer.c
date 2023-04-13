@@ -131,7 +131,7 @@ uint32_t RingBuffer_In(RingBuffer *fifo, const void *in, uint32_t len)
   */
 uint32_t RingBuffer_Out(RingBuffer *fifo, void *out, uint32_t len)
 {
-	OS_CPU_SR cpu_sr=0;
+
 	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  	
   len = min(len, RingBuffer_Len(fifo));
 

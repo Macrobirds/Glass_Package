@@ -5,7 +5,20 @@
 #include "mydelay.h"
 #include "malloc.h"
 
+#define SCALE 10
 
+//volatile int32_t GE_motor_struct_postion=-1;
+//volatile u32 GE_motor_struct_step=0;
+//volatile int32_t GC_rot_motor_struct_postion=-1;
+//volatile u32 GC_rot_motor_struct_step=0;
+//volatile int32_t GC_ver_motor_struct_postion=-1;
+//volatile u32 GC_ver_motor_struct_step=0;
+//volatile int32_t GP_motor_struct_postion=-1;
+//volatile u32 GP_motor_struct_step=0;
+//volatile int32_t GO_hor_motor_struct_postion=-1;
+//volatile u32 GO_hor_motor_struct_step=0;
+//volatile int32_t GO_ver_motor_struct_postion=-1;
+//volatile u32 GO_ver_motor_struct_step=0;
 
 motor_struct GE_motor_struct={
 	.name=GE_motor,
@@ -14,7 +27,12 @@ motor_struct GE_motor_struct={
 	.FRONT=1,
 	.TIM=TIM1,
 	.AccPeriodArray=NULL,
-	.postion=-1, //开机上电时位置未知
+	.postion=-1,
+	.pulse_1mm=212,
+	.maxfeq=200*212,
+	.startfeq=30*212,
+	.defaultfeq=30*212,
+	.max_pos=212*520
 	
 };
 motor_struct GC_rot_motor_struct={
@@ -24,7 +42,8 @@ motor_struct GC_rot_motor_struct={
 	.FRONT=1,
 	.TIM=TIM5,
 	.AccPeriodArray=NULL,
-	.postion=-1,	
+	.postion=-1,
+	
 };
 motor_struct GC_ver_motor_struct={
 	.name=GC_ver_motor,
@@ -34,6 +53,7 @@ motor_struct GC_ver_motor_struct={
 	.TIM=TIM3,
 	.AccPeriodArray=NULL,
 	.postion=-1,
+
 };
 motor_struct GP_motor_struct={
 	.name=GP_motor,
@@ -43,6 +63,7 @@ motor_struct GP_motor_struct={
 	.TIM=TIM8,
 	.AccPeriodArray=NULL,
 	.postion=-1,
+
 };
 motor_struct GO_hor_motor_struct={
 	.name=GO_hor_motor,
@@ -52,6 +73,7 @@ motor_struct GO_hor_motor_struct={
 	.TIM=TIM2,
 	.AccPeriodArray=NULL,
 	.postion=-1,
+
 };
 motor_struct GO_ver_motor_struct={
 	.name=GO_ver_motor,
@@ -61,6 +83,7 @@ motor_struct GO_ver_motor_struct={
 	.TIM=TIM4,
 	.AccPeriodArray=NULL,
 	.postion=-1,
+
 };
 
 void motor_parameter_Init(void)
@@ -70,6 +93,9 @@ void motor_parameter_Init(void)
 	GE_motor_struct.maxfeq=Global_Parm.MOT.GE_max_speed*GE_motor_struct.pulse_1mm;
 	GE_motor_struct.startfeq=Global_Parm.MOT.GE_min_speed*GE_motor_struct.pulse_1mm;
 	GE_motor_struct.max_pos=Global_Parm.GIO.GE_max_pos;
+	
+
+	
 	GE_motor_struct.defaultfeq=GE_motor_struct.pulse_1mm*30;
 	GE_motor_struct.curvature=2;
 	GE_motor_struct.t_m=(GE_motor_struct.timerfeq/GE_motor_struct.defaultfeq);
@@ -233,10 +259,10 @@ u8 motor_Get_Start_Sen(enum motor_index motor_name)
 
 
 //设置对应电机的方向
-void motor_Set_Direction(motor_struct * motor,enum motor_direction dir)
+void motor_Set_Direction(motor_struct * motor)
 {
 	 u8 direction=0;
-	 if(dir==Front)
+	 if(motor->dir==Front)
 	 {
 		direction=motor->FRONT;
 	 }
@@ -296,6 +322,42 @@ void stepperMotorStart(motor_struct * motor,u16 arr)
 		TIM_Cmd(motor->TIM,ENABLE);
 }
 
+//void stepperMotor_Set_planstep(motor_struct * motor,u32 planstep)
+//{
+//	switch(motor->name)
+//	{
+//		case GE_motor:
+//		GE_motor_struct_step=planstep;
+//		break;
+//		case GC_rot_motor:
+//		GC_rot_motor_struct_step=planstep;
+//		break;
+//		case GC_ver_motor:
+//		GC_ver_motor_struct_step=planstep;
+//		break;
+//		case GP_motor:
+//		GP_motor_struct_step=planstep;
+//		break;
+//		case GO_hor_motor:
+//		GO_hor_motor_struct_step=planstep;
+//		break;
+//		case GO_ver_motor:
+//		GO_ver_motor_struct_step=planstep;
+//		break;
+//		default: break;
+//		
+//	}
+//}
+//void stepperMotor_Reset_Step(motor_struct * motor)
+//{
+//	
+//}
+
+//volatile int32_t stepperMotor_Get_position(motor_struct *motor)
+//{
+
+//}
+
 // 匀速控制电机运行 电机结构体 电机状态 匀速运动频率 当速度频率为0时用默认匀速运动频率
 void motorGo(motor_struct * motor, long planPosition,u32 freq)
 {
@@ -333,12 +395,12 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		if(planStepNumber>0)
 		{
 			motor->dir=Front;
-			motor_Set_Direction(motor,Front);
+			motor_Set_Direction(motor);
 		}
 		else if(planStepNumber<0)
 		{
 			motor->dir=Back;
-			motor_Set_Direction(motor,Back);
+			motor_Set_Direction(motor);
 			planStepNumber*=-1;
 		}
 		else
@@ -353,12 +415,16 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		motor->motion=ConstMove; //标记运动状态为匀速运动
 		motor->planSetpNumber=planStepNumber; //设置目标步数
 		motor->step=0; //设置当前步数
-		if(freq) 
+		if(freq>16) 
 		{
 			motor->t_m=motor->timerfeq/freq;//设置目标计数值设定频率
 		}else 
 		{
-			motor->t_m=motor->timerfeq/motor->defaultfeq;//设置目标计数值为默认频率
+			if(motor->defaultfeq>16)
+			{
+				motor->t_m=motor->timerfeq/motor->defaultfeq;//设置目标计数值为默认频率
+			}else return;
+
 		}
 		stepperMotorStart(motor,motor->t_m);
 		
@@ -378,14 +444,20 @@ void setMixtureData(motor_struct * motor)
 	if(motor->planSetpNumber>=motor->pulse_1mm*20)
 	{
 		motor->AccPeriodArray=mymalloc(SRAMIN,motor->accStepNumber*2);
+		if(motor->AccPeriodArray!=NULL)
+		{
+			printf("malloc success\r\n");
+		}
 		motor->t_m=motor->timerfeq/motor->maxfeq;
 		GetStepPeriodArrayOnAcc(motor->AccPeriodArray,motor->accStepNumber,motor->timerfeq,motor->startfeq,motor->maxfeq,motor->curvature);
 		motor->motion=AccMove; //设置电机运动状态为加减速状态
+		printf("acc move\r\n");
 	}
 	else
 	{
 		motor->motion=ConstMove;//设置电机运动状态为匀速状态
 		motor->t_m=motor->timerfeq/motor->defaultfeq;
+		printf("const move\r\n");
 	}
 	
 
@@ -402,7 +474,11 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 	{
 		return FALSE;
 	}
-
+	if(motor->motion!=Stop) //电机不是处于静止状态来启动
+	{
+		return FALSE;
+	}
+	
 	OldDirection=motor->dir;
 	if(planPosition>0)
 	{
@@ -421,19 +497,19 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 		}
 		else
 		{
-			if(motor->postion<=0) motor->postion=motor->max_pos;
+			if(motor->postion<0) motor->postion=motor->max_pos;
 			planStepNumber=planPosition-motor->postion;
 		}
 	}
 	if(planStepNumber>0)
 	{
 		motor->dir=Front;
-		motor_Set_Direction(motor,Front);
+		motor_Set_Direction(motor);
 	}
 	else if(planStepNumber<0)
 	{
 		motor->dir=Back;
-		motor_Set_Direction(motor,Back);
+		motor_Set_Direction(motor);
 		planStepNumber*=-1;
 	}
 	else
@@ -461,4 +537,33 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 	}
 
 	return TRUE;
+}
+
+void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq)
+{
+	motor->motion=ConstMove;
+	motor->planSetpNumber=pulse;
+	motor->step=0;
+	if(freq>16)
+	{
+		motor->t_m=motor->timerfeq/freq;
+		printf("motor arr :%d",motor->t_m);
+	}else
+	{
+		if(motor->defaultfeq>16)
+		{
+				motor->t_m=motor->timerfeq/motor->defaultfeq;
+		}else return;
+
+	}
+	stepperMotorStart(motor,motor->t_m);
+}
+
+void motorAccGO_Debug(motor_struct * motor,u32 pulse)
+{
+	motor->motion=AccMove;
+	motor->planSetpNumber=pulse;
+	motor->step=0;
+	setMixtureData(motor);
+	stepperMotorStart(motor,motor->t_m);
 }
