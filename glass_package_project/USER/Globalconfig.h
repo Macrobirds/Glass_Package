@@ -17,7 +17,7 @@
 #include "w25qxx.h"
 #include "RingBuffer.h"
 
-
+#define DEBUG_MODE
 
 //SPI Flash 参数
 #define SpiFlashAddr_initFlag 				0x0000			// 首次初始化标志位
@@ -70,13 +70,14 @@
 
 #define GP_sucker1_Cyl PDout(14) //吸盘1阀 
 #define GP_sucker2_Cyl PDout(15) //吸盘2阀
-#define GP_sucker_Pump PBout(0) //吸盘阀
+#define GP_sucker_Pump PBout(0) //吸盘泵
 
 #define GP_big_Cyl PDout(11) //大气缸
 #define GP_small_Cyl PDout(12) //小气缸
 #define GC_claw_Cyl PDout(13) //夹手
 
 #define GP_spray_Cyl PBout(1) //喷头
+#define GCV_motor_Break PEout(7) //GCV电机抱闸
 
 #define DeveiceType_package 3
 

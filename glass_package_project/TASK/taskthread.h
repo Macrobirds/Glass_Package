@@ -3,7 +3,7 @@
 #include "motor.h"
 #include "Globalconfig.h"
 
-#define OVERTIME 3000
+#define OVERTIME 10000
 
 //任务线程状态
 enum taskthread_state
@@ -45,7 +45,7 @@ enum task_error
 //玻片进入槽任务流程序号
 enum glass_enter_task_index
 {
-	GE_none,// none 空任务 
+	GE_none=0,// none 空任务 
 	GE_reset_on,//  开机复位
 	GE_reset_off,// 关机复位
 	GE_Box_In, //进缸
@@ -55,14 +55,14 @@ enum glass_enter_task_index
 	GE_move_glass, //移动到载玻片
 	GE_move_back, //移动到装载槽后端
 	GE_finish, //结束任务
-  	GE_error,//异常上报任务
+  GE_error,//异常上报任务
     
 };
 
 //玻片夹手任务流程序号
 enum glass_claw_task_index
 {
-	GC_none,
+	GC_none=0,
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
 	GC_ver_start, //夹手复位到垂直原点位置
@@ -81,7 +81,7 @@ enum glass_claw_task_index
 //玻片封装任务流程序号
 enum glass_package_task_index
 {
-	GP_none,
+	GP_none=0,
 	GP_reset_on,//开机复位
 	GP_reset_off,//关机复位
 	GP_lack_glass, //缺少盖玻片复位 
@@ -102,7 +102,7 @@ enum glass_package_task_index
 //玻片出任务流程序号
 enum glass_out_task_index
 {
-	GO_none,
+	GO_none=0,
 	GO_reset_on,//开机复位
 	GO_reset_off, //关机复位
 	GO_Box_In,//进槽
@@ -118,10 +118,10 @@ enum glass_out_task_index
 };
 
 struct glass_enter_struct{
-	volatile enum glass_enter_task_index task; //任务序列
-	volatile enum task_state sta; //任务状态
+	enum glass_enter_task_index task; //任务序列
+	enum task_state sta; //任务状态
 	motor_struct * motor; //电机结构体指针
-	volatile u32 running_tim; //运行时间 ms
+	u32 running_tim; //运行时间 ms
 	u32 GE_box_len; //装载槽长度
 	u32 GE_box_dis; //装载槽间距
 	u8 box_Exist; //装载槽检测信号

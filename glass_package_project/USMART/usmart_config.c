@@ -22,14 +22,35 @@ static void Set_motor_dir(u8 dir)
 
 void gpio_test(u8 state,u8 pin)
 {
-	
-	if(state)
+	if(pin>=8&&pin<=15)
 	{
-		GPIO_SetBits(GPIOD,GPIO_Pin_0<<pin);
-	}else
+		if(state)
+		{
+			GPIO_SetBits(GPIOD,GPIO_Pin_0<<pin);
+		}else
+		{
+			GPIO_ResetBits(GPIOD,GPIO_Pin_0<<pin);
+		}
+	}else if(pin<=1||pin==12)
 	{
-		GPIO_ResetBits(GPIOD,GPIO_Pin_0<<pin);
+		if(state)
+		{
+			GPIO_SetBits(GPIOB,GPIO_Pin_0<<pin);
+		}else
+		{
+			GPIO_ResetBits(GPIOB,GPIO_Pin_0<<pin);
+		}
+	}else if(pin==7)
+	{
+		if(state)
+		{
+			GPIO_SetBits(GPIOE,GPIO_Pin_0<<pin);
+		}else
+		{
+			GPIO_ResetBits(GPIOE,GPIO_Pin_0<<pin);
+		}
 	}
+
 }
 
 void close_device(void)
@@ -61,8 +82,31 @@ void motor_test(u8 dir,u8 motor,u32 pulse,u32 freq)
 		motorGO_Debug(&GE_motor_struct,pulse,freq);
 		
 		break;
-		case 2:break;
-		case 3:break;
+		case 2: //GCV motor
+		if(dir)
+		{
+			GC_ver_motor_struct.dir=Front;
+		}else
+		{
+			GC_ver_motor_struct.dir=Back;
+		}
+		motor_Set_Direction(&GC_ver_motor_struct);
+		
+		motorGO_Debug(&GC_ver_motor_struct,pulse,freq);
+		break;
+		case 3:
+		if(dir)
+		{
+			GC_rot_motor_struct.dir=Front;
+		}else
+		{
+			GC_rot_motor_struct.dir=Back;
+		}
+		motor_Set_Direction(&GC_rot_motor_struct);
+		
+		motorGO_Debug(&GC_rot_motor_struct,pulse,freq);
+		
+		break;
 		case 4:break;
 		case 5:break;
 		case 6:break;
@@ -96,6 +140,36 @@ void motoracc_test(u8 dir,u8 motor,u32 pulse)
 	}
 }
 
+void boost_test(u8 task,u8 task_index)
+{
+	switch(task)
+	{
+		case 1: //GE task
+		if(GE.task==GE_none&&task_index<=GE_BOx_Out)
+		{	
+			GE.sta=Ready;
+			GE.subtask=0;
+			GE.task=task_index;
+			
+		}
+
+		break;
+		case 2:
+		if(GC.task==GC_none&&task_index<=GC_reset_off)
+		{
+			GC.sta=Ready;
+			GC.subtask=0;
+			GC.task=task_index;
+		}
+		break;
+		case 3:break;
+		case 4:break;
+
+	}
+}
+	
+	
+
 
 //函数名列表初始化(用户自己添加)
 //用户直接在这里输入要执行的函数名及其查找串
@@ -113,6 +187,7 @@ struct _m_usmart_nametab usmart_nametab[]=
 	(void *)boost_device_test,"void boost_device_test(u8 task)",
 	(void *)motor_test,"void motor_test(u8 dir,u8 motor,u32 pulse,u32 freq)",
 	(void *)motoracc_test,"void motoracc_test(u8 dir,u8 motor,u32 pulse)",
+	(void *)boost_test,"void boost_test(u8 task,u8 task_index)",
 };						  
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

@@ -27,12 +27,12 @@ motor_struct GE_motor_struct={
 	.FRONT=1,
 	.TIM=TIM1,
 	.AccPeriodArray=NULL,
-	.postion=-1,
+	.postion=-1000000,
 	.pulse_1mm=212,
 	.maxfeq=200*212,
 	.startfeq=30*212,
 	.defaultfeq=30*212,
-	.max_pos=212*520
+	.max_pos=212*460,
 	
 };
 motor_struct GC_rot_motor_struct={
@@ -42,17 +42,28 @@ motor_struct GC_rot_motor_struct={
 	.FRONT=1,
 	.TIM=TIM5,
 	.AccPeriodArray=NULL,
-	.postion=-1,
+	.postion=-10000,
+	.pulse_1mm=1,
+	.maxfeq=2000,
+	.startfeq=400,
+	.defaultfeq=600,
+	.max_pos=4800,
+	
 	
 };
 motor_struct GC_ver_motor_struct={
 	.name=GC_ver_motor,
 	.motion=Stop,
 	.dir=Front,
-	.FRONT=1,
+	.FRONT=0,
 	.TIM=TIM3,
 	.AccPeriodArray=NULL,
-	.postion=-1,
+	.postion=-1000000,
+	.pulse_1mm=211,
+	.maxfeq=211*200,
+	.startfeq=211*30,
+	.defaultfeq=211*30,
+	.max_pos=211*170,
 
 };
 motor_struct GP_motor_struct={
@@ -298,6 +309,10 @@ void stepperMotorStop(motor_struct * motor)
 {
 	TIM_Cmd(motor->TIM,DISABLE);
 	motor->motion=Stop;
+	if(motor->name==GC_ver_motor)
+	{
+		GCV_motor_Break=GAS_DISABLE; //关闭刹车
+	}
 }
 
 void stepperMotorStart(motor_struct * motor,u16 arr)
@@ -311,10 +326,14 @@ void stepperMotorStart(motor_struct * motor,u16 arr)
 			TIM_SetCompare1(motor->TIM,arr/2);
 			break;
 			//TIM2-5
-			case GC_ver_motor:
-			case GC_rot_motor: 
+			case GC_rot_motor:
 			case GO_hor_motor:
 			case GO_ver_motor:
+			TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+arr)%0xffff);
+			break;
+			case GC_ver_motor:
+			GCV_motor_Break=GAS_ENABLE; //打开刹车
+			my_delay_ms(100);
 			TIM_SetCompare1(motor->TIM,(motor->TIM->CNT+arr)%0xffff);
 			break;
 			default: break;
@@ -386,7 +405,7 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		}
 		else//位置未初始化成功
 		{
-			if(motor->postion<=0) motor->postion=motor->max_pos; 
+			if(motor->postion<=0) motor->postion=motor->max_pos-100; 
 			planStepNumber=planPosition-motor->postion;
 		}
 	
@@ -497,7 +516,7 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 		}
 		else
 		{
-			if(motor->postion<0) motor->postion=motor->max_pos;
+			if(motor->postion<=0) motor->postion=motor->max_pos-100;
 			planStepNumber=planPosition-motor->postion;
 		}
 	}
@@ -525,17 +544,7 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 			my_delay_us(5);
 	}
 	setMixtureData(motor);
-	if(motor->AccPeriodArray!=NULL)
-	{
-
-		stepperMotorStart(motor,motor->AccPeriodArray[0]);
-		
-	}else
-	{
-		motor->motion=Stop;
-		return FALSE;
-	}
-
+	stepperMotorStart(motor,motor->AccPeriodArray[0]);
 	return TRUE;
 }
 

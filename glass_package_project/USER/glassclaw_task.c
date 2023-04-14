@@ -17,7 +17,7 @@ void GC_ReadyTask(void)
 		case GC_reset_off:
 		if(GC.subtask==0) //复位至垂直原点
 		{
-			if(GC_ver_Sen==Sen_Block)
+			if(GC_ver_Sen!=Sen_Block)
 			{
 				GC.subtask=1;
 			}else
@@ -37,9 +37,7 @@ void GC_ReadyTask(void)
 					motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
 					GC.sta=Running;
 				}
-
 			}
-
 		}else if(GC.subtask==2) //旋转到旋转原点
 		{
 			if(GC_rot_Sen==Sen_Block)
@@ -47,7 +45,7 @@ void GC_ReadyTask(void)
 				GC.subtask=3;
 			}else
 			{
-				if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片托盘回到原点
+				if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片吸盘装置离开原点
 				{
 					motorGo_acc(GC.motor_r,0);
 					GC.sta=Running;
@@ -90,17 +88,28 @@ void GC_ReadyTask(void)
 		break;
 		///////////////////旋转方向复位到原点/////////////////////
 		case GC_rot_start:
-		if(GC_rot_Sen==Sen_Block) //旋转原点感应
+		if(GC.subtask==0)
 		{
-			stepperMotorStop(GC.motor_r);
-			GC.motor_r->postion=0;			
-			GC.sta=Finish;
-		}else
+			if(GC_rot_Sen!=Sen_Block) //夹手在原点位 不感应
+			{
+				GC.motor_r->dir=Front;
+				motor_Set_Direction(GC.motor_r);
+				motorGO_Debug(GC.motor_r,GC.motor_r->pulse_1mm*400,0);
+				GC.sta=Running;
+			}else
+			{
+				GC.subtask=1;
+			}
+		}else if(GC.subtask==1)
 		{
-			GC_claw_Cyl=GAS_DISABLE; //夹手释放
-			motorGo_acc(GC.motor_r,0); //旋转方向复位至原点
-			GC.sta=Running;
+			if(GC_claw_Sen!=Sen_Block)
+			{
+				GC.motor_r->postion=-1;
+				motorGo(GC.motor_r,0,0);
+				GC.sta=Running;
+			}
 		}
+		
 		break;
 		//////////////////夹手旋转至垂直位置//////////////////
 		case GC_rot_down:
@@ -264,8 +273,6 @@ void GC_RunningTask(void)
 		////////////夹手复位至垂直原点////////////////
 		if(GC_ver_Sen==Sen_Block)
 		{
-			stepperMotorStop(GC.motor_v);
-			GC.motor_v->postion=0;
 			GC.sta=Finish;
 		}else
 		{
@@ -277,16 +284,25 @@ void GC_RunningTask(void)
 		break;
 		///////////夹手复位至旋转原点////////////////
 		case GC_rot_start:
-		if(GC_rot_Sen==Sen_Block)
-		{
-			stepperMotorStop(GC.motor_r);
-			GC.motor_r->postion=0;
-			GC.sta=Finish;
-		}else
+		if(GC.subtask==0)
 		{
 			if(GC.motor_r->motion==Stop)
 			{
-				Error_Set(Error_Sensor,GC_rot_sensor);
+				GC.subtask=1,
+				GC.sta=Ready;
+			}
+		}else if(GC.subtask==1)
+		{
+			if(GC_rot_Sen!=Sen_Block)
+			{
+				GC.subtask=0;
+				GC.sta=Finish;
+			}else
+			{
+				if(GC.motor_r->motion==Stop)
+				{
+					Error_Set(Error_Sensor,GC_rot_sensor);
+				}
 			}
 		}
 		break;

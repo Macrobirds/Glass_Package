@@ -4,6 +4,7 @@ struct glass_enter_struct GE={
 	.task=GE_none,
 	.sta=Ready,
 	.motor=&GE_motor_struct,
+
 };
 
 
@@ -12,6 +13,7 @@ struct glass_claw_struct GC={
 	.sta=Ready,
 	.motor_v=&GC_ver_motor_struct,
 	.motor_r=&GC_rot_motor_struct,
+	.GCV_down_pos=211*154,
 };
 
 
@@ -108,6 +110,7 @@ void TaskThread_Parm_Init(void)
 
 void TaskThread_Init(void)
 {
+	printf("TaskThread_Init\r\n");
 	//Init TIM6 Interrupt  1ms
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -139,7 +142,6 @@ void TIM6_IRQHandler(void) //TIM6中断
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update)!=RESET)
 	{
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
-		
 		if(TaskThread_State!=taskthread_pause) //不等于暂停状态
 		{
 			//GE 玻片入料任务线程

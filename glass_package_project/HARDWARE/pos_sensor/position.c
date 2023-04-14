@@ -152,7 +152,7 @@ static void Exti_Init_8_15(void)
 	{
 		//GPIOE.11
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOE, GPIO_PinSource11);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //上升沿触发
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; //上升沿触发
 		EXTI_InitStructure.EXTI_Line = EXTI_Line11;
 		EXTI_Init(&EXTI_InitStructure);
 	}
@@ -384,6 +384,7 @@ void EXTI9_5_IRQHandler(void)
 }
 void EXTI15_10_IRQHandler(void)
 {
+	printf("exti15-10\r\n");
 	//GE_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line10)!=RESET) //进料槽移动到原点
 	{
@@ -401,13 +402,14 @@ void EXTI15_10_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line11)!=RESET) //夹手旋转至原点
 	{
 		delay_us(50);
-		if(GC_rot_Sen==Sen_Block) //夹手旋转停止
+		if(GC_rot_Sen!=Sen_Block) //夹手旋转停止
 		{
 			TIM_Cmd(TIM5,DISABLE);
 			GC_rot_motor_struct.postion=0;
 			GC_rot_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line11);
+		printf("GC_rot_Sen\r\n");
 	}
 	//GC_ver_Sen
 	if(EXTI_GetITStatus(EXTI_Line12)!=RESET) //夹手运动到垂直原点
@@ -416,11 +418,13 @@ void EXTI15_10_IRQHandler(void)
 		if(GC_ver_Sen==Sen_Block) //夹手垂直停止
 		{
 			TIM_Cmd(TIM3,DISABLE);
+			GCV_motor_Break=GAS_DISABLE;
 			GC_ver_motor_struct.postion=0;
 			GC_ver_motor_struct.motion=Stop;
 		}
 
 		EXTI_ClearITPendingBit(EXTI_Line12);
+		printf("GC_ver_sen\r\n");
 	}
 	//GP_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line13)!=RESET) //封片运动到原点
@@ -433,6 +437,7 @@ void EXTI15_10_IRQHandler(void)
 			GP_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line13);
+		printf("Exti 13\r\n");
 	}
 	//GOH_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line14)!=RESET) //封片设备到达原点
@@ -445,6 +450,14 @@ void EXTI15_10_IRQHandler(void)
 			GO_hor_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line14);
+		printf("exti 14\r\n");
+	}
+	
+	if(EXTI_GetITStatus(EXTI_Line15)!=RESET) //封片设备到达原点
+	{
+
+		EXTI_ClearITPendingBit(EXTI_Line15);
+		printf("exti 15\r\n");
 	}
 
 
