@@ -65,15 +65,14 @@ enum glass_claw_task_index
 	GC_none=0,
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
+	GC_run, //开始运行
 	GC_ver_start, //夹手复位到垂直原点位置
 	GC_rot_start, //夹手复位到旋转原点位置
 	GC_rot_down, //夹手旋转到垂直位置
-	GC_move_down, //夹手移动到夹载玻片处
-	GC_grab,	//夹手夹取载玻片
-	GC_move_up,	//夹手回到垂直原点
-	GC_rot_up, //夹手旋转到旋转原点位置
-	GC_rot_hor, //夹手旋转到水平位置
+	GC_move_down, //夹手下降到夹载玻片处
+	GC_grab,	//夹手夹取
 	GC_release, //夹手松开释放
+	GC_rot_hor, //夹手旋转到水平位置
 	GC_finish, 
   	GC_error,//异常上报任务
 };
