@@ -65,7 +65,7 @@ enum glass_claw_task_index
 	GC_none=0,
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
-	GC_run, //开始运行
+	GC_start, //开始运行
 	GC_ver_start, //夹手复位到垂直原点位置
 	GC_rot_start, //夹手复位到旋转原点位置
 	GC_rot_down, //夹手旋转到垂直位置
@@ -83,9 +83,9 @@ enum glass_package_task_index
 	GP_none=0,
 	GP_reset_on,//开机复位
 	GP_reset_off,//关机复位
-	GP_lack_glass, //缺少盖玻片复位 
 	GP_start, //封片初始化
-	GP_move_start, //移动到轨道原点
+	GP_move_start, //复位到轨道原点
+	GP_cyl_start, //气缸复位到原点位置
 	GP_move_glass, //移动到盖玻片位置
 	GP_sucker_down, //吸盘下降
 	GP_suck_glass, //吸盘吸取盖玻片
@@ -106,9 +106,11 @@ enum glass_out_task_index
 	GO_reset_off, //关机复位
 	GO_Box_In,//进槽
 	GO_Box_Out,//出槽
-	GO_start, //玻片托盘移动到原点位置
-	GO_package, //玻片托盘移动到封片位置
-	GO_end, //玻片托盘移动到终点位置
+	GO_start, //开始运行
+	GOH_start, //玻片复位到水平原点位置
+	GOH_package, //玻片托盘移动到水平封片位置
+	GOH_end, //玻片托盘移动到水平终点位置
+	GOV_start, //复位到垂直原点位置
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
 	GO_adjust,  //调整存储槽对准玻片
@@ -132,7 +134,8 @@ struct glass_enter_struct{
 };
 
 struct glass_claw_struct{
-	volatile enum glass_claw_task_index task;
+	volatile enum glass_claw_task_index task; 
+ 	enum glass_claw_task_index main_task;
 	volatile enum task_state sta;
 	motor_struct * motor_v; //垂直电机
 	motor_struct * motor_r; //旋转电机
@@ -141,11 +144,13 @@ struct glass_claw_struct{
 	u16 GCR_ver_pos; //旋转垂直位置
 	u32 GCV_down_pos; //垂直下降位置
 	u8 subtask; //子任务
+	u8 main_subtask;
 	enum glass_claw_task_index resume_task; //恢复任务序列
 }; 
 
 struct glass_package_struct{
 	volatile enum glass_package_task_index task;
+	enum glass_package_task_index main_task;
 	volatile enum task_state sta;
 	motor_struct * motor;
 	volatile u32 running_tim;
@@ -158,11 +163,13 @@ struct glass_package_struct{
 	u16 spray_speed;
 	u8 spray_pressure;
 	u8 subtask;
+	u8 main_subtask;
 	enum glass_package_task_index resume_task; //恢复任务序列 
 };
 
 struct glass_out_struct{
 	volatile enum glass_out_task_index task;
+	enum glass_out_task_index main_task;
 	volatile enum task_state sta;
 	motor_struct * motor_h;
 	motor_struct * motor_v;
@@ -173,6 +180,7 @@ struct glass_out_struct{
 	u32 GOV_slot_dis;
 	u32 GOV_box_len;
 	u8 subtask; //子任务
+	u8 main_subtask; //
 	volatile u8 glass_num;
 	volatile u8 box_num;
 	enum glass_out_task_index resume_task; //恢复任务序列

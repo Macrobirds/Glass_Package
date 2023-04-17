@@ -1,15 +1,15 @@
 #include "taskthread.h"
 
-static enum glass_enter_task_index next_task = GE_none;
+
 
 // 夹手位于垂直原点，垂直静止
 static u8 check_GC(void)
 {
-	#ifdef DEBUG_MODE
+#ifdef DEBUG_MODE
 	return TRUE;
-	#else
+#else
 	return (GC_ver_Sen == Sen_Block) && (GC.motor_v->motion == Stop);
-	#endif
+#endif
 }
 
 void GE_ReadyTask(void)
@@ -20,7 +20,6 @@ void GE_ReadyTask(void)
 		break;
 	/////////////////开机复位//////////////////////////////
 	case GE_reset_on:
-		printf("GE_reset_on\r\n");
 		if (GE.subtask == 0)
 		{
 			if (GE_start_Sen == Sen_Block) // 原点感应  离开感应器 再回到原点
@@ -39,8 +38,7 @@ void GE_ReadyTask(void)
 		{
 			if (check_GC())
 			{
-			  GE.motor->postion=-1;// 标记位置未校准 前往原点
-				motorGo(GE.motor, 0, GE.motor->pulse_1mm * 50);
+				motorGo(GE.motor, 0, 0);
 				GE.sta = Running;
 			}
 		}
@@ -48,11 +46,9 @@ void GE_ReadyTask(void)
 		break;
 	/////////////关机复位///////////////////////////
 	case GE_reset_off:
-		GE.sta=Finish;
-	break;
+		break;
 	/////////////////装载槽进入//////////////////////////////
 	case GE_Box_In:
-		printf("GE_box_in\r\n");
 		if (GE_start_Sen == Sen_Block) // 原点感应 装载槽已进入
 		{
 			stepperMotorStop(GE.motor);
@@ -70,7 +66,6 @@ void GE_ReadyTask(void)
 		break;
 	/////////////////装载槽推出//////////////////////////////
 	case GE_BOx_Out:
-		printf("GE_box_out\r\n");
 		motorGo_acc(GE.motor, GE.motor->max_pos - 100);
 		GE.sta = Running;
 		break;
@@ -79,6 +74,7 @@ void GE_ReadyTask(void)
 	case GE_move_start:
 		if (GE_start_Sen == Sen_Block)
 		{
+			stepperMotorStop(GE.motor);
 			GE.motor->postion = 0;
 			GE.sta = Finish;
 		}
@@ -93,7 +89,7 @@ void GE_ReadyTask(void)
 		break;
 	////////////////////装载槽前端移动到夹手正下方////////////////////////
 	case GE_move_front:
-		if ((GE_up_Sen == Sen_Block) && (GE_down_Sen == Sen_Block))
+		if (GE_up_Sen == Sen_Block)
 		{
 			GE.sta = Finish;
 			GE.box_Exist = TRUE;
@@ -109,7 +105,7 @@ void GE_ReadyTask(void)
 		break;
 	//////////////////////玻片移动到夹手正下方//////////////////////////////////
 	case GE_move_glass:
-		if (GE_down_Sen == Sen_Block)
+		if (GE_down_Sen == Sen_Block || GE_up_Sen == Sen_Block)
 		{
 			GE.sta = Finish;
 		}
@@ -196,7 +192,7 @@ void GE_RunningTask(void)
 	case GE_reset_off:
 
 		break;
-		/////////////////装载槽进入//////////////////////////////
+	/////////////////装载槽进入//////////////////////////////
 	case GE_Box_In:
 		if (GE_start_Sen == Sen_Block)
 		{
@@ -210,14 +206,14 @@ void GE_RunningTask(void)
 			}
 		}
 		break;
-		/////////////////装载槽推出//////////////////////////////
+	/////////////////装载槽推出//////////////////////////////
 	case GE_BOx_Out:
 		if (GE.motor->motion == Stop)
 		{
 			GE.sta = Finish;
 		}
 		break;
-		/////////////////////装载槽复位到原点//////////////////////////////////
+	/////////////////////装载槽复位到原点//////////////////////////////////
 	case GE_move_start:
 		if (GE_start_Sen == Sen_Block)
 		{
@@ -231,9 +227,9 @@ void GE_RunningTask(void)
 			}
 		}
 		break;
-		/////////////////////等待装载槽前端移动到夹手正下方///////////////////////////////
+	/////////////////////等待装载槽前端移动到夹手正下方///////////////////////////////
 	case GE_move_front:
-		if ((GE_up_Sen == Sen_Block) && (GE_down_Sen == Sen_Block))
+		if (GE_up_Sen == Sen_Block)
 		{
 			GE.sta = Finish;
 			GE.box_Exist = TRUE;
@@ -312,18 +308,15 @@ void GE_FinishTask(void)
 	case GE_reset_off:
 		GE.task = GE_none;
 		GE.sta = Ready;
-		GE.subtask = 0;
 		break;
 	case GE_Box_In:
 		GE.task = GE_none;
 		GE.sta = Ready;
-		GE.subtask = 0;
 		break;
 	case GE_BOx_Out:
 		GE.task = GE_none;
 		GE.sta = Ready;
-		GE.subtask = 0;
-	  break;
+		break;
 	case GE_move_start: // 跳转至装载槽前端移动到夹手正下方
 		GE.sta = Ready;
 		GE.task = GE_move_front;
@@ -335,15 +328,15 @@ void GE_FinishTask(void)
 	case GE_move_glass:
 		if (check_GC()) // 夹手位于垂直原点，垂直静止
 		{
-			if (GE_down_Sen != Sen_Block) // 玻片被夹取 下端无感应
+			if (GE_down_Sen != Sen_Block && GE_up_Sen!=Sen_Block) // 玻片被夹取 上下端无感应
 			{
 				GE.sta = Ready;
 			}
-		}
-		if ((GE_up_Sen == Sen_Block) && (GE_down_Sen == Sen_Block)) // 到达装载槽后端
-		{
-			GE.sta = Ready;
-			GE.task = GE_move_back;
+			else if ((GE_up_Sen == Sen_Block)) // 到达装载槽后端
+			{
+				GE.sta = Ready;
+				GE.task = GE_move_back;
+			}
 		}
 		break;
 	case GE_move_back:
@@ -360,14 +353,14 @@ void GE_FinishTask(void)
 
 void GE_TaskThread(void)
 {
-	if (GE.sta == Ready)
+	if (GE.task == Ready)
 	{
 		GE_ReadyTask();
 		// 重载计时
 		GE.running_tim = 0;
 	}
 
-	if (GE.sta == Running)
+	if (GE.task == Running)
 	{
 		GE_RunningTask();
 		// 计时 若超时进行超时错误上报
@@ -378,7 +371,7 @@ void GE_TaskThread(void)
 		}
 	}
 
-	if (GE.sta == Finish)
+	if (GE.task == Finish)
 	{
 		if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务跳转
 		{

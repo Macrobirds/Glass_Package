@@ -13,7 +13,9 @@ struct glass_claw_struct GC={
 	.sta=Ready,
 	.motor_v=&GC_ver_motor_struct,
 	.motor_r=&GC_rot_motor_struct,
-	.GCV_down_pos=211*154,
+	.GCV_down_pos=32500,
+	.GCR_hor_pos=190,
+	.GCR_ver_pos=3390,
 };
 
 
@@ -55,6 +57,7 @@ u8 TaskThread_CheckIdle(void)
 void Error_Set(enum task_error error,u32 error_sen)
 {
 
+	#ifndef DEBUG_MODE
 	//暂停当前任务
 	Pause_TaskThread();
 
@@ -80,6 +83,7 @@ void Error_Set(enum task_error error,u32 error_sen)
 	{
 		sensor_error_idx|=error_sen;
 	}
+	#endif
 }
 
 void TaskThread_Parm_Init(void)
@@ -186,7 +190,7 @@ void Pause_TaskThread(void)
 
 
 }
-//暂停恢复运行
+//恢复运行
 void Resume_TaskThread(void)
 {
 	if(error_type<Error_Slide_Glass) //未发生元器件机构错误

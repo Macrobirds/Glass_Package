@@ -63,7 +63,7 @@ motor_struct GC_ver_motor_struct={
 	.maxfeq=211*200,
 	.startfeq=211*30,
 	.defaultfeq=211*30,
-	.max_pos=211*170,
+	.max_pos=36000,
 
 };
 motor_struct GP_motor_struct={
@@ -249,7 +249,7 @@ u8 motor_Get_Start_Sen(enum motor_index motor_name)
 			return GE_start_Sen;
 		break;
 		case GC_rot_motor:
-		return GC_rot_Sen;	
+		return (!GC_rot_Sen);
 		break;
 		case GC_ver_motor:
 		return GC_ver_Sen;	

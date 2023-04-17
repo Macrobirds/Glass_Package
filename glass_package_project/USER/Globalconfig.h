@@ -48,7 +48,7 @@
 #define GC_rot_Sen PEin(11) //玻片夹手旋转传感器 
 #define GC_ver_Sen PEin(12) //玻片夹手垂直传感器
 #define GP_start_Sen PEin(13) //玻片封片起点传感器
-#define GOH_start_Sen PEin(14) //玻片承载起点传感器
+#define GOH_start_Sen PDin(3) //玻片承载起点传感器
 #define GOH_mid_Sen PDin(0) //玻片承载封片传感器
 #define GOH_end_Sen PDin(5)  //片承载终点传感器
 #define GOV_start_Sen PDin(6) //玻片出盒轨道原点传感器
@@ -57,10 +57,10 @@
 #define GP_sucker_Sen  PEin(15)//玻片封片玻片吸取检测传感器
 #define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
 #define GC_claw_Sen PCin(2) //玻片夹手夹手状态传感器
-#define GP_big_cyl_Sen PDin(3) //大气缸传感器
+#define GP_big_cyl_Sen PEin(0) //大气缸传感器
 #define GP_small_cyl_Sen PDin(4) //小气缸传感器
 
-#define GOV_box_Sen PBin(5)  //玻片出盒玻片盒传感器
+#define GOV_box_Sen PEin(14)  //玻片出盒玻片盒传感器
 
 
 //映射气阀气泵控制端口

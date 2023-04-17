@@ -298,7 +298,22 @@ void EXTI0_IRQHandler(void)
 }
 void EXTI1_IRQHandler(void);
 void EXTI2_IRQHandler(void);
-void EXTI3_IRQHandler(void);
+void EXTI3_IRQHandler(void)
+{
+	//GOH_start_Sen
+	if(EXTI_GetITStatus(EXTI_Line3)!=RESET) //封片设备到达原点
+	{
+		delay_us(50);
+		if(GOH_start_Sen==Sen_Block)//封片设备停止
+		{
+			TIM_Cmd(TIM2,DISABLE);
+			GO_hor_motor_struct.postion=0;
+			GO_hor_motor_struct.motion=Stop;
+		}
+		EXTI_ClearITPendingBit(EXTI_Line3);
+		printf("exti 3\r\n");
+	}
+}
 void EXTI4_IRQHandler(void);
 
 
@@ -358,7 +373,7 @@ void EXTI9_5_IRQHandler(void)
 		printf("exit8 trigger\r\n");
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
-			if(GE_down_Sen==Sen_Block) //上升沿触发
+			if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //只有下端照射
 			{
 				TIM_Cmd(TIM1,DISABLE);
 				GE_motor_struct.motion=Stop;
@@ -372,7 +387,7 @@ void EXTI9_5_IRQHandler(void)
 		delay_us(50);
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
-			if(GE_up_Sen==Sen_Block) //上升沿触发
+			if(GE_up_Sen==Sen_Block) //只有上端照射
 			{
 				TIM_Cmd(TIM1,DISABLE);
 				GE_motor_struct.motion=Stop;
@@ -439,19 +454,7 @@ void EXTI15_10_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line13);
 		printf("Exti 13\r\n");
 	}
-	//GOH_start_Sen
-	if(EXTI_GetITStatus(EXTI_Line14)!=RESET) //封片设备到达原点
-	{
-		delay_us(50);
-		if(GOH_start_Sen==Sen_Block)//封片设备停止
-		{
-			TIM_Cmd(TIM2,DISABLE);
-			GO_hor_motor_struct.postion=0;
-			GO_hor_motor_struct.motion=Stop;
-		}
-		EXTI_ClearITPendingBit(EXTI_Line14);
-		printf("exti 14\r\n");
-	}
+
 	
 	if(EXTI_GetITStatus(EXTI_Line15)!=RESET) //封片设备到达原点
 	{
