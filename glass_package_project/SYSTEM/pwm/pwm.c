@@ -390,27 +390,27 @@ void TIM2_IRQHandler(void) // TIM2 中断 GO_hor_motor
 		}
 		// 在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		if (GO_hor_motor_struct.planpostion == 0 && GOH_start_Sen == Sen_Block)
-		{
-			TIM_Cmd(TIM2, DISABLE);
-			GO_hor_motor_struct.motion = Stop;
-			GO_hor_motor_struct.postion = 0;
-			return;
-		}
-		else if (GO_hor_motor_struct.planpostion == GO.GOH_mid_pos && GOH_mid_Sen == Sen_Block)
-		{
-			TIM_Cmd(TIM2, DISABLE);
-			GO_hor_motor_struct.motion = Stop;
-			GO_hor_motor_struct.postion = GO.GOH_mid_pos;
-			return;
-		}
-		else if (GO_hor_motor_struct.planpostion == GO.GOH_end_pos && GOH_end_Sen == Sen_Block)
-		{
-			TIM_Cmd(TIM2, DISABLE);
-			GO_hor_motor_struct.motion = Stop;
-			GO_hor_motor_struct.postion = GO.GOH_end_pos;
-			return;
-		}
+//		if (GO_hor_motor_struct.planpostion == 0 && GOH_start_Sen == Sen_Block)
+//		{
+//			TIM_Cmd(TIM2, DISABLE);
+//			GO_hor_motor_struct.motion = Stop;
+//			GO_hor_motor_struct.postion = 0;
+//			return;
+//		}
+//		else if (GO_hor_motor_struct.planpostion == GO.GOH_mid_pos && GOH_mid_Sen == Sen_Block)
+//		{
+//			TIM_Cmd(TIM2, DISABLE);
+//			GO_hor_motor_struct.motion = Stop;
+//			GO_hor_motor_struct.postion = GO.GOH_mid_pos;
+//			return;
+//		}
+//		else if (GO_hor_motor_struct.planpostion == GO.GOH_end_pos && GOH_end_Sen == Sen_Block)
+//		{
+//			TIM_Cmd(TIM2, DISABLE);
+//			GO_hor_motor_struct.motion = Stop;
+//			GO_hor_motor_struct.postion = GO.GOH_end_pos;
+//			return;
+//		}
 		/****/
 
 		if (GO_hor_motor_struct.motion == ConstMove) // 电机匀速运动
@@ -464,7 +464,7 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 				return;
 			}
 
-			if (GC_ver_motor_struct.max_pos < GC_ver_motor_struct.postion) // 到达轨道最大距离
+			if (GC_ver_motor_struct.max_pos <= GC_ver_motor_struct.postion) // 到达轨道最大距离
 			{
 				TIM_Cmd(TIM3, DISABLE);
 				GCV_motor_Break = GAS_DISABLE;
@@ -529,13 +529,13 @@ void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
 			}
 			GO_ver_motor_struct.step++; // 计算当前步数
 
-			if (GO_ver_motor_struct.planSetpNumber < GO_ver_motor_struct.step) // 到达指定步数,电机停止
+			if (GO_ver_motor_struct.planSetpNumber <= GO_ver_motor_struct.step) // 到达指定步数,电机停止
 			{
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
 				return;
 			}
-			if (GO_ver_motor_struct.max_pos < GO_ver_motor_struct.postion) // 到达最大距离
+			if (GO_ver_motor_struct.max_pos <= GO_ver_motor_struct.postion) // 到达最大距离
 			{
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
@@ -600,14 +600,14 @@ void TIM5_IRQHandler(void) // TIM5 中断 GC_rot_motor
 			}
 			GC_rot_motor_struct.step++; // 计算当前步数
 
-			if (GC_rot_motor_struct.planSetpNumber < GC_rot_motor_struct.step) // 到达指定步数,电机停止
+			if (GC_rot_motor_struct.planSetpNumber <= GC_rot_motor_struct.step) // 到达指定步数,电机停止
 			{
 				TIM_Cmd(TIM5, DISABLE);
 				GC_rot_motor_struct.motion = Stop;
 				return;
 			}
 
-			if(GC_rot_motor_struct.max_pos<GC_rot_motor_struct.postion) //到达指定步数,电机停止
+			if(GC_rot_motor_struct.max_pos<= GC_rot_motor_struct.postion) //到达指定步数,电机停止
 			{
 				TIM_Cmd(TIM5,DISABLE);
 				GC_rot_motor_struct.motion=Stop;
@@ -665,14 +665,14 @@ void TIM8_UP_IRQHandler(void) // TIM8中断 GP_motor
 		}
 		GP_motor_struct.step++; // 计算当前步数
 
-		if (GP_motor_struct.planSetpNumber < GP_motor_struct.step) // 到达指定步数,电机停止
+		if (GP_motor_struct.planSetpNumber <= GP_motor_struct.step) // 到达指定步数,电机停止
 		{
 			TIM_Cmd(TIM8, DISABLE);
 			GP_motor_struct.motion = Stop;
 			return;
 		}
 
-		if (GP_motor_struct.max_pos < GP_motor_struct.postion) // 到达轨道最大距离
+		if (GP_motor_struct.max_pos <= GP_motor_struct.postion) // 到达轨道最大距离
 		{
 			TIM_Cmd(TIM8, DISABLE);
 			GP_motor_struct.motion = Stop;

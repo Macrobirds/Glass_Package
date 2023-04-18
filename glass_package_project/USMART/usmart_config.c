@@ -94,7 +94,7 @@ void motor_test(u8 dir,u8 motor,u32 pulse,u32 freq)
 		
 		motorGO_Debug(&GC_ver_motor_struct,pulse,freq);
 		break;
-		case 3:
+		case 3: //GCV_motor
 		if(dir)
 		{
 			GC_rot_motor_struct.dir=Front;
@@ -107,9 +107,39 @@ void motor_test(u8 dir,u8 motor,u32 pulse,u32 freq)
 		motorGO_Debug(&GC_rot_motor_struct,pulse,freq);
 		
 		break;
-		case 4:break;
-		case 5:break;
-		case 6:break;
+		case 4: //GP_motor
+		if(dir)
+		{
+			GP_motor_struct.dir=Front;
+		}else
+		{
+			GP_motor_struct.dir=Back;
+		}
+		motor_Set_Direction(&GP_motor_struct);
+		motorGO_Debug(&GP_motor_struct,pulse,freq);
+		break;
+		case 5: //GOH_motor
+		if(dir)
+		{
+			GO_hor_motor_struct.dir=Front;
+		}else
+		{
+			GO_hor_motor_struct.dir=Back;
+		}
+		motor_Set_Direction(&GO_hor_motor_struct);
+		motorGO_Debug(&GO_hor_motor_struct,pulse,freq);	
+		break;
+		case 6: //GOV_motor
+		if(dir)
+		{
+			GO_ver_motor_struct.dir=Front;
+		}else
+		{
+			GO_ver_motor_struct.dir=Back;
+		}
+		motor_Set_Direction(&GO_ver_motor_struct);
+		motorGO_Debug(&GO_ver_motor_struct,pulse,freq);	
+		break;
 		
 	}
 }
@@ -162,8 +192,22 @@ void boost_test(u8 task,u8 task_index)
 			GC.task=task_index;
 		}
 		break;
-		case 3:break;
-		case 4:break;
+		case 3:
+		if(GP.task==GP_none&&task_index<=GP_reset_off)
+		{
+			GP.sta=Ready;
+			GP.subtask=0;
+			GP.task=task_index;
+		}
+		break;
+		case 4:
+		if(GO.task==GO_none&&task_index<=GO_Box_Out)
+		{
+			GO.sta=Ready;
+			GO.subtask=0;
+			GO.task=task_index;
+		}
+		break;
 
 	}
 }

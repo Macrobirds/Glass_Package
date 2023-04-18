@@ -56,7 +56,7 @@ void GC_ReadyTask(void)
 		break;
 	///////////////开机复位//////////////////////
 	case GC_reset_on:
-		printf("GC reset on:%d\r\n ",GC.subtask,GC.task);
+		printf("GC reset on:%d\r\n ",GC.subtask);
 		if (GC.subtask == 0) // 夹手释放
 		{
 			Next_Task(GC.task, GC_release);
@@ -88,6 +88,7 @@ void GC_ReadyTask(void)
 		break;
 	////////////////夹手关机复位//////////////////
 	case GC_reset_off:
+		printf("GC reset on:%d\r\n ",GC.subtask);
 		if (GC.subtask == 0) // 复位至垂直原点
 		{
 			Next_Task(GC.task, GC_ver_start);
@@ -110,7 +111,7 @@ void GC_ReadyTask(void)
 			}
 			else
 			{
-				GC.subtask = 4;
+				GC.sta=Finish; //结束任务
 			}
 		}
 		else if (GC.subtask == 3) // 夹手释放
@@ -124,6 +125,7 @@ void GC_ReadyTask(void)
 		break;
 	///////////////////开始运行任务//////////////////////////
 	case GC_start:
+		printf("GC reset on:%d\r\n ",GC.subtask);
 		if (GC.subtask == 0) // 释放夹手
 		{
 			if (GP.task < GP_sucker_up) // 等待封片工作完成
@@ -368,7 +370,7 @@ void GC_RunningTask(void)
 		break;
 	///////////////夹手旋转至水平位置//////////
 	case GC_rot_hor:
-		if (GC.motor_r == Stop)
+		if (GC.motor_r->motion == Stop)
 		{
 			GC.sta = Finish;
 		}

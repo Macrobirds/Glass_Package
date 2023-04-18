@@ -103,14 +103,14 @@ enum glass_out_task_index
 {
 	GO_none=0,
 	GO_reset_on,//开机复位
-	GO_reset_off, //关机复位
+	GO_reset_off, //关机复位	
+	GOV_start, //复位到垂直原点位置
 	GO_Box_In,//进槽
 	GO_Box_Out,//出槽
 	GO_start, //开始运行
 	GOH_start, //玻片复位到水平原点位置
 	GOH_package, //玻片托盘移动到水平封片位置
 	GOH_end, //玻片托盘移动到水平终点位置
-	GOV_start, //复位到垂直原点位置
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
 	GO_adjust,  //调整存储槽对准玻片
@@ -176,9 +176,9 @@ struct glass_out_struct{
 	volatile u32 running_tim;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;
-	u32 GOV_box_dis;
-	u32 GOV_slot_dis;
-	u32 GOV_box_len;
+	u32 GOV_box_dis; //不同存储槽的槽间距
+	u32 GOV_slot_dis; //存储槽槽长度
+	u32 GOV_box_len; //两个存储槽总长度
 	u8 subtask; //子任务
 	u8 main_subtask; //
 	volatile u8 glass_num;

@@ -294,6 +294,7 @@ void EXTI0_IRQHandler(void)
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line0);
+		printf("exti 1\r\n");
 	}
 }
 void EXTI1_IRQHandler(void);
@@ -330,6 +331,7 @@ void EXTI9_5_IRQHandler(void)
 			GO_hor_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line5);
+		printf("GOH_end_sen\r\n");
 	}
 	//GOV_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line6)!=RESET) //垂直出料槽到达原点
@@ -342,9 +344,10 @@ void EXTI9_5_IRQHandler(void)
 			GO_ver_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line6);
+		printf("GOV_start_Sen\r\n");
 	}
 	//GOV_galss_Sen
-	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //检测到存储槽空
+	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //检测到存储槽是否存在玻片
 	{
 		delay_us(50);
 		if(GO.task>GO_Box_Out)
@@ -354,7 +357,7 @@ void EXTI9_5_IRQHandler(void)
 				TIM_Cmd(TIM4,DISABLE);
 				GO_ver_motor_struct.motion=Stop;
 			}
-		}else if(GO.task==GO_Box_In&&GO.subtask==2)
+		}else if(GO.task==GO_Box_In&&GO.subtask==1)
 		{
 			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 			{
@@ -362,7 +365,7 @@ void EXTI9_5_IRQHandler(void)
 				GO_ver_motor_struct.motion=Stop;
 			}
 		}
-		printf("exit7 trigger\r\n");
+		//printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line7);
 	}
 	//GE_down_Sen

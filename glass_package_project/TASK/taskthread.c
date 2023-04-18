@@ -23,6 +23,10 @@ struct glass_package_struct GP={
 	.task=GP_none,
 	.sta=Ready,
 	.motor=&GP_motor_struct,
+	.sucker_pos=20000,
+	.spray_pos=14000,
+	.spray_len=268*20,
+	.spray_speed=268*30,
 };
 
 
@@ -31,6 +35,11 @@ struct glass_out_struct GO={
 	.sta=Ready,
 	.motor_h=&GO_hor_motor_struct,
 	.motor_v=&GO_ver_motor_struct,
+	.GOH_mid_pos=268*31,
+	.GOH_end_pos=29000,
+	.GOV_box_dis=800*25,
+	.GOV_box_len=800*210,
+	
 };
 
 enum taskthread_state TaskThread_State=taskthread_boost; //任务线程运行状态 
@@ -137,8 +146,9 @@ void TaskThread_Init(void)
 	NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
 
 	TIM_Cmd(TIM6,ENABLE);
+	#ifndef DEBUG_MODE
 	TaskThread_Parm_Init();
-	
+	#endif
 }
 
 void TIM6_IRQHandler(void) //TIM6中断

@@ -87,7 +87,21 @@ void GP_ReadyTask(void)
 		}
 		else if (GP.subtask == 2) // 原点复位
 		{
-			Next_Task(GP_none, GP_move_start);
+			if(GC_claw_Sen!=Sen_Block)
+			{
+				Next_Task(GP_none, GP_move_start);
+			}else //离开原点位 等待夹手释放复位
+			{
+				motorGo_acc(GP.motor,GP.sucker_pos);
+				GP.sta=Running;
+			}
+			
+		}else if(GP.subtask==3)
+		{
+			if(GC_claw_Sen!=Sen_Block)
+			{
+				Next_Task(GP_none, GP_move_start);
+			}
 		}
 
 		break;
@@ -108,7 +122,7 @@ void GP_ReadyTask(void)
 	////////////大小气缸复位/////////////// basic
 	case GP_cyl_start:
 		GP_small_Cyl = GAS_DISABLE; // 小气缸使能
-		GP_big_Cyl = GAS_ENABLE;	// 大气缸失能能
+		GP_big_Cyl = GAS_DISABLE;	// 大气缸失能能
 		GP.sta = Running;
 		break;
 	//////////复位至原点位置/////////////// basic
@@ -149,7 +163,7 @@ void GP_ReadyTask(void)
 		}
 		else if (GP.subtask == 1)
 		{
-			GP_big_Cyl = GAS_DISABLE;
+			GP_big_Cyl = GAS_ENABLE;
 			GP.sta = Running;
 		}
 		break;
@@ -170,7 +184,7 @@ void GP_ReadyTask(void)
 		break;
 	///////////玻片吸盘上升///////////
 	case GP_sucker_up:
-		GP_big_Cyl = GAS_ENABLE;
+		GP_big_Cyl = GAS_DISABLE;
 		GP.sta = Running;
 		break;
 	/////////////移动到喷胶位置/////////
@@ -198,7 +212,7 @@ void GP_ReadyTask(void)
 	case GP_package:
 		if (GP.subtask == 0)
 		{
-			GP_big_Cyl = GAS_DISABLE; // 大气缸下降
+			GP_big_Cyl = GAS_ENABLE; // 大气缸下降
 			GP.sta=Running;
 		}
 		else if (GP.subtask == 1)
@@ -234,15 +248,48 @@ void GP_RunningTask(void)
 	case GP_none:
 		break;
 	case GP_reset_on:
-		if (GP.running_tim > DELAY_BIG_CYLIDER)
+		if (GP.subtask == 0) // 大小气缸复位
 		{
-			GP.sta = Finish;
+
+		}
+		else if (GP.subtask == 1)
+		{
+			if(GP.motor->motion==Stop)// 若原点传感器感应 离开原点 重新校准位置
+			{
+				GP.subtask=2;
+				GP.sta=Ready;
+			}
+		}
+		else if (GP.subtask == 2) // 复位至原点
+		{
+			
 		}
 		break;
 	case GP_reset_off:
-		if (GP.running_tim > DELAY_BIG_CYLIDER)
+		if (GP.subtask == 0) // 关闭吸盘
 		{
-			GP.sta = Finish;
+			if(GP.running_tim>DELAY_SUCKER)
+			{
+				GP.subtask=1;
+				GP.sta=Ready;
+			}
+		}
+		else if (GP.subtask == 1) // 气缸复位
+		{
+
+		}
+		else if (GP.subtask == 2) // 原点复位
+		{
+			
+			if(GP.motor->motion==Stop)
+			{
+				GP.subtask=3;
+				GP.sta=Ready;
+			}
+			
+		}else if(GP.subtask==3)
+		{
+			
 		}
 		break;
 

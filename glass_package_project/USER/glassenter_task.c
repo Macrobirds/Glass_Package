@@ -313,9 +313,11 @@ void GE_FinishTask(void)
 		GE.task = GE_none;
 		GE.sta = Ready;
 		break;
-	case GE_BOx_Out:
+	case GE_BOx_Out: //保留出盒状态
+		#ifdef DEBUG_MODE
 		GE.task = GE_none;
 		GE.sta = Ready;
+		#endif
 		break;
 	case GE_move_start: // 跳转至装载槽前端移动到夹手正下方
 		GE.sta = Ready;

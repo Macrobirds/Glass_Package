@@ -20,6 +20,7 @@
 //volatile int32_t GO_ver_motor_struct_postion=-1;
 //volatile u32 GO_ver_motor_struct_step=0;
 
+
 motor_struct GE_motor_struct={
 	.name=GE_motor,
 	.motion=Stop,
@@ -35,6 +36,7 @@ motor_struct GE_motor_struct={
 	.max_pos=212*460,
 	
 };
+
 motor_struct GC_rot_motor_struct={
 	.name=GC_rot_motor,
 	.motion=Stop,
@@ -51,6 +53,7 @@ motor_struct GC_rot_motor_struct={
 	
 	
 };
+
 motor_struct GC_ver_motor_struct={
 	.name=GC_ver_motor,
 	.motion=Stop,
@@ -66,24 +69,35 @@ motor_struct GC_ver_motor_struct={
 	.max_pos=36000,
 
 };
+
 motor_struct GP_motor_struct={
 	.name=GP_motor,
 	.motion=Stop,
 	.dir=Front,
-	.FRONT=1,
+	.FRONT=0,
 	.TIM=TIM8,
 	.AccPeriodArray=NULL,
-	.postion=-1,
+	.postion=-100000,
+	.pulse_1mm=268,
+	.maxfeq=268*150,
+	.startfeq=268*30,
+	.defaultfeq=268*50,
+	.max_pos=30000,
 
 };
 motor_struct GO_hor_motor_struct={
 	.name=GO_hor_motor,
 	.motion=Stop,
 	.dir=Front,
-	.FRONT=1,
+	.FRONT=0,
 	.TIM=TIM2,
 	.AccPeriodArray=NULL,
-	.postion=-1,
+	.postion=-1000000,
+	.pulse_1mm=268,
+	.maxfeq=268*100,
+	.startfeq=268*30,
+	.defaultfeq=268*50,
+	.max_pos=30000,
 
 };
 motor_struct GO_ver_motor_struct={
@@ -93,8 +107,12 @@ motor_struct GO_ver_motor_struct={
 	.FRONT=1,
 	.TIM=TIM4,
 	.AccPeriodArray=NULL,
-	.postion=-1,
-
+	.postion=-100000,
+	.pulse_1mm=800,
+	.maxfeq=800*50,
+	.startfeq=800*10,
+	.defaultfeq=800*30,
+	.max_pos=800*250,
 };
 
 void motor_parameter_Init(void)
@@ -405,7 +423,7 @@ void motorGo(motor_struct * motor, long planPosition,u32 freq)
 		}
 		else//位置未初始化成功
 		{
-			if(motor->postion<=0) motor->postion=motor->max_pos-100; 
+		  motor->postion=motor->max_pos-100; 
 			planStepNumber=planPosition-motor->postion;
 		}
 	
@@ -550,6 +568,7 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 
 void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq)
 {
+	if(!pulse) return;
 	motor->motion=ConstMove;
 	motor->planSetpNumber=pulse;
 	motor->step=0;

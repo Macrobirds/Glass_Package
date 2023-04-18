@@ -1,5 +1,5 @@
 #include "taskthread.h"
-#define ADJUST_DIS 2
+#define ADJUST_DIS 400 //pulse value 
 
 // 检测是否夹手阻挡了托盘
 static u8 Check_GC(void)
@@ -128,6 +128,7 @@ void GO_ReadyTask(void)
 				if (GC.motor_r->postion == 0 && GC.motor_r->motion == Stop) // 等待夹手复位到原点
 				{
 					motorGo_acc(GO.motor_h, GO.GOH_mid_pos);
+					GO.sta=Running;
 				}
 			}
 			else // 夹手释放 结束任务
@@ -145,7 +146,8 @@ void GO_ReadyTask(void)
 		break;
 	//////////////////存储器推出////////////////
 	case GO_Box_Out:
-		motorGo_acc(GO.motor_v, GO.GOV_box_dis);
+		motorGo_acc(GO.motor_v, GO.GOV_box_len);
+		GO.sta=Running;
 		break;
 	/////////////////存储器进入////////////////
 	case GO_Box_In:
@@ -153,14 +155,25 @@ void GO_ReadyTask(void)
 		{
 			if (Check_box())
 			{
-				motorGo_acc(GO.motor_v, 0);
+				
+				motorGo(GO.motor_v, 0,0);
 				GO.sta = Running;
 			}
 		}
 		else if (GO.subtask == 1) // 对准存储器槽
 		{
-			motorGo(GO.motor_v, GO.GOV_box_len, 0);
-			GO.sta = Running;
+				if(GO.motor_v->postion==0)
+				{
+					GO.subtask=2;
+				}else
+				{
+								GO.motor_v->dir=Front;
+				motor_Set_Direction(GO.motor_v);
+				motorGO_Debug(GO.motor_v,GO.GOV_box_dis,0);
+				GO.sta = Running;
+				}
+
+
 		}
 		else if (GO.subtask == 2) // 调整存储器位置
 		{
@@ -262,7 +275,9 @@ void GO_ReadyTask(void)
 	///////////微调存储器位置让玻片对准槽下端///////////////
 	case GO_adjust:
 		GO.sta = Running;
-		motorGo(GO.motor_v, GO.motor_v->postion + GO.motor_v->pulse_1mm * ADJUST_DIS, 0);
+		GO.motor_v->dir=Front;
+		motor_Set_Direction(GO.motor_v);
+		motorGO_Debug(GO.motor_v,ADJUST_DIS,0);
 		break;
 	case GO_finish:
 		break;
@@ -309,19 +324,25 @@ void GO_RunningTask(void)
 		}
 		else if (GO.subtask == 1) // 夹手处于夹紧状态  到水平工作点
 		{
-
-			if (GOH_mid_Sen == Sen_Block)
+			
+			if(GO.motor_h->motion==Stop)
 			{
 				GO.sta = Ready;
 				GO.subtask = 2;
 			}
-			else
-			{
-				if (GO.motor_h->motion == Stop)
-				{
-					Error_Set(Error_Sensor, GOH_mid_sensor);
-				}
-			}
+
+//			if (GOH_mid_Sen == Sen_Block)
+//			{
+//				GO.sta = Ready;
+//				GO.subtask = 2;
+//			}
+//			else
+//			{
+//				if (GO.motor_h->motion == Stop)
+//				{
+//					Error_Set(Error_Sensor, GOH_mid_sensor);
+//				}
+//			}
 		}
 		else if (GO.subtask == 2) // 等待夹手释放 回到水平原点
 		{
@@ -357,6 +378,10 @@ void GO_RunningTask(void)
 
 		}
 		break;
+		////////////开始运行//////////////////
+		case GO_start:
+
+		break;
 	///////////////复位至水平原点///////////////////
 	case GOH_start:
 		if (GOH_start_Sen == Sen_Block)
@@ -373,17 +398,22 @@ void GO_RunningTask(void)
 		break;
 	//////////////移动至封片工作点////////////////////
 	case GOH_package:
-		if (GOH_mid_Sen == Sen_Block)
-		{
-			GO.sta = Finish;
-		}
-		else
-		{
-			if (GO.motor_h->motion == Stop)
+			if(GO.motor_h->motion==Stop)
 			{
-				Error_Set(Error_Sensor, GOH_mid_sensor);
+				GO.sta = Ready;
+				GO.subtask = 2;
 			}
-		}
+//		if (GOH_mid_Sen == Sen_Block)
+//		{
+//			GO.sta = Finish;
+//		}
+//		else
+//		{
+//			if (GO.motor_h->motion == Stop)
+//			{
+//				Error_Set(Error_Sensor, GOH_mid_sensor);
+//			}
+//		}
 		break;
 	////////////移动到水平终点 玻片放置到存储槽////////////////
 	case GOH_end:
@@ -396,6 +426,22 @@ void GO_RunningTask(void)
 			if (GO.motor_h->motion == Stop)
 			{
 				Error_Set(Error_Sensor, GOH_end_sensor);
+			}
+		}
+		break;
+			///////////复位到垂直原点位置/////////////////////
+	case GOV_start:
+		
+	
+		if (GOV_start_Sen == Sen_Block)
+		{
+			GO.sta = Finish;
+		}
+		else
+		{
+			if(GO.motor_v->motion==Stop)
+			{
+				Error_Set(Error_Sensor,GOV_start_sensor);
 			}
 		}
 		break;
@@ -463,26 +509,45 @@ void GO_FinishTask(void)
 	case GO_none:
 		break;
 	case GO_reset_on:
+		GO.main_subtask=0;
+		GO.main_task=GO_none;
 		GO.sta = Ready;
 		GO.task = GO_none;
 		GO.subtask = 0;
 		break;
 	case GO_reset_off:
+		GO.main_subtask=0;
+		GO.main_task=GO_none;
 		GO.sta = Ready;
 		GO.task = GO_none;
 		GO.subtask = 0;
 		break;
-	case GO_Box_Out:
-		break;
+	case GO_Box_Out: //保留出槽状态
+		#ifdef  DEBUG_MODE
+		GO.main_subtask=0;
+		GO.main_task=GO_none;
 		GO.sta = Ready;
 		GO.task = GO_none;
 		GO.subtask = 0;
+		#endif
+		break;
 	case GO_Box_In:
-
+		GO.main_subtask=0;
+		GO.main_task=GO_none;
+		GO.sta = Ready;
+		GO.task = GO_none;
+		GO.subtask = 0;
 		break;
 	case GO_start:
-
+		GO.main_subtask=0;
+		GO.main_task=GO_none;
+		GO.sta = Ready;
+		GO.task = GO_none;
+		GO.subtask = 0;
 	break;
+	case GOV_start:
+		Resume_Task();
+		break;
 	case GOH_start:
 	Resume_Task();	
 		break;
