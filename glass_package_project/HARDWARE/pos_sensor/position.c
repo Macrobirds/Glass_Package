@@ -320,6 +320,9 @@ void EXTI4_IRQHandler(void);
 
 void EXTI9_5_IRQHandler(void)
 {
+	static volatile u8 flag=FALSE;
+	static volatile u32 old_sensor_filter=0;
+	
 	//GOH_end_Sen
 	if(EXTI_GetITStatus(EXTI_Line5)!=RESET) //水平出料到达终点
 	{
@@ -371,34 +374,84 @@ void EXTI9_5_IRQHandler(void)
 	//GE_down_Sen
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
 	{
-		delay_us(50);
+		delay_us(300);
 		
-		printf("exit8 trigger\r\n");
-		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
+//		if(GE.task==GE_move_glass)
+//		{
+//					if(!flag)
+//					{
+//						if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //只有下端照射
+//						{
+//							TIM_Cmd(TIM1,DISABLE);
+//							GE_motor_struct.motion=Stop;
+//							printf("GE_down_Sen \r\n");
+//						}
+//					}else
+//					{
+//						flag=FALSE;
+//						printf("GE_down true\r\n");
+//					}
+
+//				
+//		}
+		if(GE.task==GE_move_glass)
 		{
-			if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //只有下端照射
+			if(sensor_filter>=old_sensor_filter)
 			{
-				TIM_Cmd(TIM1,DISABLE);
-				GE_motor_struct.motion=Stop;
+				if(sensor_filter-old_sensor_filter>150)
+				{
+					if(!flag)
+					{
+						if(GE_down_Sen==Sen_Block) //只有下端照射
+						{
+							TIM_Cmd(TIM1,DISABLE);
+							GE_motor_struct.motion=Stop;
+							printf("GE_down_Sen %d\r\n",sensor_filter);
+						}
+					}else
+					{
+						flag=FALSE;
+					}
+				}
+			}else
+			{
+				if((sensor_filter+old_sensor_filter)%1000>150)
+				{
+					if(!flag)
+					{
+						if(GE_down_Sen==Sen_Block) //只有下端照射
+						{
+							TIM_Cmd(TIM1,DISABLE);
+							GE_motor_struct.motion=Stop;
+							printf("GE_down_Sen %d\r\n",sensor_filter);
+						}
+					}else
+					{
+						flag=FALSE;
+					}
+				}
 			}
 		}
+		
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
 	//GE_up_Sen
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
-		delay_us(50);
+		delay_us(300);
 		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
 		{
 			if(GE_up_Sen==Sen_Block) //只有上端照射
 			{
 				TIM_Cmd(TIM1,DISABLE);
 				GE_motor_struct.motion=Stop;
+				printf("GE_up_Sen%d\r\n",sensor_filter);
+				flag=TRUE;
 			}
 		}
 		EXTI_ClearITPendingBit(EXTI_Line9);
 	}
-
+	old_sensor_filter=sensor_filter;
 }
 void EXTI15_10_IRQHandler(void)
 {

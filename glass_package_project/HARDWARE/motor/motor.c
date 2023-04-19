@@ -32,7 +32,7 @@ motor_struct GE_motor_struct={
 	.pulse_1mm=212,
 	.maxfeq=200*212,
 	.startfeq=30*212,
-	.defaultfeq=30*212,
+	.defaultfeq=60*212,
 	.max_pos=212*460,
 	
 };
@@ -565,7 +565,7 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 	stepperMotorStart(motor,motor->AccPeriodArray[0]);
 	return TRUE;
 }
-
+//走指定脉冲的相对距离  freq=0 速度位defaultfeq
 void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq)
 {
 	if(!pulse) return;
@@ -575,7 +575,6 @@ void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq)
 	if(freq>16)
 	{
 		motor->t_m=motor->timerfeq/freq;
-		printf("motor arr :%d",motor->t_m);
 	}else
 	{
 		if(motor->defaultfeq>16)
@@ -586,6 +585,7 @@ void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq)
 	}
 	stepperMotorStart(motor,motor->t_m);
 }
+
 
 void motorAccGO_Debug(motor_struct * motor,u32 pulse)
 {

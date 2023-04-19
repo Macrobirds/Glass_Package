@@ -4,6 +4,11 @@ struct glass_enter_struct GE={
 	.task=GE_none,
 	.sta=Ready,
 	.motor=&GE_motor_struct,
+	.GE_box_len=212*120,
+	.GE_box_dis=212*80,
+	.glass_Exist=FALSE,
+	.box_Exist=FALSE,
+	.subtask=0,
 
 };
 
@@ -16,6 +21,8 @@ struct glass_claw_struct GC={
 	.GCV_down_pos=32500,
 	.GCR_hor_pos=190,
 	.GCR_ver_pos=3390,
+	.main_subtask=0,
+	.main_task=GC_none,
 };
 
 
@@ -46,6 +53,8 @@ enum taskthread_state TaskThread_State=taskthread_boost; //任务线程运行状态
 enum taskthread_state OldTaskThread_State=taskthread_boost; //
 volatile enum task_error error_type=Error_none;
 
+volatile u32 sensor_filter=0;
+
 
 u8 TaskThread_CheckIdle(void)
 {
@@ -66,6 +75,7 @@ u8 TaskThread_CheckIdle(void)
 void Error_Set(enum task_error error,u32 error_sen)
 {
 
+//	printf("error occur:%d,%d\r\n",error,error_sen);
 	#ifndef DEBUG_MODE
 	//暂停当前任务
 	Pause_TaskThread();
@@ -155,6 +165,11 @@ void TIM6_IRQHandler(void) //TIM6中断
 {
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update)!=RESET)
 	{
+		sensor_filter++;
+		if(sensor_filter>1000)
+		{
+			sensor_filter=0;
+		}
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
 		if(TaskThread_State!=taskthread_pause) //不等于暂停状态
 		{
@@ -287,7 +302,7 @@ void Start_TaskThread(void)
 	if(TaskThread_State==taskthread_ready)
 	{
 		GE.sta=Ready;
-		GE.task=GE_move_start;
+		GE.task=GE_start;
 
 		GC.sta=Ready;
 		GC.task=GC_rot_down;

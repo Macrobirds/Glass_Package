@@ -50,7 +50,7 @@ enum glass_enter_task_index
 	GE_reset_off,// 关机复位
 	GE_Box_In, //进缸
 	GE_BOx_Out, //出缸
-	GE_move_start, //移动到原点位置
+	GE_start, //移动到原点位置
 	GE_move_front, //移动到装载槽前端
 	GE_move_glass, //移动到载玻片
 	GE_move_back, //移动到装载槽后端
@@ -63,29 +63,34 @@ enum glass_enter_task_index
 enum glass_claw_task_index
 {
 	GC_none=0,
+	/*************复用任务***********/
+	GC_ver_start, //夹手复位到垂直原点位置 basic
+	GC_rot_start, //夹手复位到旋转原点位置 basic
+	GC_release, //夹手松开释放 basic
+	/*****************************/
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
 	GC_start, //开始运行
-	GC_ver_start, //夹手复位到垂直原点位置
-	GC_rot_start, //夹手复位到旋转原点位置
 	GC_rot_down, //夹手旋转到垂直位置
 	GC_move_down, //夹手下降到夹载玻片处
 	GC_grab,	//夹手夹取
-	GC_release, //夹手松开释放
+	GC_rot_up, //夹手旋转到原点
 	GC_rot_hor, //夹手旋转到水平位置
 	GC_finish, 
-  	GC_error,//异常上报任务
+  GC_error,//异常上报任务
 };
 
 //玻片封装任务流程序号
 enum glass_package_task_index
 {
 	GP_none=0,
+	/**************复用任务****************/
+	GP_move_start, //复位到轨道原点 basic
+	GP_cyl_start, //气缸复位到原点位置 basic
+	/*************************************/
 	GP_reset_on,//开机复位
 	GP_reset_off,//关机复位
 	GP_start, //封片初始化
-	GP_move_start, //复位到轨道原点
-	GP_cyl_start, //气缸复位到原点位置
 	GP_move_glass, //移动到盖玻片位置
 	GP_sucker_down, //吸盘下降
 	GP_suck_glass, //吸盘吸取盖玻片
@@ -102,25 +107,27 @@ enum glass_package_task_index
 enum glass_out_task_index
 {
 	GO_none=0,
+	/************复用任务************/
+	GOV_start, //复位到垂直原点位置 basic
+	GOH_start, //玻片复位到水平原点位置 basic
+	GO_adjust,  //调整存储槽对准玻片 basic
+	/*******************************/
 	GO_reset_on,//开机复位
-	GO_reset_off, //关机复位	
-	GOV_start, //复位到垂直原点位置
+	GO_reset_off, //关机复位
 	GO_Box_In,//进槽
 	GO_Box_Out,//出槽
 	GO_start, //开始运行
-	GOH_start, //玻片复位到水平原点位置
 	GOH_package, //玻片托盘移动到水平封片位置
 	GOH_end, //玻片托盘移动到水平终点位置
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
-	GO_adjust,  //调整存储槽对准玻片
 	GO_finish,
-  	GO_error,//异常上报任务
+  GO_error,//异常上报任务
 };
 
 struct glass_enter_struct{
-	enum glass_enter_task_index task; //任务序列
-	enum task_state sta; //任务状态
+	volatile enum glass_enter_task_index task; //任务序列
+	volatile enum task_state sta; //任务状态
 	motor_struct * motor; //电机结构体指针
 	u32 running_tim; //运行时间 ms
 	u32 GE_box_len; //装载槽长度
@@ -176,9 +183,9 @@ struct glass_out_struct{
 	volatile u32 running_tim;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;
-	u32 GOV_box_dis; //不同存储槽的槽间距
-	u32 GOV_slot_dis; //存储槽槽长度
-	u32 GOV_box_len; //两个存储槽总长度
+	u32 GOV_box_dis;
+	u32 GOV_slot_dis;
+	u32 GOV_box_len;
 	u8 subtask; //子任务
 	u8 main_subtask; //
 	volatile u8 glass_num;
@@ -198,6 +205,8 @@ extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
 extern struct glass_package_struct GP;
 extern struct glass_out_struct GO;
+
+extern volatile u32 sensor_filter;
 //任务线程结构体初始化 任务定时器TIM6初始化
 void TaskThread_Init(void); 
 //检测机器是否可以准备运行
