@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\UCOSII-1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\UCOSII-1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Apr 19 17:57:53 2023
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Apr 20 19:48:10 2023
 <BR><P>
 <H3>Maximum Stack Usage =        372 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -462,7 +462,6 @@ Global Symbols
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSSchedUnlock
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSSchedLock
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSIntExit
-<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_RunningTask
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_FinishTask
 <LI><a href="#[e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;boost_test
 <LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskStkChk
@@ -483,7 +482,6 @@ Global Symbols
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSSchedUnlock
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSSchedLock
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSIntExit
-<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_RunningTask
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_FinishTask
 <LI><a href="#[e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;boost_test
 <LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskStkChk
@@ -529,7 +527,6 @@ Global Symbols
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main_task
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gas_task
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
 <LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usmart_sys_cmd_exe
 <LI><a href="#[14]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usmart_scan
@@ -864,7 +861,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
 </UL>
-<P><STRONG><a name="[36]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 478 bytes, Stack size 8 bytes, position.o(i.EXTI9_5_IRQHandler))
+<P><STRONG><a name="[36]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 358 bytes, Stack size 8 bytes, position.o(i.EXTI9_5_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = EXTI9_5_IRQHandler &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -897,6 +894,7 @@ Global Symbols
 
 <P><STRONG><a name="[9b]"></a>Error_Set</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, taskthread.o(i.Error_Set))
 <BR><BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_RunningTask
+<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_box
 <LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_RunningTask
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
@@ -910,9 +908,8 @@ Global Symbols
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[ad]"></a>GC_FinishTask</STRONG> (Thumb, 154 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_FinishTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
-<LI>Call Chain = GC_FinishTask &rArr; Next_Task &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
+<P><STRONG><a name="[ad]"></a>GC_FinishTask</STRONG> (Thumb, 242 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_FinishTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GC_FinishTask
 </UL>
 <BR>[Calls]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Resume_Task
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
@@ -920,7 +917,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[b0]"></a>GC_ReadyTask</STRONG> (Thumb, 530 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_ReadyTask))
+<P><STRONG><a name="[b0]"></a>GC_ReadyTask</STRONG> (Thumb, 656 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GC_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -935,7 +932,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[b6]"></a>GC_RunningTask</STRONG> (Thumb, 382 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_RunningTask))
+<P><STRONG><a name="[b6]"></a>GC_RunningTask</STRONG> (Thumb, 422 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_RunningTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GC_RunningTask
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
@@ -955,7 +952,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[b8]"></a>GE_FinishTask</STRONG> (Thumb, 144 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_FinishTask))
+<P><STRONG><a name="[b8]"></a>GE_FinishTask</STRONG> (Thumb, 170 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GE_FinishTask
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
@@ -997,7 +994,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[bd]"></a>GO_FinishTask</STRONG> (Thumb, 268 bytes, Stack size 8 bytes, glassout_task.o(i.GO_FinishTask))
+<P><STRONG><a name="[bd]"></a>GO_FinishTask</STRONG> (Thumb, 276 bytes, Stack size 8 bytes, glassout_task.o(i.GO_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
 <LI>Call Chain = GO_FinishTask
 </UL>
@@ -1010,7 +1007,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 </UL>
 
-<P><STRONG><a name="[c3]"></a>GO_ReadyTask</STRONG> (Thumb, 816 bytes, Stack size 8 bytes, glassout_task.o(i.GO_ReadyTask))
+<P><STRONG><a name="[c3]"></a>GO_ReadyTask</STRONG> (Thumb, 870 bytes, Stack size 8 bytes, glassout_task.o(i.GO_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GO_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1021,22 +1018,20 @@ Global Symbols
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_box
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_GC
-</UL>
-<BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
-</UL>
-
-<P><STRONG><a name="[c4]"></a>GO_RunningTask</STRONG> (Thumb, 574 bytes, Stack size 8 bytes, glassout_task.o(i.GO_RunningTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
-<LI>Call Chain = GO_RunningTask
-</UL>
-<BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OS_CPU_SR_Save
-<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OS_CPU_SR_Restore
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 </UL>
 
-<P><STRONG><a name="[c5]"></a>GO_TaskThread</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, glassout_task.o(i.GO_TaskThread))
+<P><STRONG><a name="[c4]"></a>GO_RunningTask</STRONG> (Thumb, 552 bytes, Stack size 8 bytes, glassout_task.o(i.GO_RunningTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GO_RunningTask
+</UL>
+<BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
+</UL>
+<BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
+</UL>
+
+<P><STRONG><a name="[c5]"></a>GO_TaskThread</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, glassout_task.o(i.GO_TaskThread))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216 + Unknown Stack Size
 <LI>Call Chain = GO_TaskThread &rArr; GO_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1095,7 +1090,7 @@ Global Symbols
 <LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_test
 </UL>
 
-<P><STRONG><a name="[c6]"></a>GP_FinishTask</STRONG> (Thumb, 256 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_FinishTask))
+<P><STRONG><a name="[c6]"></a>GP_FinishTask</STRONG> (Thumb, 272 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GP_FinishTask
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Resume_Task
@@ -1104,7 +1099,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_TaskThread
 </UL>
 
-<P><STRONG><a name="[c8]"></a>GP_ReadyTask</STRONG> (Thumb, 746 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_ReadyTask))
+<P><STRONG><a name="[c8]"></a>GP_ReadyTask</STRONG> (Thumb, 730 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GP_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1929,7 +1924,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
 </UL>
 
-<P><STRONG><a name="[55]"></a>TIM6_IRQHandler</STRONG> (Thumb, 84 bytes, Stack size 8 bytes, taskthread.o(i.TIM6_IRQHandler))
+<P><STRONG><a name="[55]"></a>TIM6_IRQHandler</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, taskthread.o(i.TIM6_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224 + Unknown Stack Size
 <LI>Call Chain = TIM6_IRQHandler &rArr; GP_TaskThread &rArr; GP_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -2219,7 +2214,7 @@ Global Symbols
 <P><STRONG><a name="[b]"></a>boost_device_test</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, usmart_config.o(i.boost_device_test))
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
-<P><STRONG><a name="[e]"></a>boost_test</STRONG> (Thumb, 144 bytes, Stack size 16 bytes, usmart_config.o(i.boost_test))
+<P><STRONG><a name="[e]"></a>boost_test</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, usmart_config.o(i.boost_test))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16 + Unknown Stack Size
 <LI>Call Chain = boost_test
 </UL>
@@ -2235,7 +2230,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
-<P><STRONG><a name="[f]"></a>debug_test</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, usmart_config.o(i.debug_test))
+<P><STRONG><a name="[f]"></a>debug_test</STRONG> (Thumb, 78 bytes, Stack size 0 bytes, usmart_config.o(i.debug_test))
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
 <P><STRONG><a name="[150]"></a>delay_init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, delay.o(i.delay_init))
@@ -2585,7 +2580,7 @@ Global Symbols
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Pause_TaskThread
 </UL>
 
-<P><STRONG><a name="[10]"></a>thread_test</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, usmart_config.o(i.thread_test))
+<P><STRONG><a name="[10]"></a>thread_test</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, usmart_config.o(i.thread_test))
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
 <P><STRONG><a name="[15c]"></a>uart2_init</STRONG> (Thumb, 128 bytes, Stack size 32 bytes, usart.o(i.uart2_init))
@@ -3111,17 +3106,12 @@ Local Symbols
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
 </UL>
 
-<P><STRONG><a name="[b3]"></a>Check_GP</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, glassclaw_task.o(i.Check_GP))
+<P><STRONG><a name="[b3]"></a>Check_GP</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, glassclaw_task.o(i.Check_GP))
 <BR><BR>[Called By]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
 </UL>
 
-<P><STRONG><a name="[ae]"></a>Next_Task</STRONG> (Thumb, 52 bytes, Stack size 16 bytes, glassclaw_task.o(i.Next_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
-<LI>Call Chain = Next_Task &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
-</UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-</UL>
-<BR>[Called By]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<P><STRONG><a name="[ae]"></a>Next_Task</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, glassclaw_task.o(i.Next_Task))
+<BR><BR>[Called By]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
 </UL>
 
@@ -3145,7 +3135,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_FinishTask
 </UL>
 
-<P><STRONG><a name="[bf]"></a>Check_GC</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, glassout_task.o(i.Check_GC))
+<P><STRONG><a name="[bf]"></a>Check_GC</STRONG> (Thumb, 50 bytes, Stack size 0 bytes, glassout_task.o(i.Check_GC))
 <BR><BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_FinishTask
 </UL>

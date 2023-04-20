@@ -46,10 +46,10 @@ motor_struct GC_rot_motor_struct={
 	.AccPeriodArray=NULL,
 	.postion=-10000,
 	.pulse_1mm=1,
-	.maxfeq=2000,
+	.maxfeq=1000,
 	.startfeq=400,
 	.defaultfeq=600,
-	.max_pos=4800,
+	.max_pos=2400,
 	
 	
 };
@@ -109,10 +109,10 @@ motor_struct GO_ver_motor_struct={
 	.AccPeriodArray=NULL,
 	.postion=-100000,
 	.pulse_1mm=800,
-	.maxfeq=800*50,
+	.maxfeq=800*30,
 	.startfeq=800*10,
 	.defaultfeq=800*30,
-	.max_pos=800*250,
+	.max_pos=800*260,
 };
 
 void motor_parameter_Init(void)

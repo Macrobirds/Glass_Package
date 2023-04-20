@@ -359,6 +359,7 @@ void EXTI9_5_IRQHandler(void)
 			{
 				TIM_Cmd(TIM4,DISABLE);
 				GO_ver_motor_struct.motion=Stop;
+
 			}
 		}else if(GO.task==GO_Box_In&&GO.subtask==1)
 		{
@@ -366,6 +367,7 @@ void EXTI9_5_IRQHandler(void)
 			{
 				TIM_Cmd(TIM4,DISABLE);
 				GO_ver_motor_struct.motion=Stop;
+				printf("GOV_galss_sen\r\n");
 			}
 		}
 		//printf("exit7 trigger\r\n");
@@ -376,62 +378,59 @@ void EXTI9_5_IRQHandler(void)
 	{
 		delay_us(300);
 		
+		if(GE.task==GE_move_glass)
+		{
+					if(!flag)
+					{
+						if(GE_down_Sen==Sen_Block) //下端照射
+						{
+							TIM_Cmd(TIM1,DISABLE);
+							GE_motor_struct.motion=Stop;
+							printf("GE_down_Sen \r\n");
+						}
+					}else
+					{
+						flag=FALSE;
+					}				
+		}
 //		if(GE.task==GE_move_glass)
 //		{
+//			if(sensor_filter>=old_sensor_filter)
+//			{
+//				if(sensor_filter-old_sensor_filter>150)
+//				{
 //					if(!flag)
 //					{
-//						if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //只有下端照射
+//						if(GE_down_Sen==Sen_Block) //只有下端照射
 //						{
 //							TIM_Cmd(TIM1,DISABLE);
 //							GE_motor_struct.motion=Stop;
-//							printf("GE_down_Sen \r\n");
+//							printf("GE_down_Sen %d\r\n",sensor_filter);
 //						}
 //					}else
 //					{
 //						flag=FALSE;
-//						printf("GE_down true\r\n");
 //					}
-
-//				
+//				}
+//			}else
+//			{
+//				if((sensor_filter+old_sensor_filter)%1000>150)
+//				{
+//					if(!flag)
+//					{
+//						if(GE_down_Sen==Sen_Block) //只有下端照射
+//						{
+//							TIM_Cmd(TIM1,DISABLE);
+//							GE_motor_struct.motion=Stop;
+//							printf("GE_down_Sen %d\r\n",sensor_filter);
+//						}
+//					}else
+//					{
+//						flag=FALSE;
+//					}
+//				}
+//			}
 //		}
-		if(GE.task==GE_move_glass)
-		{
-			if(sensor_filter>=old_sensor_filter)
-			{
-				if(sensor_filter-old_sensor_filter>150)
-				{
-					if(!flag)
-					{
-						if(GE_down_Sen==Sen_Block) //只有下端照射
-						{
-							TIM_Cmd(TIM1,DISABLE);
-							GE_motor_struct.motion=Stop;
-							printf("GE_down_Sen %d\r\n",sensor_filter);
-						}
-					}else
-					{
-						flag=FALSE;
-					}
-				}
-			}else
-			{
-				if((sensor_filter+old_sensor_filter)%1000>150)
-				{
-					if(!flag)
-					{
-						if(GE_down_Sen==Sen_Block) //只有下端照射
-						{
-							TIM_Cmd(TIM1,DISABLE);
-							GE_motor_struct.motion=Stop;
-							printf("GE_down_Sen %d\r\n",sensor_filter);
-						}
-					}else
-					{
-						flag=FALSE;
-					}
-				}
-			}
-		}
 		
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
@@ -439,19 +438,20 @@ void EXTI9_5_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
 		delay_us(300);
-		if(GE.task>=GE_move_front&&GE.task<=GE_move_back)
+		if(GE.task==GE_move_front)
 		{
-			if(GE_up_Sen==Sen_Block) //只有上端照射
+			if(GE_up_Sen==Sen_Block) //上端照射
 			{
 				TIM_Cmd(TIM1,DISABLE);
 				GE_motor_struct.motion=Stop;
-				printf("GE_up_Sen%d\r\n",sensor_filter);
+				printf("GE_up_Sen\r\n");
 				flag=TRUE;
 			}
+			
 		}
 		EXTI_ClearITPendingBit(EXTI_Line9);
 	}
-	old_sensor_filter=sensor_filter;
+
 }
 void EXTI15_10_IRQHandler(void)
 {

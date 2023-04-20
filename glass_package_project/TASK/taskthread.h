@@ -3,7 +3,7 @@
 #include "motor.h"
 #include "Globalconfig.h"
 
-#define OVERTIME 10000
+#define OVERTIME 20000 //20 Second
 
 //任务线程状态
 enum taskthread_state
@@ -50,6 +50,7 @@ enum glass_enter_task_index
 	GE_reset_off,// 关机复位
 	GE_Box_In, //进缸
 	GE_BOx_Out, //出缸
+	/****************************/
 	GE_start, //移动到原点位置
 	GE_move_front, //移动到装载槽前端
 	GE_move_glass, //移动到载玻片
@@ -67,14 +68,16 @@ enum glass_claw_task_index
 	GC_ver_start, //夹手复位到垂直原点位置 basic
 	GC_rot_start, //夹手复位到旋转原点位置 basic
 	GC_release, //夹手松开释放 basic
-	/*****************************/
+	GC_grab,	//夹手夹取 basic
 	GC_reset_on, //开机复位
 	GC_reset_off, //关机复位
+	/*****************************/
 	GC_start, //开始运行
 	GC_rot_down, //夹手旋转到垂直位置
 	GC_move_down, //夹手下降到夹载玻片处
-	GC_grab,	//夹手夹取
-	GC_rot_up, //夹手旋转到原点
+	GC_check_glass, //检测是否夹取到玻片
+	GC_move_up, //夹手上升回垂直原点
+	GC_rot_up, //夹手回到旋转原点
 	GC_rot_hor, //夹手旋转到水平位置
 	GC_finish, 
   GC_error,//异常上报任务
@@ -87,9 +90,9 @@ enum glass_package_task_index
 	/**************复用任务****************/
 	GP_move_start, //复位到轨道原点 basic
 	GP_cyl_start, //气缸复位到原点位置 basic
-	/*************************************/
 	GP_reset_on,//开机复位
 	GP_reset_off,//关机复位
+	/*************************************/
 	GP_start, //封片初始化
 	GP_move_glass, //移动到盖玻片位置
 	GP_sucker_down, //吸盘下降
@@ -99,7 +102,7 @@ enum glass_package_task_index
 	GP_move_package, //移动到封片位置
 	GP_package, //开始封片
 	GP_finish, 
-  	GP_error,//异常上报任务
+  GP_error,//异常上报任务
 };
 
 
@@ -128,7 +131,7 @@ enum glass_out_task_index
 struct glass_enter_struct{
 	volatile enum glass_enter_task_index task; //任务序列
 	volatile enum task_state sta; //任务状态
-	motor_struct * motor; //电机结构体指针
+	volatile motor_struct * motor; //电机结构体指针
 	u32 running_tim; //运行时间 ms
 	u32 GE_box_len; //装载槽长度
 	u32 GE_box_dis; //装载槽间距
@@ -144,8 +147,8 @@ struct glass_claw_struct{
 	volatile enum glass_claw_task_index task; 
  	enum glass_claw_task_index main_task;
 	volatile enum task_state sta;
-	motor_struct * motor_v; //垂直电机
-	motor_struct * motor_r; //旋转电机
+	volatile motor_struct * motor_v; //垂直电机
+	volatile motor_struct * motor_r; //旋转电机
 	volatile u32 running_tim; //运行时间
 	u16 GCR_hor_pos; //旋转水平位置
 	u16 GCR_ver_pos; //旋转垂直位置
@@ -178,8 +181,8 @@ struct glass_out_struct{
 	volatile enum glass_out_task_index task;
 	enum glass_out_task_index main_task;
 	volatile enum task_state sta;
-	motor_struct * motor_h;
-	motor_struct * motor_v;
+	volatile motor_struct * motor_h;
+	volatile motor_struct * motor_v;
 	volatile u32 running_tim;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;

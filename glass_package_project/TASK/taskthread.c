@@ -18,9 +18,9 @@ struct glass_claw_struct GC={
 	.sta=Ready,
 	.motor_v=&GC_ver_motor_struct,
 	.motor_r=&GC_rot_motor_struct,
-	.GCV_down_pos=32500,
-	.GCR_hor_pos=190,
-	.GCR_ver_pos=3390,
+	.GCV_down_pos=33000,
+	.GCR_hor_pos=120,
+	.GCR_ver_pos=1720,
 	.main_subtask=0,
 	.main_task=GC_none,
 };
@@ -42,10 +42,11 @@ struct glass_out_struct GO={
 	.sta=Ready,
 	.motor_h=&GO_hor_motor_struct,
 	.motor_v=&GO_ver_motor_struct,
-	.GOH_mid_pos=268*31,
-	.GOH_end_pos=29000,
+	.GOH_mid_pos=9300,
+	.GOH_end_pos=268*210,
 	.GOV_box_dis=800*25,
-	.GOV_box_len=800*210,
+	.GOV_box_len=800*241+600,
+	.GOV_slot_dis=800*35/10,
 	
 };
 
@@ -165,11 +166,7 @@ void TIM6_IRQHandler(void) //TIM6中断
 {
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update)!=RESET)
 	{
-		sensor_filter++;
-		if(sensor_filter>1000)
-		{
-			sensor_filter=0;
-		}
+
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
 		if(TaskThread_State!=taskthread_pause) //不等于暂停状态
 		{

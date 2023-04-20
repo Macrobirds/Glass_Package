@@ -1,25 +1,28 @@
 #include "taskthread.h"
-#define ADJUST_DIS 400 //pulse value 
+#define ADJUST_DIS 600 //pulse value 
 
 // 检测是否夹手阻挡了托盘
 static u8 Check_GC(void)
 {
-#ifdef DEBUG_MODE
-	return TRUE;
-#else
-	if (GC.motor_r->postion == GC.GCR_hor_pos)
+//#ifdef DEBUG_MODE
+//	return TRUE;
+//#else
+	if(GO.task<=GO_reset_on)
 	{
-		return FALSE;
-	}
-	else
+			if(GC_claw_Sen!=Sen_Block)
+		{
+			return TRUE;
+		}
+	}else
 	{
-		if (GC.motor_r->motion == Stop) // 夹手旋转电机静止
+		if(GC.motor_r->postion!=GC.GCR_hor_pos&&GC.motor_r->motion==Stop)
 		{
 			return TRUE;
 		}
 	}
+
 	return FALSE;
-#endif
+//#endif
 }
 
 static u8 Check_box(void)
@@ -162,12 +165,12 @@ void GO_ReadyTask(void)
 		}
 		else if (GO.subtask == 1) // 对准存储器槽
 		{
-				if(GO.motor_v->postion==0)
+				if(GOV_start_Sen==Sen_Block)
 				{
 					GO.subtask=2;
 				}else
 				{
-								GO.motor_v->dir=Front;
+				GO.motor_v->dir=Front;
 				motor_Set_Direction(GO.motor_v);
 				motorGO_Debug(GO.motor_v,GO.GOV_box_dis,0);
 				GO.sta = Running;
@@ -181,18 +184,20 @@ void GO_ReadyTask(void)
 		}
 		break;
 	////////////////开始运行///////////////////////
-	case GO_start:
-
-		if (Check_box()) // 水平复位到原点
+	case GO_start:	// 水平复位到原点
+		if(GOH_start_Sen==Sen_Block)
+		{
+			GO.sta=Finish;
+		}else
 		{
 			if (Check_GC())
 			{
-				Next_Task(GOH_package, GOH_start);
+				motorGo_acc(GO.motor_h,0);
+				GO.sta=Finish;
 			}
 		}
-
 		break;
-	///////////////复位至水平原点///////////////////
+	///////////////复位至水平原点/////////////////// basic
 	case GOH_start:
 		if (GOH_start_Sen == Sen_Block)
 		{
@@ -200,11 +205,15 @@ void GO_ReadyTask(void)
 		}
 		else
 		{
-			motorGo_acc(GO.motor_h, 0);
-			GO.sta = Running;
+			if(Check_GC())
+			{
+				motorGo_acc(GO.motor_h, 0);
+				GO.sta = Running;
+			}
+
 		}
 		break;
-	//////////////移动至封片工作点////////////////////
+	//////////////移动至封片工作点//////////////////// 
 	case GOH_package:
 		if (GOH_mid_Sen == Sen_Block)
 		{
@@ -212,7 +221,7 @@ void GO_ReadyTask(void)
 		}
 		else
 		{
-			if (GC.main_task == GC_start && GC.subtask == 6) // 等待夹手夹取玻片到旋转原点
+			if (GC_rot_Sen!=Sen_Block) // 等待夹手夹取玻片到旋转原点
 			{
 				GO.sta = Running;
 				motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
@@ -227,15 +236,20 @@ void GO_ReadyTask(void)
 		}
 		else
 		{
-			// 封片工作结束 夹手释放
-			if (Check_GC())
+			if(Check_box()) //检测是否有存储盒
 			{
-				GO.sta = Running;
-				motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+				if (Check_GC())// 封片工作结束 夹手释放
+				{
+					GO.sta = Running;
+					motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+				}
+			}else
+			{
+				Error_Set(Error_Out_Box,0);
 			}
 		}
 		break;
-	///////////复位到垂直原点位置/////////////////////
+	///////////复位到垂直原点位置///////////////////// basic
 	case GOV_start:
 		if (GOV_start_Sen == Sen_Block)
 		{
@@ -249,11 +263,12 @@ void GO_ReadyTask(void)
 		break;
 	///////////将玻片移出托盘,放入存储槽///////////////
 	case GO_out:
-		if (GOV_glass_Sen == Sen_Block)
+		if (GOV_glass_Sen == Sen_Block) //检测到玻片在存储槽
 		{
-
+			GO.motor_v->dir=Front;
+			motor_Set_Direction(GO.motor_v);
+			motorGO_Debug(GO.motor_v,GO.GOV_slot_dis,0);
 			GO.sta = Running;
-			motorGo(GO.motor_v, GO.GOV_slot_dis, 0);
 		}
 		else
 		{
@@ -264,8 +279,9 @@ void GO_ReadyTask(void)
 	case GO_next:
 		if (GOV_glass_Sen == Sen_Block)
 		{
+			motorGo(GO.motor_v,GO.GOV_box_len,0);
 			GO.sta = Running;
-			motorGo(GO.motor_v, GO.GOV_box_dis, 0);
+			
 		}
 		else
 		{
@@ -331,18 +347,6 @@ void GO_RunningTask(void)
 				GO.subtask = 2;
 			}
 
-//			if (GOH_mid_Sen == Sen_Block)
-//			{
-//				GO.sta = Ready;
-//				GO.subtask = 2;
-//			}
-//			else
-//			{
-//				if (GO.motor_h->motion == Stop)
-//				{
-//					Error_Set(Error_Sensor, GOH_mid_sensor);
-//				}
-//			}
 		}
 		else if (GO.subtask == 2) // 等待夹手释放 回到水平原点
 		{
@@ -380,9 +384,18 @@ void GO_RunningTask(void)
 		break;
 		////////////开始运行//////////////////
 		case GO_start:
-
+		if(GOH_start_Sen==Sen_Block)
+		{
+			GO.sta=Finish;
+		}else
+		{
+			if(GO.motor_h->motion==Stop)
+			{
+				Error_Set(Error_Sensor,GOH_start_sensor);
+			}
+		}
 		break;
-	///////////////复位至水平原点///////////////////
+	///////////////复位至水平原点/////////////////// basic
 	case GOH_start:
 		if (GOH_start_Sen == Sen_Block)
 		{
@@ -400,8 +413,7 @@ void GO_RunningTask(void)
 	case GOH_package:
 			if(GO.motor_h->motion==Stop)
 			{
-				GO.sta = Ready;
-				GO.subtask = 2;
+				GO.sta = Finish;
 			}
 //		if (GOH_mid_Sen == Sen_Block)
 //		{
@@ -429,10 +441,8 @@ void GO_RunningTask(void)
 			}
 		}
 		break;
-			///////////复位到垂直原点位置/////////////////////
+			///////////复位到垂直原点位置///////////////////// basic
 	case GOV_start:
-		
-	
 		if (GOV_start_Sen == Sen_Block)
 		{
 			GO.sta = Finish;
@@ -452,7 +462,7 @@ void GO_RunningTask(void)
 		}
 		else
 		{
-			if (GO.motor_v->motion == Stop && GO.motor_v->postion <= GO.GOV_box_len) // 走完一个槽的距离后 仍然有感应
+			if (GO.motor_v->motion == Stop) // 走完一个槽的距离后 仍然有感应
 			{
 				GO.sta = Ready;
 				GO.task = GO_next;
@@ -473,18 +483,13 @@ void GO_RunningTask(void)
 		{
 			if (GO.motor_v->motion == Stop)
 			{
-				if (GO.motor_v->postion < GO.GOV_box_len)
+				if (GO.motor_v->postion >= GO.GOV_box_len)
 				{
-					GO.sta=Finish;
-				}
-				else
-				{
-					OS_ENTER_CRITICAL();
-					GO.box_num++; // 槽个数加1
-					OS_EXIT_CRITICAL();
 					GO.sta = Ready;
 					GO.task = GO_finish;
-					Error_Set(Error_Out_Box, 0); // 报错 存储槽满
+				}else
+				{
+					Error_Set(Error_Sensor,GOV_glass_sensor);
 				}
 			}
 		}
@@ -539,11 +544,11 @@ void GO_FinishTask(void)
 		GO.subtask = 0;
 		break;
 	case GO_start:
-		GO.main_subtask=0;
-		GO.main_task=GO_none;
-		GO.sta = Ready;
-		GO.task = GO_none;
-		GO.subtask = 0;
+		if(GC.task==GC_rot_up&&GC.sta==Finish)
+		{
+			GO.sta=Ready;
+			GO.task=GOH_package;
+		}
 	break;
 	case GOV_start:
 		Resume_Task();
@@ -559,7 +564,6 @@ void GO_FinishTask(void)
 		}
 		break;
 	case GOH_end:
-
 			OS_ENTER_CRITICAL();
 			GO.glass_num++; // 封片玻片数量+1
 			OS_EXIT_CRITICAL();
@@ -604,7 +608,7 @@ void GO_TaskThread(void)
 	}
 	if (GO.sta == Finish)
 	{
-		if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务跳转
+		if (!debug_flag) // debug 模式下不进行任务跳转
 		{
 			GO_FinishTask();
 		}

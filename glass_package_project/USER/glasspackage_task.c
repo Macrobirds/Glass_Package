@@ -3,8 +3,8 @@
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 #define DELAY_SUCKER 1000
-#define DELAY_BIG_CYLIDER 2000
-#define DELAY_SMALL_CYLIDER 2000
+#define DELAY_BIG_CYLIDER 1000
+#define DELAY_SMALL_CYLIDER 1000
 
 static u8 Check_Spray(void)
 {
@@ -121,9 +121,16 @@ void GP_ReadyTask(void)
 		break;
 	////////////大小气缸复位/////////////// basic
 	case GP_cyl_start:
-		GP_small_Cyl = GAS_DISABLE; // 小气缸使能
-		GP_big_Cyl = GAS_DISABLE;	// 大气缸失能能
-		GP.sta = Running;
+		if(GP_big_cyl_Sen==Sen_Block&&GP_small_cyl_Sen==Sen_Block)
+		{
+			GP.sta=Finish;
+		}else
+		{
+				GP_small_Cyl = GAS_DISABLE; // 小气缸使能
+				GP_big_Cyl = GAS_DISABLE;	// 大气缸失能能
+				GP.sta = Running;
+		}
+
 		break;
 	//////////复位至原点位置/////////////// basic
 	case GP_move_start:
@@ -139,20 +146,8 @@ void GP_ReadyTask(void)
 		break;
 	///////////到达玻片吸取位置////////////
 	case GP_move_glass:
-		if (GC.task > GC_move_down && GC.task < GC_finish)
-		{
 			GP.sta = Running;
 			motorGo_acc(GP.motor, GP.sucker_pos);
-		}
-		else if (GC.task == GC_finish) //检测到任务结束 
-		{
-			GP.main_task=GP_none;
-			GP.main_subtask=0;
-			GP.subtask=0;
-			GP.sta=Ready;
-			GP.task=GP_finish;
-		}
-
 		break;
 	//////////玻片吸盘下降/////////////
 	case GP_sucker_down:
@@ -184,16 +179,19 @@ void GP_ReadyTask(void)
 		break;
 	///////////玻片吸盘上升///////////
 	case GP_sucker_up:
-		GP_big_Cyl = GAS_DISABLE;
-		GP.sta = Running;
+		if ((GC.motor_r->postion == GC.GCR_hor_pos) && (GC.motor_r->motion == Stop)) // 夹手位于旋转水平位置静止
+		{
+				GP_big_Cyl = GAS_DISABLE;
+				GP.sta = Running;
+		}
+
 		break;
 	/////////////移动到喷胶位置/////////
 	case GP_move_spray:
-		if ((GC.motor_r->postion == GC.GCR_hor_pos) && (GC.motor_r->motion == Stop)) // 夹手位于旋转水平位置静止
-		{
+	
+		
 			GP.sta = Running;
 			motorGo_acc(GP.motor, GP.spray_pos);
-		}
 		break;
 		/////////////移动到封片位置///////// 封片位置和原点位置重合
 	case GP_move_package:
@@ -229,8 +227,9 @@ void GP_ReadyTask(void)
 		
 		else if (GP.subtask == 3)
 		{
-			GP_sucker2_Cyl = GAS_DISABLE; // 关闭吸盘2气阀 吸盘气泵
-			GP_sucker_Pump = GAS_DISABLE;
+			GP_sucker_Pump = GAS_DISABLE; //关闭吸盘2气阀 吸盘气泵
+			GP_sucker1_Cyl = GAS_DISABLE;
+			GP_sucker2_Cyl = GAS_DISABLE;
 			GP.sta=Running;
 		}
 		break;
@@ -459,8 +458,7 @@ void GP_FinishTask(void)
 		GP.task = GP_none;
 		break;
 	case GP_start:
-		GP.sta = Ready;
-		GP.task = GP_none;
+
 		break;
 	case GP_cyl_start:
 		Resume_Task();
@@ -478,6 +476,7 @@ void GP_FinishTask(void)
 		{
 			GP.sta = Ready;
 			GP.task = GP_suck_glass;
+			GP.subtask=0;
 		}
 		else
 		{
@@ -487,8 +486,12 @@ void GP_FinishTask(void)
 	case GP_suck_glass:
 		if (GP_sucker_Sen == Sen_Block) // 检测到玻片
 		{
-			GP.sta = Ready;
-			GP.task = GP_sucker_up;
+			if ((GC.task == GC_rot_hor) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
+			{
+						GP.sta = Ready;
+						GP.task = GP_sucker_up;
+						GP.subtask=0;
+			}
 		}
 		else
 		{
@@ -496,15 +499,14 @@ void GP_FinishTask(void)
 		}
 		break;
 	case GP_sucker_up:
-		if ((GC.task == GC_rot_hor) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
-		{
 			GP.sta = Ready;
 			GP.task = GP_move_spray;
-		}
+			GP.subtask=0;
 		break;
 	case GP_move_spray:
 		GP.sta = Ready;
 		GP.task = GP_move_package;
+		GP.subtask=0;
 		break;
 	case GP_move_package:
 		GP.sta = Ready;

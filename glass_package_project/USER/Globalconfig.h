@@ -188,6 +188,8 @@ struct Global_Parameter_struct{
 	Glass_In_Out_Date GIO;
 };
 
+extern u8 debug_flag;
+
 extern struct Global_Parameter_struct Global_Parm; 
 extern enum sensor_index sensor_error_idx;
 

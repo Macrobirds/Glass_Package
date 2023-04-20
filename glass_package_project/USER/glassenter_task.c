@@ -334,10 +334,14 @@ void GE_FinishTask(void)
 		{
 			if (check_GC()) // 夹手位于垂直原点，垂直静止
 			{
-//				if (GE_down_Sen != Sen_Block && GE_up_Sen != Sen_Block) // 玻片被夹取 上下端无感应
+//				if(GC.task>GC_move_up)
 //				{
-//					GE.sta = Ready;
+					if (GE_down_Sen != Sen_Block && GE_up_Sen != Sen_Block) // 玻片被夹取 上下端无感应
+					{
+						GE.sta = Ready;
+					}
 //				}
+
 			}
 		}else //到达后端
 		{

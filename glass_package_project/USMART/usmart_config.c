@@ -188,7 +188,7 @@ void boost_test(u8 task, u8 task_index)
 	switch (task)
 	{
 	case 1: // GE task
-		if (GE.task == GE_none && task_index <= GE_BOx_Out)
+		if (task_index <= GE_BOx_Out)
 		{
 
 			GE.sta = Ready;
@@ -199,7 +199,7 @@ void boost_test(u8 task, u8 task_index)
 
 		break;
 	case 2:
-		if (GC.task == GC_none && task_index <= GC_reset_off)
+		if (task_index <= GC_reset_off)
 		{
 			OS_ENTER_CRITICAL();
 			GC.sta = Ready;
@@ -209,7 +209,7 @@ void boost_test(u8 task, u8 task_index)
 		}
 		break;
 	case 3:
-		if (GP.task == GP_none && task_index <= GP_reset_off)
+		if (task_index <= GP_reset_off)
 		{
 			GP.sta = Ready;
 			GP.subtask = 0;
@@ -217,8 +217,9 @@ void boost_test(u8 task, u8 task_index)
 		}
 		break;
 	case 4:
-		if (GO.task == GO_none && task_index <= GO_Box_Out)
+		if (task_index <= GO_Box_Out)
 		{
+			debug_flag=FALSE;
 			GO.sta = Ready;
 			GO.subtask = 0;
 			GO.task = task_index;
@@ -244,7 +245,14 @@ void debug_test(u8 task, u8 task_index)
 		break;
 	case 3:
 		break;
-	case 4:
+	case 4://GO task
+		if(task_index>GO_Box_Out)
+		{
+			debug_flag=TRUE;
+			GO.sta=Ready;
+			GO.subtask=0;
+			GO.task=task_index;
+		}
 		break;
 	default:
 		break;
@@ -260,6 +268,11 @@ void thread_test(u8 task)
 		GE.sta=Ready;
 		GE.subtask=0;
 		GE.task=GE_start;
+		break;
+		case 2:
+		GC.sta=Ready;
+		GC.subtask=0;
+		GC.task=GC_start;
 		break;
 	}
 

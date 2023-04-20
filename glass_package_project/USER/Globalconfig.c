@@ -7,6 +7,8 @@ volatile u32 nowRtcTime = 0;
 u32 deviceSnNumber = 0;
 u8 DeviceType = DeviceType_Default;
 static u8 Carrier_Versions_Default = 0;
+u8 debug_flag=FALSE;
+
 void Set_Global_Parameter_Default(void)
 {
 

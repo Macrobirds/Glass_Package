@@ -33,7 +33,7 @@ enum motor_direction
 	Back,
 };
 
-typedef struct{
+typedef volatile struct{
 	enum motor_index name; //电机名称
 	enum motor_state motion; //电机运动状态
 	enum motor_direction dir; //电机运动方向
