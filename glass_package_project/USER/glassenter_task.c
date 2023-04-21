@@ -13,10 +13,10 @@ static u8 check_GC(void)
 
 void GE_ReadyTask(void)
 {
-	if(GE.task!=GE_none)
-	{
-			printf("readytask%d subtask:%d\r\n",GE.task,GE.subtask);
-	}
+//	if(GE.task!=GE_none)
+//	{
+//			printf("readytask%d subtask:%d\r\n",GE.task,GE.subtask);
+//	}
 	switch (GE.task)
 	{
 	case GE_none:
@@ -56,6 +56,8 @@ void GE_ReadyTask(void)
 	case GE_Box_In:
 		if (GE_start_Sen == Sen_Block) // 原点感应 装载槽已进入
 		{
+			stepperMotorStop(GE.motor);
+			GE.motor->postion=0;
 			GE.sta = Finish;
 		}
 		else
@@ -82,6 +84,8 @@ void GE_ReadyTask(void)
 		GE.box_Exist = FALSE;
 		if (GE_start_Sen == Sen_Block)
 		{
+			stepperMotorStop(GE.motor);
+			GE.motor->postion=0;
 			GE.sta = Finish;
 		}
 		else

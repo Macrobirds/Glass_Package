@@ -1,6 +1,6 @@
 #include "taskthread.h"
 #define ADJUST_DIS 600 //pulse value 
-
+#define ADJUST_DIS_full 200
 // 检测是否夹手阻挡了托盘
 static u8 Check_GC(void)
 {
@@ -10,6 +10,11 @@ static u8 Check_GC(void)
 	if(GO.task<=GO_reset_on)
 	{
 			if(GC_claw_Sen!=Sen_Block)
+		{
+			return TRUE;
+		}
+		
+		if(GC.motor_r->postion!=GC.GCR_hor_pos&&GC.motor_r->motion==Stop)
 		{
 			return TRUE;
 		}
@@ -61,6 +66,10 @@ static void Next_Task(enum glass_out_task_index Resume_task, enum glass_out_task
 
 void GO_ReadyTask(void)
 {
+	if(GO.task!=GO_none)
+	{
+		printf("GO task:%d\r\n",GO.task);
+	}
 	switch (GO.task)
 	{
 	case GO_none:
@@ -104,7 +113,10 @@ void GO_ReadyTask(void)
 		}
 		else if (GO.subtask == 3) // 复位垂直原点
 		{
-			Next_Task(GO_none, GOV_start);
+			Next_Task(GO.task, GOV_start);
+		}else if(GO.subtask==4)
+		{
+			Next_Task(GO_none,GO_adjust);
 		}
 		break;
 	//////////////////关机复位/////////////////
@@ -187,13 +199,15 @@ void GO_ReadyTask(void)
 	case GO_start:	// 水平复位到原点
 		if(GOH_start_Sen==Sen_Block)
 		{
+			stepperMotorStop(GO.motor_h);
 			GO.sta=Finish;
+			GO.motor_h->postion=0;
 		}else
 		{
 			if (Check_GC())
 			{
 				motorGo_acc(GO.motor_h,0);
-				GO.sta=Finish;
+				GO.sta=Running;;
 			}
 		}
 		break;
@@ -201,7 +215,9 @@ void GO_ReadyTask(void)
 	case GOH_start:
 		if (GOH_start_Sen == Sen_Block)
 		{
+			stepperMotorStop(GO.motor_h);
 			GO.sta = Finish;
+			GO.motor_h->postion=0;
 		}
 		else
 		{
@@ -215,13 +231,15 @@ void GO_ReadyTask(void)
 		break;
 	//////////////移动至封片工作点//////////////////// 
 	case GOH_package:
-		if (GOH_mid_Sen == Sen_Block)
+		if (GO.motor_h->postion==GO.GOH_mid_pos)
 		{
+			stepperMotorStop(GO.motor_h);
 			GO.sta = Finish;
+			GO.motor_h->postion=GO.GOH_mid_pos;
 		}
 		else
 		{
-			if (GC_rot_Sen!=Sen_Block) // 等待夹手夹取玻片到旋转原点
+			if (GC_rot_Sen!=Sen_Block&&GC_claw_Sen==Sen_Block) // 等待夹手夹取玻片到旋转原点
 			{
 				GO.sta = Running;
 				motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
@@ -232,7 +250,9 @@ void GO_ReadyTask(void)
 	case GOH_end:
 		if (GOH_end_Sen == Sen_Block)
 		{
+			stepperMotorStop(GO.motor_h);
 			GO.sta = Finish;
+			GO.motor_h->postion=GO.GOH_end_pos;
 		}
 		else
 		{
@@ -253,7 +273,9 @@ void GO_ReadyTask(void)
 	case GOV_start:
 		if (GOV_start_Sen == Sen_Block)
 		{
+			stepperMotorStop(GO.motor_v);
 			GO.sta = Finish;
+			GO.motor_v->postion=0;
 		}
 		else
 		{
@@ -293,7 +315,15 @@ void GO_ReadyTask(void)
 		GO.sta = Running;
 		GO.motor_v->dir=Front;
 		motor_Set_Direction(GO.motor_v);
-		motorGO_Debug(GO.motor_v,ADJUST_DIS,0);
+		if(GOV_start_Sen==Sen_Block)
+		{
+			motorGO_Debug(GO.motor_v,ADJUST_DIS+ADJUST_DIS_full,0);
+		}else
+		{
+				motorGO_Debug(GO.motor_v,ADJUST_DIS,0);
+		}
+
+	
 		break;
 	case GO_finish:
 		break;
@@ -456,43 +486,33 @@ void GO_RunningTask(void)
 		}
 		break;
 	case GO_out:
-		if (GOV_glass_Sen != Sen_Block)
-		{
-			GO.sta = Finish;
-		}
-		else
-		{
+
 			if (GO.motor_v->motion == Stop) // 走完一个槽的距离后 仍然有感应
 			{
-				GO.sta = Ready;
-				GO.task = GO_next;
-			}
-			else if (GO.motor_v->postion > GO.GOV_box_len) //存储槽满 结束任务
-			{
-				GO.sta = Ready;
-				GO.task = GO_finish;
-			}
-		}
-		break;
-	case GO_next:
-		if (GOV_glass_Sen != Sen_Block)
-		{
-			GO.sta = Finish;
-		}
-		else
-		{
-			if (GO.motor_v->motion == Stop)
-			{
-				if (GO.motor_v->postion >= GO.GOV_box_len)
+				if(GOV_glass_Sen!=Sen_Block)
 				{
-					GO.sta = Ready;
-					GO.task = GO_finish;
+					GO.sta=Finish;
 				}else
 				{
-					Error_Set(Error_Sensor,GOV_glass_sensor);
+						GO.sta = Ready; //到达下一个槽或者槽满
+						GO.task = GO_next;
+				}
+
+			}
+
+		break;
+	case GO_next:
+			if (GO.motor_v->motion == Stop)
+			{
+				if (GOV_glass_Sen!=Sen_Block)
+				{
+					GO.sta=Finish;
+				}else //槽满
+				{
+					GO.sta=Ready;
+					GO.task=GO_finish;
 				}
 			}
-		}
 		break;
 	case GO_adjust:
 		if (GO.motor_v->motion == Stop)
@@ -557,7 +577,7 @@ void GO_FinishTask(void)
 	Resume_Task();	
 		break;
 	case GOH_package:
-		if (Check_GC()) // 当夹手离开封片区域
+		if (GC.task>=GC_move_down&&GC.task<GC_rot_up) // 当夹手离开封片区域
 		{
 			GO.sta = Ready;
 			GO.task = GOH_end;

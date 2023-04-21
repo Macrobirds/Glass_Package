@@ -382,7 +382,7 @@ void EXTI9_5_IRQHandler(void)
 		{
 					if(!flag)
 					{
-						if(GE_down_Sen==Sen_Block) //下端照射
+						if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //下端照射
 						{
 							TIM_Cmd(TIM1,DISABLE);
 							GE_motor_struct.motion=Stop;
@@ -438,7 +438,7 @@ void EXTI9_5_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
 		delay_us(300);
-		if(GE.task==GE_move_front)
+		if(GE.task==GE_move_front||GE.task==GE_move_glass)
 		{
 			if(GE_up_Sen==Sen_Block) //上端照射
 			{

@@ -230,16 +230,16 @@ void boost_test(u8 task, u8 task_index)
 
 void debug_test(u8 task, u8 task_index)
 {
-	TaskThread_State = taskthread_debug; // 进入debug 模式 不允许任务自动跳转
+//	TaskThread_State = taskthread_debug; // 进入debug 模式 不允许任务自动跳转
 	switch (task)
 	{
 	case 1: // GE task
-		if (task_index > GE_BOx_Out)
-		{
-			GE.sta = Ready;
-			GE.subtask = 0;
-			GE.task = task_index;
-		}
+//		if (task_index > GE_BOx_Out)
+//		{
+//			GE.sta = Ready;
+//			GE.subtask = 0;
+//			GE.task = task_index;
+//		}
 		break;
 	case 2:
 		break;
@@ -273,6 +273,13 @@ void thread_test(u8 task)
 		GC.sta=Ready;
 		GC.subtask=0;
 		GC.task=GC_start;
+		break;
+		case 3:
+		break;
+		case 4:
+		GO.sta=0;
+		GO.subtask=0;
+		GO.task=GO_start;
 		break;
 	}
 

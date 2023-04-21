@@ -10,7 +10,7 @@ static u8 Check_GP(void)
 //#else
 	if (GC_claw_Sen == Sen_Block) // 夹手夹紧状态
 	{
-		if (GO.motor_h->postion == 0 && GO.motor_h->motion == Stop)/* && GP.motor->postion == GP.sucker_pos && GP.motor->motion == Stop*/
+		if (GOH_start_Sen==Sen_Block&& GO.motor_h->motion == Stop)/* && GP.motor->postion == GP.sucker_pos && GP.motor->motion == Stop*/
 		{
 			return TRUE;
 		}
@@ -54,10 +54,10 @@ static void Next_Task(enum glass_claw_task_index Resume_task,enum glass_claw_tas
 
 void GC_ReadyTask(void)
 {
-	if(GC.task!=GC_none)
-	{
-			printf("GC task:%d\r\n ",GC.task);
-	}
+//	if(GC.task!=GC_none)
+//	{
+//			printf("GC task:%d\r\n ",GC.task);
+//	}
 	switch (GC.task)
 	{
 	case GC_none:
@@ -215,7 +215,7 @@ void GC_ReadyTask(void)
 		}
 		break;
 	case GC_rot_hor:
-		if(GO.motor_h->postion==GO.GOH_mid_pos&&GO.motor_h->motion==Stop)
+		if(GO.motor_h->postion==GO.GOH_mid_pos &&GO.motor_h->motion==Stop)
 		{
 			motorGo(GC.motor_r, GC.GCR_hor_pos, 0);
 			GC.sta = Running;
@@ -456,7 +456,8 @@ void GC_FinishTask(void)
 //		}else
 //		{
 //			//Error_Set(Error_Slide_Glass,0); 载玻片错误
-//			GC_claw_Cyl=GAS_DISABLE; //夹手释放
+//			//GC_claw_Cyl=GAS_DISABLE; //夹手释放
+//			printf("glass error\r\n");
 //			Next_Task(GC_none,GC_ver_start); //复位回垂直原点 重新夹取玻片
 //		}
 		break;

@@ -126,8 +126,8 @@ void GP_ReadyTask(void)
 			GP.sta=Finish;
 		}else
 		{
-				GP_small_Cyl = GAS_DISABLE; // 小气缸使能
-				GP_big_Cyl = GAS_DISABLE;	// 大气缸失能能
+				GP_small_Cyl = GAS_DISABLE; // 小气缸失能
+				GP_big_Cyl = GAS_DISABLE;	// 大气缸失能
 				GP.sta = Running;
 		}
 
