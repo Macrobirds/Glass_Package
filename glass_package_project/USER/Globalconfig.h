@@ -17,7 +17,12 @@
 #include "w25qxx.h"
 #include "RingBuffer.h"
 
+
+// 条件编译参数
 #define DEBUG_MODE
+//#define GE_UP_SENSOR_BEFORE 
+#define GE_DOWN_SENSOR_BEFORE
+
 
 //SPI Flash 参数
 #define SpiFlashAddr_initFlag 				0x0000			// 首次初始化标志位

@@ -1,5 +1,7 @@
 #include "position.h"
 
+#define DELAY_US 100
+
 static void Exti_8_15_GPIO_Init(void) 
 { 
 	// PE8-15
@@ -285,7 +287,7 @@ void EXTI0_IRQHandler(void)
 	{
 		if(GO_hor_motor_struct.dir==Front) //向终点方向
 		{
-			delay_us(50);
+			delay_us(DELAY_US);
 			if(GOH_mid_Sen==Sen_Block) //到达工作点停止
 			{
 				TIM_Cmd(TIM2,DISABLE);
@@ -304,7 +306,7 @@ void EXTI3_IRQHandler(void)
 	//GOH_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line3)!=RESET) //封片设备到达原点
 	{
-		delay_us(50);
+		delay_us(DELAY_US);
 		if(GOH_start_Sen==Sen_Block)//封片设备停止
 		{
 			TIM_Cmd(TIM2,DISABLE);
@@ -326,7 +328,7 @@ void EXTI9_5_IRQHandler(void)
 	//GOH_end_Sen
 	if(EXTI_GetITStatus(EXTI_Line5)!=RESET) //水平出料到达终点
 	{
-		delay_us(50);
+		delay_us(DELAY_US);
 		if(GOH_end_Sen==Sen_Block) 
 		{
 			TIM_Cmd(TIM2,DISABLE);
@@ -339,7 +341,7 @@ void EXTI9_5_IRQHandler(void)
 	//GOV_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line6)!=RESET) //垂直出料槽到达原点
 	{
-		delay_us(50);
+		delay_us(DELAY_US);
 		if(GOV_start_Sen==Sen_Block)
 		{
 			TIM_Cmd(TIM4,DISABLE);
@@ -352,13 +354,22 @@ void EXTI9_5_IRQHandler(void)
 	//GOV_galss_Sen
 	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //检测到存储槽是否存在玻片
 	{
-		delay_us(50);
+		delay_us(DELAY_US);
 		if(GO.task>GO_Box_Out)
 		{
 			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 			{
-				TIM_Cmd(TIM4,DISABLE);
-				GO_ver_motor_struct.motion=Stop;
+				if(GO_ver_motor_struct.step>600) //确保移动到下一个槽
+				{
+					TIM_Cmd(TIM4,DISABLE);
+					GO_ver_motor_struct.motion=Stop;
+					GO_ver_motor_struct.step=0;
+					printf("glass stop\r\n");
+				}else
+				{
+					printf("glass error\r\n");
+				}
+
 
 			}
 		}else if(GO.task==GO_Box_In&&GO.subtask==1)
@@ -377,7 +388,7 @@ void EXTI9_5_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
 	{
 		delay_us(300);
-		
+		#ifdef GE_UP_SENSOR_BEFORE
 		if(GE.task==GE_move_glass)
 		{
 					if(!flag)
@@ -393,44 +404,25 @@ void EXTI9_5_IRQHandler(void)
 						flag=FALSE;
 					}				
 		}
-//		if(GE.task==GE_move_glass)
-//		{
-//			if(sensor_filter>=old_sensor_filter)
-//			{
-//				if(sensor_filter-old_sensor_filter>150)
-//				{
-//					if(!flag)
-//					{
-//						if(GE_down_Sen==Sen_Block) //只有下端照射
-//						{
-//							TIM_Cmd(TIM1,DISABLE);
-//							GE_motor_struct.motion=Stop;
-//							printf("GE_down_Sen %d\r\n",sensor_filter);
-//						}
-//					}else
-//					{
-//						flag=FALSE;
-//					}
-//				}
-//			}else
-//			{
-//				if((sensor_filter+old_sensor_filter)%1000>150)
-//				{
-//					if(!flag)
-//					{
-//						if(GE_down_Sen==Sen_Block) //只有下端照射
-//						{
-//							TIM_Cmd(TIM1,DISABLE);
-//							GE_motor_struct.motion=Stop;
-//							printf("GE_down_Sen %d\r\n",sensor_filter);
-//						}
-//					}else
-//					{
-//						flag=FALSE;
-//					}
-//				}
-//			}
-//		}
+		#endif
+		
+		#ifdef GE_DOWN_SENSOR_BEFORE
+				if(GE.task==GE_move_glass)
+		{
+				if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //下端照射
+				{
+						TIM_Cmd(TIM1,DISABLE);
+						GE_motor_struct.motion=Stop;
+						printf("GE_down_Sen \r\n");
+				}
+				
+		}
+		
+		#endif
+		
+		
+		
+
 		
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
@@ -459,7 +451,7 @@ void EXTI15_10_IRQHandler(void)
 	//GE_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line10)!=RESET) //进料槽移动到原点
 	{
-			delay_us(50);
+			delay_us(DELAY_US);
 			if(GE_start_Sen==Sen_Block)//原点感应
 			{
 				TIM_Cmd(TIM1,DISABLE);
@@ -472,7 +464,7 @@ void EXTI15_10_IRQHandler(void)
 	//GC_rot_Sen
 	if(EXTI_GetITStatus(EXTI_Line11)!=RESET) //夹手旋转至原点
 	{
-		delay_us(50);
+		delay_us(DELAY_US+100);
 		if(GC_rot_Sen!=Sen_Block) //夹手旋转停止
 		{
 			TIM_Cmd(TIM5,DISABLE);
@@ -485,7 +477,7 @@ void EXTI15_10_IRQHandler(void)
 	//GC_ver_Sen
 	if(EXTI_GetITStatus(EXTI_Line12)!=RESET) //夹手运动到垂直原点
 	{
-		delay_us(50);
+		delay_us(DELAY_US);
 		if(GC_ver_Sen==Sen_Block) //夹手垂直停止
 		{
 			TIM_Cmd(TIM3,DISABLE);
@@ -500,7 +492,7 @@ void EXTI15_10_IRQHandler(void)
 	//GP_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line13)!=RESET) //封片运动到原点
 	{
-		delay_us(50);
+		delay_us(DELAY_US);
 		if(GP_start_Sen==Sen_Block)//封片设备停止
 		{
 			TIM_Cmd(TIM8,DISABLE);
@@ -541,3 +533,43 @@ void EXTI15_10_IRQHandler(void)
 //			TIM_Cmd(TIM2, DISABLE);  //关闭TIM8				
 //		}
 //		EXTI_ClearITPendingBit(EXTI_Line8);
+
+
+//		if(GE.task==GE_move_glass)
+//		{
+//			if(sensor_filter>=old_sensor_filter)
+//			{
+//				if(sensor_filter-old_sensor_filter>150)
+//				{
+//					if(!flag)
+//					{
+//						if(GE_down_Sen==Sen_Block) //只有下端照射
+//						{
+//							TIM_Cmd(TIM1,DISABLE);
+//							GE_motor_struct.motion=Stop;
+//							printf("GE_down_Sen %d\r\n",sensor_filter);
+//						}
+//					}else
+//					{
+//						flag=FALSE;
+//					}
+//				}
+//			}else
+//			{
+//				if((sensor_filter+old_sensor_filter)%1000>150)
+//				{
+//					if(!flag)
+//					{
+//						if(GE_down_Sen==Sen_Block) //只有下端照射
+//						{
+//							TIM_Cmd(TIM1,DISABLE);
+//							GE_motor_struct.motion=Stop;
+//							printf("GE_down_Sen %d\r\n",sensor_filter);
+//						}
+//					}else
+//					{
+//						flag=FALSE;
+//					}
+//				}
+//			}
+//		}

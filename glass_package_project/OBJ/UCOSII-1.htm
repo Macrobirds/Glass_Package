@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\UCOSII-1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\UCOSII-1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri Apr 21 17:22:02 2023
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sat May 06 18:04:18 2023
 <BR><P>
 <H3>Maximum Stack Usage =        372 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -526,8 +526,9 @@ Global Symbols
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_receivetask
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main_task
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gas_task
-<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM4_IRQHandler
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 <LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usmart_sys_cmd_exe
 <LI><a href="#[14]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usmart_scan
 <LI><a href="#[13]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usmart_exe
@@ -861,7 +862,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
 </UL>
-<P><STRONG><a name="[36]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 356 bytes, Stack size 8 bytes, position.o(i.EXTI9_5_IRQHandler))
+<P><STRONG><a name="[36]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 390 bytes, Stack size 8 bytes, position.o(i.EXTI9_5_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = EXTI9_5_IRQHandler &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -887,95 +888,103 @@ Global Symbols
 <LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[aa]"></a>EXTI_Init</STRONG> (Thumb, 142 bytes, Stack size 0 bytes, stm32f10x_exti.o(i.EXTI_Init))
-<BR><BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
-<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
+<P><STRONG><a name="[ab]"></a>EXTI_Init</STRONG> (Thumb, 142 bytes, Stack size 0 bytes, stm32f10x_exti.o(i.EXTI_Init))
+<BR><BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
+<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
 </UL>
 
-<P><STRONG><a name="[9b]"></a>Error_Set</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, taskthread.o(i.Error_Set))
-<BR><BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_RunningTask
+<P><STRONG><a name="[9b]"></a>Error_Set</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, taskthread.o(i.Error_Set))
+<BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
+<LI>Call Chain = Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
+</UL>
+<BR>[Calls]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+</UL>
+<BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_RunningTask
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_box
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_RunningTask
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_FinishTask
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Spray
-<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_RunningTask
+<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_RunningTask
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_RunningTask
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_TaskThread
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_TaskThread
-<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[ad]"></a>GC_FinishTask</STRONG> (Thumb, 242 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_FinishTask))
+<P><STRONG><a name="[ae]"></a>GC_FinishTask</STRONG> (Thumb, 242 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GC_FinishTask
 </UL>
-<BR>[Calls]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Resume_Task
-<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
+<BR>[Calls]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Resume_Task
+<LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
+<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[b0]"></a>GC_ReadyTask</STRONG> (Thumb, 640 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_ReadyTask))
+<P><STRONG><a name="[b1]"></a>GC_ReadyTask</STRONG> (Thumb, 640 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GC_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
-<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
-<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_GP
+<BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
+<LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
+<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_GP
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
+<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[b6]"></a>GC_RunningTask</STRONG> (Thumb, 422 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_RunningTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GC_RunningTask
+<P><STRONG><a name="[b7]"></a>GC_RunningTask</STRONG> (Thumb, 382 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_RunningTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = GC_RunningTask &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
+<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[b7]"></a>GC_TaskThread</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_TaskThread))
+<P><STRONG><a name="[b8]"></a>GC_TaskThread</STRONG> (Thumb, 82 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_TaskThread))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216 + Unknown Stack Size
 <LI>Call Chain = GC_TaskThread &rArr; GC_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_RunningTask
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
+<BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_RunningTask
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[b8]"></a>GE_FinishTask</STRONG> (Thumb, 170 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_FinishTask))
+<P><STRONG><a name="[b9]"></a>GE_FinishTask</STRONG> (Thumb, 170 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GE_FinishTask
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
 </UL>
 <BR>[Called By]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_TaskThread
 </UL>
 
-<P><STRONG><a name="[ba]"></a>GE_ReadyTask</STRONG> (Thumb, 458 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_ReadyTask))
+<P><STRONG><a name="[bb]"></a>GE_ReadyTask</STRONG> (Thumb, 470 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GE_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
-<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
+<BR>[Calls]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
 </UL>
 <BR>[Called By]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_TaskThread
 </UL>
 
 <P><STRONG><a name="[bc]"></a>GE_RunningTask</STRONG> (Thumb, 340 bytes, Stack size 8 bytes, glassenter_task.o(i.GE_RunningTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GE_RunningTask
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = GE_RunningTask &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
@@ -987,14 +996,14 @@ Global Symbols
 <LI>Call Chain = GE_TaskThread &rArr; GE_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_RunningTask
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[be]"></a>GO_FinishTask</STRONG> (Thumb, 286 bytes, Stack size 8 bytes, glassout_task.o(i.GO_FinishTask))
+<P><STRONG><a name="[be]"></a>GO_FinishTask</STRONG> (Thumb, 284 bytes, Stack size 8 bytes, glassout_task.o(i.GO_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
 <LI>Call Chain = GO_FinishTask
 </UL>
@@ -1006,26 +1015,26 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 </UL>
 
-<P><STRONG><a name="[c3]"></a>GO_ReadyTask</STRONG> (Thumb, 1056 bytes, Stack size 8 bytes, glassout_task.o(i.GO_ReadyTask))
+<P><STRONG><a name="[c3]"></a>GO_ReadyTask</STRONG> (Thumb, 1052 bytes, Stack size 8 bytes, glassout_task.o(i.GO_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GO_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
-<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
+<BR>[Calls]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_box
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_GC
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 </UL>
 
 <P><STRONG><a name="[c5]"></a>GO_RunningTask</STRONG> (Thumb, 494 bytes, Stack size 8 bytes, glassout_task.o(i.GO_RunningTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GO_RunningTask
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = GO_RunningTask &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
@@ -1044,20 +1053,20 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[a9]"></a>GPIO_EXTILineConfig</STRONG> (Thumb, 60 bytes, Stack size 12 bytes, stm32f10x_gpio.o(i.GPIO_EXTILineConfig))
+<P><STRONG><a name="[aa]"></a>GPIO_EXTILineConfig</STRONG> (Thumb, 60 bytes, Stack size 12 bytes, stm32f10x_gpio.o(i.GPIO_EXTILineConfig))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = GPIO_EXTILineConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
-<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
+<BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
+<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
 </UL>
 
-<P><STRONG><a name="[a6]"></a>GPIO_Init</STRONG> (Thumb, 278 bytes, Stack size 24 bytes, stm32f10x_gpio.o(i.GPIO_Init))
+<P><STRONG><a name="[a7]"></a>GPIO_Init</STRONG> (Thumb, 278 bytes, Stack size 24 bytes, stm32f10x_gpio.o(i.GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adc2_init
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IIC_Init
-<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_8_15_GPIO_Init
-<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_0_7_GPIO_Init
+<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_8_15_GPIO_Init
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_0_7_GPIO_Init
 <LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 <LI><a href="#[15c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart2_init
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM8_PWM_Init
@@ -1091,8 +1100,9 @@ Global Symbols
 <LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_test
 </UL>
 
-<P><STRONG><a name="[c7]"></a>GP_FinishTask</STRONG> (Thumb, 272 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_FinishTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GP_FinishTask
+<P><STRONG><a name="[c7]"></a>GP_FinishTask</STRONG> (Thumb, 312 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_FinishTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = GP_FinishTask &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Resume_Task
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
@@ -1100,14 +1110,14 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_TaskThread
 </UL>
 
-<P><STRONG><a name="[c9]"></a>GP_ReadyTask</STRONG> (Thumb, 730 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_ReadyTask))
+<P><STRONG><a name="[c9]"></a>GP_ReadyTask</STRONG> (Thumb, 752 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = GP_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
+<BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
 <LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Next_Task
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Spray
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
@@ -1115,8 +1125,9 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_TaskThread
 </UL>
 
-<P><STRONG><a name="[cb]"></a>GP_RunningTask</STRONG> (Thumb, 622 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_RunningTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = GP_RunningTask
+<P><STRONG><a name="[cb]"></a>GP_RunningTask</STRONG> (Thumb, 662 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_RunningTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = GP_RunningTask &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
@@ -1190,9 +1201,9 @@ Global Symbols
 <P><STRONG><a name="[97]"></a>Heater_Gpio_Init</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, gpio.o(i.Heater_Gpio_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Heater_Gpio_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALL_GPIO_Init
 </UL>
@@ -1200,8 +1211,8 @@ Global Symbols
 <P><STRONG><a name="[e2]"></a>IIC_Init</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, myiic.o(i.IIC_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = IIC_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ITV0011_IIC_Init
 </UL>
@@ -1260,8 +1271,8 @@ Global Symbols
 <P><STRONG><a name="[99]"></a>IoInput_GpioInit</STRONG> (Thumb, 116 bytes, Stack size 8 bytes, gpio.o(i.IoInput_GpioInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = IoInput_GpioInit &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALL_GPIO_Init
 </UL>
@@ -1269,9 +1280,9 @@ Global Symbols
 <P><STRONG><a name="[95]"></a>LED_GPIO_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, gpio.o(i.LED_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = LED_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALL_GPIO_Init
 </UL>
@@ -1279,7 +1290,7 @@ Global Symbols
 <P><STRONG><a name="[e9]"></a>MYDMA_Config_Usart2</STRONG> (Thumb, 148 bytes, Stack size 24 bytes, usart.o(i.MYDMA_Config_Usart2))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = MYDMA_Config_Usart2 &rArr; NVIC_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
 <LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
 <LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Init
@@ -1308,8 +1319,8 @@ Global Symbols
 <P><STRONG><a name="[98]"></a>Motor_Dir_GpioInit</STRONG> (Thumb, 162 bytes, Stack size 16 bytes, gpio.o(i.Motor_Dir_GpioInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Motor_Dir_GpioInit &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALL_GPIO_Init
@@ -1331,10 +1342,10 @@ Global Symbols
 <P><STRONG><a name="[16]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
 </UL>
-<P><STRONG><a name="[ac]"></a>NVIC_Init</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, misc.o(i.NVIC_Init))
+<P><STRONG><a name="[ad]"></a>NVIC_Init</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, misc.o(i.NVIC_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = NVIC_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
+<BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
 <LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 <LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;postions_sensor_Init
 <LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Init
@@ -1675,7 +1686,7 @@ Global Symbols
 <P><STRONG><a name="[123]"></a>Pause_TaskThread</STRONG> (Thumb, 90 bytes, Stack size 8 bytes, taskthread.o(i.Pause_TaskThread))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Pause_TaskThread &rArr; stepperMotorStop
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<BR>[Calls]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;close_device
 </UL>
@@ -1697,13 +1708,13 @@ Global Symbols
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[a5]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd))
+<P><STRONG><a name="[a6]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd))
 <BR><BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adc2_init
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IIC_Init
-<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
-<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
-<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_8_15_GPIO_Init
-<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_0_7_GPIO_Init
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
+<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
+<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_8_15_GPIO_Init
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_0_7_GPIO_Init
 <LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 <LI><a href="#[15c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart2_init
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM8_PWM_Init
@@ -1732,8 +1743,8 @@ Global Symbols
 <P><STRONG><a name="[96]"></a>RELAY_GPIO_Init</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, gpio.o(i.RELAY_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = RELAY_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALL_GPIO_Init
 </UL>
@@ -1798,9 +1809,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM1_PWM_Init &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1PreloadConfig
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1Init
 <LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_CtrlPWMOutputs
@@ -1837,9 +1848,9 @@ Global Symbols
 <P><STRONG><a name="[f8]"></a>TIM2_PWM_Init</STRONG> (Thumb, 216 bytes, Stack size 48 bytes, pwm.o(i.TIM2_PWM_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM2_PWM_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1PreloadConfig
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1Init
 <LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_PinRemapConfig
@@ -1863,9 +1874,9 @@ Global Symbols
 <P><STRONG><a name="[f5]"></a>TIM3_PWM_Init</STRONG> (Thumb, 178 bytes, Stack size 48 bytes, pwm.o(i.TIM3_PWM_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM3_PWM_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1PreloadConfig
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1Init
 <LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
@@ -1875,22 +1886,24 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
 </UL>
 
-<P><STRONG><a name="[3d]"></a>TIM4_IRQHandler</STRONG> (Thumb, 392 bytes, Stack size 8 bytes, pwm.o(i.TIM4_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = TIM4_IRQHandler &rArr; TIM_GetITStatus
+<P><STRONG><a name="[3d]"></a>TIM4_IRQHandler</STRONG> (Thumb, 408 bytes, Stack size 8 bytes, pwm.o(i.TIM4_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
+<LI>Call Chain = TIM4_IRQHandler &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_SetCompare1
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
 <LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_GetITStatus
 <LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ClearITPendingBit
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
 </UL>
 <P><STRONG><a name="[f4]"></a>TIM4_PWM_Init</STRONG> (Thumb, 178 bytes, Stack size 48 bytes, pwm.o(i.TIM4_PWM_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM4_PWM_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1PreloadConfig
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1Init
 <LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
@@ -1913,9 +1926,9 @@ Global Symbols
 <P><STRONG><a name="[f7]"></a>TIM5_PWM_Init</STRONG> (Thumb, 178 bytes, Stack size 48 bytes, pwm.o(i.TIM5_PWM_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM5_PWM_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1PreloadConfig
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1Init
 <LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
@@ -1934,7 +1947,7 @@ Global Symbols
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_TaskThread
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_TaskThread
-<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
 </UL>
@@ -1950,9 +1963,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM8_PWM_Init &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1PreloadConfig
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_OC1Init
 <LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_CtrlPWMOutputs
@@ -1997,7 +2010,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[a2]"></a>TIM_Cmd</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_Cmd))
-<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<BR><BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStart
 <LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI9_5_IRQHandler
 <LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI3_IRQHandler
@@ -2097,7 +2110,7 @@ Global Symbols
 <LI>Call Chain = TaskThread_Init &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
 <LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ITConfig
 <LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
@@ -2198,8 +2211,8 @@ Global Symbols
 <P><STRONG><a name="[122]"></a>adc2_init</STRONG> (Thumb, 138 bytes, Stack size 32 bytes, adc.o(i.adc2_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = adc2_init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_ADCCLKConfig
 <LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_StartCalibration
 <LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_ResetCalibration
@@ -2381,62 +2394,62 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motoracc_test
 </UL>
 
-<P><STRONG><a name="[b2]"></a>motorGO_Debug</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, motor.o(i.motorGO_Debug))
+<P><STRONG><a name="[b3]"></a>motorGO_Debug</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, motor.o(i.motorGO_Debug))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = motorGO_Debug &rArr; stepperMotorStart
 </UL>
 <BR>[Calls]<UL><LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStart
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
 <LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_test
 </UL>
 
-<P><STRONG><a name="[b4]"></a>motorGo</STRONG> (Thumb, 192 bytes, Stack size 24 bytes, motor.o(i.motorGo))
+<P><STRONG><a name="[b5]"></a>motorGo</STRONG> (Thumb, 192 bytes, Stack size 24 bytes, motor.o(i.motorGo))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = motorGo &rArr; stepperMotorStart
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;my_delay_us
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStart
-<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
 <LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Get_Start_Sen
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
 </UL>
 
-<P><STRONG><a name="[b5]"></a>motorGo_acc</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, motor.o(i.motorGo_acc))
+<P><STRONG><a name="[b6]"></a>motorGo_acc</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, motor.o(i.motorGo_acc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 200 + Unknown Stack Size
 <LI>Call Chain = motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;my_delay_us
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
+<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStop
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;stepperMotorStart
 <LI><a href="#[15f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;setMixtureData
-<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
 <LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Get_Start_Sen
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
 </UL>
 
 <P><STRONG><a name="[161]"></a>motor_Get_Start_Sen</STRONG> (Thumb, 86 bytes, Stack size 0 bytes, motor.o(i.motor_Get_Start_Sen))
-<BR><BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<BR><BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
 </UL>
 
-<P><STRONG><a name="[b1]"></a>motor_Set_Direction</STRONG> (Thumb, 92 bytes, Stack size 0 bytes, motor.o(i.motor_Set_Direction))
-<BR><BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<P><STRONG><a name="[b2]"></a>motor_Set_Direction</STRONG> (Thumb, 92 bytes, Stack size 0 bytes, motor.o(i.motor_Set_Direction))
+<BR><BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
-<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
 <LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motoracc_test
 <LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_test
 </UL>
@@ -2444,8 +2457,8 @@ Global Symbols
 <P><STRONG><a name="[c]"></a>motor_test</STRONG> (Thumb, 238 bytes, Stack size 24 bytes, usmart_config.o(i.motor_test))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = motor_test &rArr; motorGO_Debug &rArr; stepperMotorStart
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
+<BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
@@ -2453,7 +2466,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 208 + Unknown Stack Size
 <LI>Call Chain = motoracc_test &rArr; motorAccGO_Debug &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
+<BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorAccGO_Debug
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
@@ -2467,8 +2480,8 @@ Global Symbols
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IIC_Stop
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IIC_Start
 <LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IIC_Send_Byte
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
 </UL>
 
 <P><STRONG><a name="[163]"></a>my_mem_free</STRONG> (Thumb, 96 bytes, Stack size 24 bytes, malloc.o(i.my_mem_free))
@@ -2524,9 +2537,9 @@ Global Symbols
 <P><STRONG><a name="[15d]"></a>postions_sensor_Init</STRONG> (Thumb, 128 bytes, Stack size 8 bytes, position.o(i.postions_sensor_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = postions_sensor_Init &rArr; Exti_Init_8_15 &rArr; Exti_8_15_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
-<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
+<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -2541,7 +2554,7 @@ Global Symbols
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorAccGO_Debug
 </UL>
 
@@ -2565,21 +2578,22 @@ Global Symbols
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_SetAutoreload
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
-<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
+<BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorAccGO_Debug
 </UL>
 
-<P><STRONG><a name="[bb]"></a>stepperMotorStop</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, motor.o(i.stepperMotorStop))
+<P><STRONG><a name="[a4]"></a>stepperMotorStop</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, motor.o(i.stepperMotorStop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = stepperMotorStop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
-<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
+<BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
 <LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 <LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Pause_TaskThread
 </UL>
 
@@ -2589,8 +2603,8 @@ Global Symbols
 <P><STRONG><a name="[15c]"></a>uart2_init</STRONG> (Thumb, 128 bytes, Stack size 32 bytes, usart.o(i.uart2_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = uart2_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
 <LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_DMACmd
 <LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_Malloc
@@ -2602,9 +2616,9 @@ Global Symbols
 <P><STRONG><a name="[15b]"></a>uart_init</STRONG> (Thumb, 152 bytes, Stack size 32 bytes, usart.o(i.uart_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = uart_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
 <LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ITConfig
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
@@ -3002,43 +3016,43 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClock
 </UL>
 
-<P><STRONG><a name="[a4]"></a>Exti_0_7_GPIO_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, position.o(i.Exti_0_7_GPIO_Init))
+<P><STRONG><a name="[a5]"></a>Exti_0_7_GPIO_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, position.o(i.Exti_0_7_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Exti_0_7_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
+<BR>[Called By]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_0_7
 </UL>
 
-<P><STRONG><a name="[a7]"></a>Exti_8_15_GPIO_Init</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, position.o(i.Exti_8_15_GPIO_Init))
+<P><STRONG><a name="[a8]"></a>Exti_8_15_GPIO_Init</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, position.o(i.Exti_8_15_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Exti_8_15_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
+<BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_Init_8_15
 </UL>
 
-<P><STRONG><a name="[a8]"></a>Exti_Init_0_7</STRONG> (Thumb, 146 bytes, Stack size 16 bytes, position.o(i.Exti_Init_0_7))
+<P><STRONG><a name="[a9]"></a>Exti_Init_0_7</STRONG> (Thumb, 146 bytes, Stack size 16 bytes, position.o(i.Exti_Init_0_7))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Exti_Init_0_7 &rArr; Exti_0_7_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
-<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_0_7_GPIO_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<BR>[Calls]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
+<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_0_7_GPIO_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;postions_sensor_Init
 </UL>
 
-<P><STRONG><a name="[ab]"></a>Exti_Init_8_15</STRONG> (Thumb, 230 bytes, Stack size 16 bytes, position.o(i.Exti_Init_8_15))
+<P><STRONG><a name="[ac]"></a>Exti_Init_8_15</STRONG> (Thumb, 230 bytes, Stack size 16 bytes, position.o(i.Exti_Init_8_15))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Exti_Init_8_15 &rArr; Exti_8_15_GPIO_Init &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
-<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
-<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_8_15_GPIO_Init
-<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
+<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
+<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Exti_8_15_GPIO_Init
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;postions_sensor_Init
 </UL>
@@ -3104,26 +3118,27 @@ Local Symbols
 <P><STRONG><a name="[8]"></a>Set_motor_dir</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, usmart_config.o(i.Set_motor_dir))
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
-<P><STRONG><a name="[b9]"></a>check_GC</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, glassenter_task.o(i.check_GC))
-<BR><BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
+<P><STRONG><a name="[ba]"></a>check_GC</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, glassenter_task.o(i.check_GC))
+<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_ReadyTask
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
 </UL>
 
-<P><STRONG><a name="[b3]"></a>Check_GP</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, glassclaw_task.o(i.Check_GP))
-<BR><BR>[Called By]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<P><STRONG><a name="[b4]"></a>Check_GP</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, glassclaw_task.o(i.Check_GP))
+<BR><BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
 </UL>
 
-<P><STRONG><a name="[ae]"></a>Next_Task</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, glassclaw_task.o(i.Next_Task))
-<BR><BR>[Called By]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
-<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
+<P><STRONG><a name="[af]"></a>Next_Task</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, glassclaw_task.o(i.Next_Task))
+<BR><BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_ReadyTask
+<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
 </UL>
 
-<P><STRONG><a name="[af]"></a>Resume_Task</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, glassclaw_task.o(i.Resume_Task))
-<BR><BR>[Called By]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
+<P><STRONG><a name="[b0]"></a>Resume_Task</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, glassclaw_task.o(i.Resume_Task))
+<BR><BR>[Called By]<UL><LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_FinishTask
 </UL>
 
 <P><STRONG><a name="[9a]"></a>Check_Spray</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, glasspackage_task.o(i.Check_Spray))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Check_Spray
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = Check_Spray &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>
@@ -3143,7 +3158,8 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[9c]"></a>Check_box</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, glassout_task.o(i.Check_box))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Check_box
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
+<LI>Call Chain = Check_box &rArr; Error_Set &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 </UL>

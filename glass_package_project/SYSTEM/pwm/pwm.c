@@ -539,6 +539,9 @@ void TIM4_IRQHandler(void) // TIM4 ÖÐ¶Ï GO_ver_motor
 			{
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
+				GO.Storage_full=TRUE;
+				printf("full\r\n");
+				
 				return;
 			}
 		}
@@ -612,6 +615,7 @@ void TIM5_IRQHandler(void) // TIM5 ÖÐ¶Ï GC_rot_motor
 				TIM_Cmd(TIM5,DISABLE);
 				GC_rot_motor_struct.motion=Stop;
 				return;
+				printf("max pos\r\n");
 			}
 		}
 

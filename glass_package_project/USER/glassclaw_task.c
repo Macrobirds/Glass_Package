@@ -296,7 +296,8 @@ void GC_RunningTask(void)
 		{
 			if (GC.motor_v->motion == Stop) // 垂直传感器错误 或电机错误
 			{
-				Error_Set(Error_Sensor, GC_ver_sensor);
+				//重力作用 容易误报错
+				//Error_Set(Error_Sensor, GC_ver_sensor);
 			}
 		}
 		break;
@@ -310,7 +311,8 @@ void GC_RunningTask(void)
 		{
 			if (GC.motor_r->motion == Stop)
 			{
-				Error_Set(Error_Sensor, GC_rot_sensor);
+				//电机力矩不足  容易误报错
+				//	Error_Set(Error_Sensor, GC_rot_sensor);
 			}
 		}
 		break;
@@ -357,7 +359,7 @@ void GC_RunningTask(void)
 			{
 				if(GC.motor_v->motion==Stop)
 				{
-					Error_Set(Error_Sensor,GC_ver_sensor);
+					//Error_Set(Error_Sensor,GC_ver_sensor);
 				}
 			}
 		break;
@@ -369,7 +371,7 @@ void GC_RunningTask(void)
 		{
 			if(GC.motor_r->motion==Stop)
 			{
-				Error_Set(Error_Sensor,GC_rot_sensor);
+				//Error_Set(Error_Sensor,GC_rot_sensor);
 			}
 		}
 	case GC_rot_hor:

@@ -108,7 +108,7 @@ void GE_ReadyTask(void)
 		{
 			if (check_GC()) // 夹手位于垂直原点，垂直静止
 			{
-				motorGo(GE.motor, (GE.GE_box_dis + GE.GE_box_len) * 2, 0);
+				motorGo(GE.motor, (GE.GE_box_dis + GE.GE_box_len) * 2-(100*GE.motor->pulse_1mm), 0);
 				GE.sta = Running;
 			}
 		}

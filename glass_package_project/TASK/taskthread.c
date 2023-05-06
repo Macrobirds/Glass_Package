@@ -42,12 +42,12 @@ struct glass_out_struct GO={
 	.sta=Ready,
 	.motor_h=&GO_hor_motor_struct,
 	.motor_v=&GO_ver_motor_struct,
-	.GOH_mid_pos=9210,
+	.GOH_mid_pos=9210+400,
 	.GOH_end_pos=268*210,
 	.GOV_box_dis=800*25,
 	.GOV_box_len=800*241+600,
-	.GOV_slot_dis=800*35/10,
-	
+	.GOV_slot_dis=800*7,
+	.Storage_full=TRUE, //默认存储器满 需要通过出槽入槽重新装填来更新存储器状态
 };
 
 enum taskthread_state TaskThread_State=taskthread_boost; //任务线程运行状态 
@@ -76,7 +76,9 @@ u8 TaskThread_CheckIdle(void)
 void Error_Set(enum task_error error,u32 error_sen)
 {
 
-//	printf("error occur:%d,%d\r\n",error,error_sen);
+
+
+	
 	#ifndef DEBUG_MODE
 	//暂停当前任务
 	Pause_TaskThread();
@@ -103,6 +105,31 @@ void Error_Set(enum task_error error,u32 error_sen)
 	{
 		sensor_error_idx|=error_sen;
 	}
+	#else
+	printf("Errror:%d,Error_sensor:%d",error,error_sen);
+	stepperMotorStop(&GE_motor_struct);
+	stepperMotorStop(&GC_ver_motor_struct);
+	stepperMotorStop(&GC_rot_motor_struct);
+	stepperMotorStop(&GP_motor_struct);
+	stepperMotorStop(&GO_hor_motor_struct);
+	stepperMotorStop(&GO_ver_motor_struct);
+	//进入报错程序 处理
+	GE.subtask=0;
+	GE.sta=Ready;
+	GE.task=GE_none;
+
+	GC.subtask=0;
+	GC.sta=Ready;
+	GC.task=GC_none;
+
+	GP.subtask=0;
+	GP.sta=Ready;
+	GP.task=GP_none;
+
+	GO.subtask=0;
+	GO.sta=Ready;
+	GO.task=GO_none;
+	
 	#endif
 }
 

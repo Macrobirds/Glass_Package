@@ -1,6 +1,6 @@
 #include "taskthread.h"
-#define ADJUST_DIS 600 //pulse value 
-#define ADJUST_DIS_full 200
+#define ADJUST_DIS 700 //pulse value 
+#define ADJUST_DIS_full 0
 // ºÏ≤‚ «∑Òº– ÷◊Ëµ≤¡ÀÕ–≈Ã
 static u8 Check_GC(void)
 {
@@ -66,10 +66,10 @@ static void Next_Task(enum glass_out_task_index Resume_task, enum glass_out_task
 
 void GO_ReadyTask(void)
 {
-	if(GO.task!=GO_none)
-	{
-		printf("GO task:%d\r\n",GO.task);
-	}
+//	if(GO.task!=GO_none)
+//	{
+//		printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
+//	}
 	switch (GO.task)
 	{
 	case GO_none:
@@ -103,7 +103,7 @@ void GO_ReadyTask(void)
 			{
 				GO.motor_v->dir = Front;
 				motor_Set_Direction(GO.motor_v);
-				motorGO_Debug(GO.motor_v, GO.motor_v->pulse_1mm * 5, 0);
+				motorGO_Debug(GO.motor_v, GO.motor_v->pulse_1mm * 10, 800*10);
 				GO.sta = Running;
 			}
 			else
@@ -192,6 +192,8 @@ void GO_ReadyTask(void)
 		}
 		else if (GO.subtask == 2) // µ˜’˚¥Ê¥¢∆˜Œª÷√
 		{
+			//¥Ê¥¢∆˜◊¥Ã¨∏¸–¬
+			GO.Storage_full=FALSE;
 			Next_Task(GO_none, GO_adjust);
 		}
 		break;
@@ -256,17 +258,23 @@ void GO_ReadyTask(void)
 		}
 		else
 		{
-			if(Check_box()) //ºÏ≤‚ «∑Ò”–¥Ê¥¢∫–
-			{
-				if (Check_GC())// ∑‚∆¨π§◊˜Ω· ¯ º– ÷ Õ∑≈
+				if(GO.Storage_full==TRUE) //¥Ê¥¢≤€“—¬˙
 				{
-					GO.sta = Running;
-					motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+					Error_Set(Error_StorageFull,0); //æØ∏Ê ¥Ê¥¢≤€¬˙
+				}else
+				{
+						if(Check_box()&&GOV_glass_Sen!=Sen_Block) //ºÏ≤‚ «∑Ò”–¥Ê¥¢∫– «“¥Ê¥¢≤€ø’
+						{
+							if (Check_GC())// ∑‚∆¨π§◊˜Ω· ¯ º– ÷ Õ∑≈
+							{
+								GO.sta = Running;
+								motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+							}
+						}else
+						{
+							Error_Set(Error_Out_Box,0);
+						}
 				}
-			}else
-			{
-				Error_Set(Error_Out_Box,0);
-			}
 		}
 		break;
 	///////////∏¥ŒªµΩ¥π÷±‘≠µ„Œª÷√///////////////////// basic
@@ -280,22 +288,27 @@ void GO_ReadyTask(void)
 		else
 		{
 			GO.sta = Running;
-			motorGo_acc(GO.motor_v, 0);
+			motorGo(GO.motor_v,0,0);
+		//	motorGo_acc(GO.motor_v, 0);
 		}
 		break;
 	///////////Ω´≤£∆¨“∆≥ˆÕ–≈Ã,∑≈»Î¥Ê¥¢≤€///////////////
 	case GO_out:
-		if (GOV_glass_Sen == Sen_Block) //ºÏ≤‚µΩ≤£∆¨‘⁄¥Ê¥¢≤€
-		{
 			GO.motor_v->dir=Front;
 			motor_Set_Direction(GO.motor_v);
 			motorGO_Debug(GO.motor_v,GO.GOV_slot_dis,0);
 			GO.sta = Running;
-		}
-		else
-		{
-			GO.sta = Finish;
-		}
+//		if (GOV_glass_Sen == Sen_Block) //ºÏ≤‚µΩ≤£∆¨‘⁄¥Ê¥¢≤€
+//		{
+//			GO.motor_v->dir=Front;
+//			motor_Set_Direction(GO.motor_v);
+//			motorGO_Debug(GO.motor_v,GO.GOV_slot_dis,0);
+//			GO.sta = Running;
+//		}
+//		else
+//		{
+//			GO.sta = Finish;
+//		}
 		break;
 	////////////“∆∂ØµΩœ¬“ª¥Ê¥¢∫–///////////////////
 	case GO_next:
@@ -317,10 +330,10 @@ void GO_ReadyTask(void)
 		motor_Set_Direction(GO.motor_v);
 		if(GOV_start_Sen==Sen_Block)
 		{
-			motorGO_Debug(GO.motor_v,ADJUST_DIS+ADJUST_DIS_full,0);
+			motorGO_Debug(GO.motor_v,ADJUST_DIS-ADJUST_DIS_full,0);
 		}else
 		{
-				motorGO_Debug(GO.motor_v,ADJUST_DIS,0);
+			motorGO_Debug(GO.motor_v,ADJUST_DIS,0);
 		}
 
 	
@@ -577,7 +590,7 @@ void GO_FinishTask(void)
 	Resume_Task();	
 		break;
 	case GOH_package:
-		if (GC.task>=GC_move_down&&GC.task<GC_rot_up) // µ±º– ÷¿Îø™∑‚∆¨«¯”Ú
+		if (GC.motor_r->postion==GC.GCR_ver_pos) // µ±º– ÷¥π÷±
 		{
 			GO.sta = Ready;
 			GO.task = GOH_end;

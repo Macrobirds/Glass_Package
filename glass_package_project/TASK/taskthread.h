@@ -36,10 +36,10 @@ enum task_error
 	Error_Spray=1<<1, //缺少滴胶头
 	Error_Slide_Glass=1<<2, //缺少载玻片
 	Error_In_Box=1<<3, //缺少进料槽
-	Error_Out_Box=1<<4, //缺少装载槽或装载槽已满
+	Error_Out_Box=1<<4, //缺少装载槽
 	Error_Sensor=1<<5, //传感器错误
 	Error_OverTime=1<<6, //任务超时错误
-	
+	Error_StorageFull=1<<7, //存储槽满
 };
 
 //玻片进入槽任务流程序号
@@ -196,6 +196,7 @@ struct glass_out_struct{
 	enum glass_out_task_index resume_task; //恢复任务序列
 	u8 Index;
 	u8 WaitAck;
+	u8 Storage_full;
 };
 
 

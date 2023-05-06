@@ -79,9 +79,9 @@ motor_struct GP_motor_struct={
 	.AccPeriodArray=NULL,
 	.postion=-10000,
 	.pulse_1mm=268,
-	.maxfeq=268*150,
+	.maxfeq=268*100,
 	.startfeq=268*30,
-	.defaultfeq=268*50,
+	.defaultfeq=268*30,
 	.max_pos=30000,
 
 };
@@ -112,7 +112,7 @@ motor_struct GO_ver_motor_struct={
 	.maxfeq=800*30,
 	.startfeq=800*10,
 	.defaultfeq=800*30,
-	.max_pos=800*260,
+	.max_pos=800*250,
 };
 
 void motor_parameter_Init(void)

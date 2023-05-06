@@ -2,9 +2,9 @@
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
-#define DELAY_SUCKER 1000
-#define DELAY_BIG_CYLIDER 1000
-#define DELAY_SMALL_CYLIDER 1000
+#define DELAY_SUCKER 500
+#define DELAY_BIG_CYLIDER 1500
+#define DELAY_SMALL_CYLIDER 1500
 
 static u8 Check_Spray(void)
 {
@@ -87,7 +87,7 @@ void GP_ReadyTask(void)
 		}
 		else if (GP.subtask == 2) // 原点复位
 		{
-			if(GC_claw_Sen!=Sen_Block)
+			if(GC_rot_Sen!=Sen_Block&&GOH_start_Sen==Sen_Block&&GC_claw_Sen!=Sen_Block) //夹手释放回到旋转原点并且托盘回到原点
 			{
 				Next_Task(GP_none, GP_move_start);
 			}else //离开原点位 等待夹手释放复位
@@ -188,8 +188,6 @@ void GP_ReadyTask(void)
 		break;
 	/////////////移动到喷胶位置/////////
 	case GP_move_spray:
-	
-		
 			GP.sta = Running;
 			motorGo_acc(GP.motor, GP.spray_pos);
 		break;
@@ -317,7 +315,11 @@ void GP_RunningTask(void)
 		}
 		else
 		{
-			Error_Set(Error_Sensor, GP_start_sensor);
+			if(GP.motor->motion==Stop)
+			{
+				Error_Set(Error_Sensor, GP_start_sensor);
+			}
+
 		}
 		break;
 	case GP_move_glass:
@@ -355,7 +357,14 @@ void GP_RunningTask(void)
 	case GP_suck_glass:
 		if (GP.running_tim > DELAY_SUCKER)
 		{
-			GP.sta = Finish;
+			if(GP_sucker_Sen==Sen_Block)
+			{
+				GP.sta = Finish;
+			}else
+			{
+				Error_Set(Error_Sensor,GP_sucker_sensor);
+			}
+
 		}
 		break;
 	///////////玻片吸盘上升///////////
@@ -454,11 +463,14 @@ void GP_FinishTask(void)
 		GP.task = GP_none;
 		break;
 	case GP_reset_off:
+		GP.subtask=0;
 		GP.sta = Ready;
 		GP.task = GP_none;
 		break;
 	case GP_start:
-
+		GP.subtask=0;
+		GP.sta = Ready;
+		GP.task = GP_none;
 		break;
 	case GP_cyl_start:
 		Resume_Task();
@@ -495,7 +507,16 @@ void GP_FinishTask(void)
 		}
 		else
 		{
-			Error_Set(Error_Cover_Glass, 0); // 报错 没有盖玻片
+			if(GC.task==GC_finish)
+			{
+				GP.task=GP_finish;
+				GP.sta=Ready;
+				GP.subtask=0;
+			}else
+			{
+				Error_Set(Error_Cover_Glass, 0); // 报错 没有盖玻片
+			}
+
 		}
 		break;
 	case GP_sucker_up:
