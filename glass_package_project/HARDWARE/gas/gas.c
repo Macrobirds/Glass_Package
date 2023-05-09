@@ -22,10 +22,23 @@ void Gas_Init(void)
 	GP_sucker_Pump=GAS_DISABLE;
 	GP_spray_Cyl=GAS_DISABLE;
 	GC_claw_Cyl=GAS_DISABLE;
-	
 }
+
+void Gas_Spray_Enable(void)
+{
+	ITV0011_IIC_Enable(GP.spray_pressure);
+	GP_spray_Cyl=GAS_ENABLE;
+}
+
+void Gas_Spray_Disable(void)
+{
+	GP_spray_Cyl=GAS_DISABLE;
+	ITV0011_IIC_Disable();
+}
+
+
 //控制主气泵维持气压稳定 控制喷胶气泵气压
-enum gas_state Gas_pump_Func(u8 ITV_value)
+enum gas_state Gas_pump_Func(void)
 {
 	static float Pressure=0;
 	Pressure=P6847_adc_GetPressure();
@@ -45,7 +58,7 @@ enum gas_state Gas_pump_Func(u8 ITV_value)
 		Main_Pump=GAS_ENABLE;
 		return gas_pumping;
 	}
-	 ITV0011_IIC_Enable(ITV_value);
+//	 ITV0011_IIC_Enable(ITV_value);
 	return 0;
 }
 

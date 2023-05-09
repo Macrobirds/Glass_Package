@@ -179,7 +179,7 @@ void gas_task(void *pdata)
 	{
 		if(TaskThread_State<taskthread_close)
 		{
-			Gas_State=Gas_pump_Func(GP.spray_pressure);
+			Gas_State=Gas_pump_Func();
 
 		}else //关机放气
 		{

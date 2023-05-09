@@ -1,6 +1,8 @@
 #include "pwm.h"
 #include "motor.h"
 
+#define PWM_PRIORITY 1
+
 // GE motor pwm
 void TIM1_PWM_Init(u16 psc)
 {
@@ -47,7 +49,7 @@ void TIM1_PWM_Init(u16 psc)
 	TIM_ARRPreloadConfig(TIM1, ENABLE);
 
 	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;		  // TIM1中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2; // 先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY; // 先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		  // 从优先级3级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			  // IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);							  // 根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
@@ -92,7 +94,7 @@ void TIM4_PWM_Init(u16 psc)
 
 	TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -133,7 +135,7 @@ void TIM3_PWM_Init(u16 psc)
 
 	TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -184,7 +186,7 @@ void TIM8_PWM_Init(u16 psc)
 	TIM_ARRPreloadConfig(TIM8, ENABLE);
 
 	NVIC_InitStructure.NVIC_IRQChannel = TIM8_UP_IRQn;		  // TIM1中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2; // 先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY; // 先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		  // 从优先级3级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			  // IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);							  // 根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
@@ -228,7 +230,7 @@ void TIM5_PWM_Init(u16 psc)
 
 	TIM_ITConfig(TIM5, TIM_IT_CC1, ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM5_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -272,7 +274,7 @@ void TIM2_PWM_Init(u16 psc)
 
 	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -540,7 +542,7 @@ void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
 				GO.Storage_full=TRUE;
-				printf("full\r\n");
+				printf("full the pos is %d\r\n",GO_ver_motor_struct.postion);
 				
 				return;
 			}

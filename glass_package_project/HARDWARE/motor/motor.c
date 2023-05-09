@@ -112,7 +112,7 @@ motor_struct GO_ver_motor_struct={
 	.maxfeq=800*30,
 	.startfeq=800*10,
 	.defaultfeq=800*30,
-	.max_pos=800*250,
+	.max_pos=800*260,
 };
 
 void motor_parameter_Init(void)
@@ -534,7 +534,7 @@ u8 motorGo_acc(motor_struct * motor, long planPosition)
 		}
 		else
 		{
-			if(motor->postion<=0) motor->postion=motor->max_pos-100;
+			if(motor->postion<=0) motor->postion=motor->max_pos-100; 
 			planStepNumber=planPosition-motor->postion;
 		}
 	}

@@ -141,7 +141,7 @@ void GC_ReadyTask(void)
 		break;
 	///////////////////垂直方向复位到原点/////////////////////basic
 	case GC_ver_start:
-			motorGo_acc(GC.motor_v, 0); // 垂直方向复位至原点
+			motorGo(GC.motor_v, 0, 0);
 			GC.sta = Running;
 		break;
 	///////////////////旋转方向复位到原点///////////////////// basic
@@ -154,7 +154,7 @@ void GC_ReadyTask(void)
 		{
 			if(Check_GP())
 			{
-				motorGo_acc(GC.motor_r, 0);
+				motorGo(GC.motor_r,0,0);
 				GC.sta = Running;
 			}
 
@@ -179,7 +179,7 @@ void GC_ReadyTask(void)
 	////////////////夹手下降至玻片装载槽//////////////// 
 	case GC_move_down:
 			// 玻片移动至夹手正下方		
-			if(GE_up_Sen!=Sen_Block&&GE_down_Sen==Sen_Block)
+			if(GE_up_Sen!=Sen_Block&&GE_down_Sen==Sen_Block&&GE.motor->motion==Stop)
 			{
 					motorGo_acc(GC.motor_v, GC.GCV_down_pos);
 					GC.sta = Running;
@@ -197,7 +197,7 @@ void GC_ReadyTask(void)
 		GC.sta=Running;
 		break;
 	case GC_move_up:
-		motorGo_acc(GC.motor_v,0);
+		motorGo(GC.motor_v,0,211*50);
 		GC.sta=Running;
 		break;
 	case GC_rot_up:
@@ -209,7 +209,7 @@ void GC_ReadyTask(void)
 		{
 			if(Check_GP())
 			{
-				motorGo_acc(GC.motor_r, 0);
+				motorGo(GC.motor_r,0,1000);
 				GC.sta = Running;
 			}
 		}
@@ -296,8 +296,7 @@ void GC_RunningTask(void)
 		{
 			if (GC.motor_v->motion == Stop) // 垂直传感器错误 或电机错误
 			{
-				//重力作用 容易误报错
-				//Error_Set(Error_Sensor, GC_ver_sensor);
+				Error_Set(Error_Sensor, GC_ver_sensor);
 			}
 		}
 		break;
@@ -311,8 +310,8 @@ void GC_RunningTask(void)
 		{
 			if (GC.motor_r->motion == Stop)
 			{
-				//电机力矩不足  容易误报错
-				//	Error_Set(Error_Sensor, GC_rot_sensor);
+
+			//	Error_Set(Error_Sensor, GC_rot_sensor);
 			}
 		}
 		break;
@@ -359,7 +358,7 @@ void GC_RunningTask(void)
 			{
 				if(GC.motor_v->motion==Stop)
 				{
-					//Error_Set(Error_Sensor,GC_ver_sensor);
+					Error_Set(Error_Sensor,GC_ver_sensor);
 				}
 			}
 		break;
@@ -371,7 +370,7 @@ void GC_RunningTask(void)
 		{
 			if(GC.motor_r->motion==Stop)
 			{
-				//Error_Set(Error_Sensor,GC_rot_sensor);
+			//	Error_Set(Error_Sensor,GC_rot_sensor);
 			}
 		}
 	case GC_rot_hor:
@@ -464,14 +463,14 @@ void GC_FinishTask(void)
 //		}
 		break;
 	case GC_move_up:
-		if(GO.task==GO_start&&GO.sta==Finish)
+		if(GO.task==GO_start&&GO.sta==Finish&&GP.motor->postion==GP.sucker_pos) //托盘位于原点 且封片装置在吸片位置
 		{
 			GC.sta=Ready;
 			GC.task=GC_rot_up;
 		}
 		break;
 	case GC_rot_up:
-		if(GO.task==GOH_package&&GO.sta==Finish)
+		if(GO.task==GOH_package&&GO.sta==Finish&&GP.motor->postion==GP.sucker_pos) //托盘位于工作点 且封片装置在吸片位置
 		{
 			GC.sta=Ready;
 			GC.task=GC_rot_hor;
@@ -479,7 +478,7 @@ void GC_FinishTask(void)
 		break;		
 	
 	case GC_rot_hor:
-		if(GP.task==GP_move_glass) //封片结束
+		if(GP.task>=GP_start&&GP.task<=GP_sucker_down) //封片结束
 		{
 				GC.sta=Ready;
 				GC.task=GC_start;

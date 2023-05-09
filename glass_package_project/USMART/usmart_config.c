@@ -21,7 +21,7 @@ static void Set_motor_dir(u8 dir)
 
 void gpio_test(u8 state, u8 pin)
 {
-	if (pin >= 8 && pin <= 15)
+	if (pin >= 8 || pin <= 15)
 	{
 		if (state)
 		{
@@ -32,8 +32,10 @@ void gpio_test(u8 state, u8 pin)
 			GPIO_ResetBits(GPIOD, GPIO_Pin_0 << pin);
 		}
 	}
-	else if (pin <= 1 || pin == 12)
+	
+	if (pin <= 1 || pin == 12)
 	{
+		printf("pin %d\r\n",pin);
 		if (state)
 		{
 			GPIO_SetBits(GPIOB, GPIO_Pin_0 << pin);
@@ -43,7 +45,8 @@ void gpio_test(u8 state, u8 pin)
 			GPIO_ResetBits(GPIOB, GPIO_Pin_0 << pin);
 		}
 	}
-	else if (pin == 7)
+	
+	if (pin == 7||pin==2||pin==3)
 	{
 		if (state)
 		{
@@ -54,6 +57,8 @@ void gpio_test(u8 state, u8 pin)
 			GPIO_ResetBits(GPIOE, GPIO_Pin_0 << pin);
 		}
 	}
+	
+
 }
 
 void close_device(void)
@@ -185,6 +190,7 @@ void motoracc_test(u8 dir, u8 motor, u32 pulse)
 
 void boost_test(u8 task, u8 task_index)
 {
+
 	switch (task)
 	{
 	case 1: // GE task
@@ -211,6 +217,7 @@ void boost_test(u8 task, u8 task_index)
 	case 3:
 		if (task_index <= GP_reset_off)
 		{
+			debug_flag=FALSE;
 			GP.sta = Ready;
 			GP.subtask = 0;
 			GP.task = task_index;
@@ -219,7 +226,6 @@ void boost_test(u8 task, u8 task_index)
 	case 4:
 		if (task_index <= GO_Box_Out)
 		{
-			debug_flag=FALSE;
 			GO.sta = Ready;
 			GO.subtask = 0;
 			GO.task = task_index;
@@ -243,7 +249,14 @@ void debug_test(u8 task, u8 task_index)
 		break;
 	case 2:
 		break;
-	case 3:
+	case 3: //GP task
+		if(task_index>GP_reset_off)
+		{
+			debug_flag=TRUE;
+			GP.sta=Ready;
+			GP.subtask=0;
+			GP.task=task_index;
+		}
 		break;
 	case 4://GO task
 		if(task_index>GO_Box_Out)

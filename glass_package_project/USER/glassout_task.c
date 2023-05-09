@@ -1,6 +1,10 @@
 #include "taskthread.h"
 #define ADJUST_DIS 700 //pulse value 
 #define ADJUST_DIS_full 0
+
+#define SLOT_NUM 30
+
+static u8 slot_num=0;
 // 检测是否夹手阻挡了托盘
 static u8 Check_GC(void)
 {
@@ -66,6 +70,12 @@ static void Next_Task(enum glass_out_task_index Resume_task, enum glass_out_task
 
 void GO_ReadyTask(void)
 {
+	
+
+	if(slot_num<=0)
+	{
+		GO.Storage_full=TRUE;
+	}
 //	if(GO.task!=GO_none)
 //	{
 //		printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
@@ -171,7 +181,7 @@ void GO_ReadyTask(void)
 			if (Check_box())
 			{
 				
-				motorGo(GO.motor_v, 0,0);
+				motorGo_acc(GO.motor_v,0);
 				GO.sta = Running;
 			}
 		}
@@ -184,7 +194,7 @@ void GO_ReadyTask(void)
 				{
 				GO.motor_v->dir=Front;
 				motor_Set_Direction(GO.motor_v);
-				motorGO_Debug(GO.motor_v,GO.GOV_box_dis,0);
+				motorGO_Debug(GO.motor_v,GO.GOV_box_len,0);
 				GO.sta = Running;
 				}
 
@@ -193,6 +203,13 @@ void GO_ReadyTask(void)
 		else if (GO.subtask == 2) // 调整存储器位置
 		{
 			//存储器状态更新
+			if(GOV_start_Sen==Sen_Block)
+			{
+				slot_num=SLOT_NUM*2;
+			}else
+			{
+				slot_num=SLOT_NUM;
+			}
 			GO.Storage_full=FALSE;
 			Next_Task(GO_none, GO_adjust);
 		}
@@ -208,7 +225,7 @@ void GO_ReadyTask(void)
 		{
 			if (Check_GC())
 			{
-				motorGo_acc(GO.motor_h,0);
+				motorGo(GO.motor_h,0,0);
 				GO.sta=Running;;
 			}
 		}
@@ -225,7 +242,7 @@ void GO_ReadyTask(void)
 		{
 			if(Check_GC())
 			{
-				motorGo_acc(GO.motor_h, 0);
+				motorGo(GO.motor_h, 0,0);
 				GO.sta = Running;
 			}
 
@@ -314,7 +331,9 @@ void GO_ReadyTask(void)
 	case GO_next:
 		if (GOV_glass_Sen == Sen_Block)
 		{
-			motorGo(GO.motor_v,GO.GOV_box_len,0);
+			GO.motor_v->dir=Front;
+			motor_Set_Direction(GO.motor_v);
+			motorGO_Debug(GO.motor_v,GO.GOV_box_dis,0);
 			GO.sta = Running;
 			
 		}
@@ -502,6 +521,7 @@ void GO_RunningTask(void)
 
 			if (GO.motor_v->motion == Stop) // 走完一个槽的距离后 仍然有感应
 			{
+				printf("out box pos:%d\r\n",GO.motor_v->postion);
 				if(GOV_glass_Sen!=Sen_Block)
 				{
 					GO.sta=Finish;
@@ -517,14 +537,16 @@ void GO_RunningTask(void)
 	case GO_next:
 			if (GO.motor_v->motion == Stop)
 			{
-				if (GOV_glass_Sen!=Sen_Block)
-				{
-					GO.sta=Finish;
-				}else //槽满
-				{
-					GO.sta=Ready;
-					GO.task=GO_finish;
-				}
+				GO.sta=Finish;
+				printf("next box pos:%d\r\n",GO.motor_v->postion);
+//				if (GOV_glass_Sen!=Sen_Block)
+//				{
+//					GO.sta=Finish;
+//				}else //槽满
+//				{
+//					GO.sta=Ready;
+//					GO.task=GO_finish;
+//				}
 			}
 		break;
 	case GO_adjust:
@@ -599,6 +621,7 @@ void GO_FinishTask(void)
 	case GOH_end:
 			OS_ENTER_CRITICAL();
 			GO.glass_num++; // 封片玻片数量+1
+			slot_num--;
 			OS_EXIT_CRITICAL();
 			GO.sta = Ready;
 			GO.task = GO_out;
@@ -613,6 +636,7 @@ void GO_FinishTask(void)
 		Next_Task(GO_start,GO_adjust);
 		break;
 	case GO_adjust:
+		printf("adj box pos:%d\r\n",GO.motor_v->postion);
 		Resume_Task();
 		break;
 	case GO_finish:
@@ -641,7 +665,7 @@ void GO_TaskThread(void)
 	}
 	if (GO.sta == Finish)
 	{
-		if (!debug_flag) // debug 模式下不进行任务跳转
+		if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务跳转
 		{
 			GO_FinishTask();
 		}

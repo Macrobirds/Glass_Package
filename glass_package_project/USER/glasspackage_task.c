@@ -1,10 +1,14 @@
 #include "taskthread.h"
+#include "gas.h"
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
-#define DELAY_SUCKER 500
+#define DELAY_SUCKER 100
 #define DELAY_BIG_CYLIDER 1500
-#define DELAY_SMALL_CYLIDER 1500
+#define DELAY_SMALL_CYLIDER 300
+#define DELAY_SPRAY 2000
+#define DELAY_MOVE_PACKAGE1 1000
+#define DELAY_MOVE_PACKAGE2 100
 
 static u8 Check_Spray(void)
 {
@@ -42,9 +46,18 @@ static void Next_Task(enum glass_package_task_index Resume_task, enum glass_pack
 
 void GP_ReadyTask(void)
 {
+	if(GP.task!=GP_none)
+	{
+		printf("GP task:%d subtask:%d\r\n",GP.task,GP.subtask);
+	}
 	switch (GP.task)
 	{
 	case GP_none:
+		break;
+	/////////////滴胶测试///////////////
+	case GP_spray_test:
+		Gas_Spray_Enable();
+		GP.sta=Running;
 		break;
 	/////////////开机复位///////////////
 	case GP_reset_on:
@@ -52,7 +65,11 @@ void GP_ReadyTask(void)
 		{
 			Next_Task(GP.task, GP_cyl_start);
 		}
-		else if (GP.subtask == 1)
+		else if(GP.subtask==1)
+		{
+			Next_Task(GP.task,GP_sucker_start);
+		}
+		else if (GP.subtask == 2)
 		{
 			if (GP_start_Sen == Sen_Block) // 若原点传感器感应 离开原点 重新校准位置
 			{
@@ -63,23 +80,19 @@ void GP_ReadyTask(void)
 			}
 			else
 			{
-				GP.subtask = 2;
+				GP.subtask = 3;
 			}
 		}
-		else if (GP.subtask == 2) // 复位至原点
+		else if (GP.subtask == 3) // 复位至原点
 		{
 			Next_Task(GP_none, GP_move_start);
 		}
-
 		break;
 	/////////////关机复位//////////////
 	case GP_reset_off:
 		if (GP.subtask == 0) // 关闭吸盘
 		{
-			GP_sucker_Pump = GAS_DISABLE;
-			GP_sucker1_Cyl = GAS_DISABLE;
-			GP_sucker2_Cyl = GAS_DISABLE;
-			GP.sta=Running;
+			Next_Task(GP.task,GP_sucker_start);
 		}
 		else if (GP.subtask == 1) // 气缸复位
 		{
@@ -119,6 +132,14 @@ void GP_ReadyTask(void)
 			}
 		}
 		break;
+	//////////////吸盘复位//////////////////// basic
+	case GP_sucker_start:
+			GP_sucker_Pump = GAS_DISABLE;
+			GP_sucker1_Cyl = GAS_DISABLE;
+			GP_sucker2_Cyl = GAS_DISABLE;
+			GP.sta=Running;	
+	break;
+		
 	////////////大小气缸复位/////////////// basic
 	case GP_cyl_start:
 		if(GP_big_cyl_Sen==Sen_Block&&GP_small_cyl_Sen==Sen_Block)
@@ -179,11 +200,13 @@ void GP_ReadyTask(void)
 		break;
 	///////////玻片吸盘上升///////////
 	case GP_sucker_up:
-		if ((GC.motor_r->postion == GC.GCR_hor_pos) && (GC.motor_r->motion == Stop)) // 夹手位于旋转水平位置静止
-		{
 				GP_big_Cyl = GAS_DISABLE;
 				GP.sta = Running;
-		}
+//		if ((GC.motor_r->postion == GC.GCR_hor_pos) && (GC.motor_r->motion == Stop)) // 夹手位于旋转水平位置静止
+//		{
+//				GP_big_Cyl = GAS_DISABLE;
+//				GP.sta = Running;
+//		}
 
 		break;
 	/////////////移动到喷胶位置/////////
@@ -199,9 +222,27 @@ void GP_ReadyTask(void)
 		}
 		else
 		{
-			GP.sta = Running;
-			GP_spray_Cyl = GAS_ENABLE;			  // 打开喷胶阀
-			motorGo(GP.motor, 0, GP.spray_speed); // 按喷胶速度匀速运动到封片点
+			
+			if(GP.subtask==0)//延时200ms等待ITV0011响应
+			{
+				GP.sta=Running;
+				Gas_Spray_Enable();			  // 开始喷胶
+			}
+			else if(GP.subtask==1)
+			{
+				GP.sta = Running;
+				motorGo(GP.motor, GP.spray_pos-GP.spray_len, GP.spray_speed); // 按喷胶速度匀速运动到封片点
+			}
+			else if(GP.subtask==2) //延时200ms等待胶全部喷出
+			{
+				GP.sta=Running;
+				Gas_Spray_Disable(); //停止喷胶
+			}
+			else if(GP.subtask==3)
+			{
+				GP.sta=Running;
+				motorGo(GP.motor, 0, 0);
+			}
 		}
 		break;
 	////////////////封片工作/////////////////////
@@ -244,12 +285,23 @@ void GP_RunningTask(void)
 	{
 	case GP_none:
 		break;
+	/////////////滴胶测试///////////////
+	case GP_spray_test:
+	if(GP.running_tim>DELAY_SPRAY)
+	{
+		Gas_Spray_Disable();
+		GP.sta=Finish;
+	}
+	break;
 	case GP_reset_on:
 		if (GP.subtask == 0) // 大小气缸复位
 		{
 
+		}else if(GP.subtask==1) //吸盘释放
+		{
+		
 		}
-		else if (GP.subtask == 1)
+		else if (GP.subtask == 2)
 		{
 			if(GP.motor->motion==Stop)// 若原点传感器感应 离开原点 重新校准位置
 			{
@@ -257,7 +309,7 @@ void GP_RunningTask(void)
 				GP.sta=Ready;
 			}
 		}
-		else if (GP.subtask == 2) // 复位至原点
+		else if (GP.subtask == 3) // 复位至原点
 		{
 			
 		}
@@ -265,11 +317,7 @@ void GP_RunningTask(void)
 	case GP_reset_off:
 		if (GP.subtask == 0) // 关闭吸盘
 		{
-			if(GP.running_tim>DELAY_SUCKER)
-			{
-				GP.subtask=1;
-				GP.sta=Ready;
-			}
+
 		}
 		else if (GP.subtask == 1) // 气缸复位
 		{
@@ -289,7 +337,13 @@ void GP_RunningTask(void)
 			
 		}
 		break;
-
+	//////////////吸盘复位//////////////////// basic
+	case GP_sucker_start:
+	if(GP.running_tim>DELAY_SUCKER)
+	{
+		GP.sta=Finish;
+	}
+	break;
 	////////////////大小气缸复位///////////////// basic
 	case GP_start:
 
@@ -389,24 +443,44 @@ void GP_RunningTask(void)
 		break;
 	/////////////移动到封片位置///////// 封片位置和原点位置重合
 	case GP_move_package:
-		if (GP.motor->postion < (GP.spray_pos - GP.spray_len)) // 到达喷胶长度 关闭喷胶阀
-		{
-			GP_spray_Cyl = GAS_DISABLE;
-		}
-
-		if (GP_start_Sen == Sen_Block) // 达到封片工作原点
-		{
-			GP_spray_Cyl = GAS_DISABLE;
-			GP.sta = Finish;
-		}
-		else
-		{
-			if (GP.motor->motion == Stop)
-			{
-				GP_spray_Cyl = GAS_DISABLE;
-				Error_Set(Error_Sensor, GP_start_sensor); // 报错
+			if(GP.subtask==0)//延时200ms等待ITV0011响应
+			{				
+				if(GP.running_tim>DELAY_MOVE_PACKAGE1)
+				{
+					GP.sta=Ready;
+					GP.subtask=1;
+				}
 			}
-		}
+			else if(GP.subtask==1)
+			{
+				if(GP.motor->motion==Stop)
+				{
+					GP.sta=Ready;
+					GP.subtask=2;
+				}
+			}
+			else if(GP.subtask==2) //延时200ms等待胶全部喷出
+			{
+				if(GP.running_tim>DELAY_MOVE_PACKAGE2)
+				{
+					GP.sta=Ready;
+					GP.subtask=3;
+				}
+			}
+			else if(GP.subtask==3)
+			{
+				if(GP_start_Sen==Sen_Block)
+				{
+					GP.subtask=0;
+					GP.sta=Finish;
+				}else
+				{
+					if(GP.motor->motion==Stop)
+					{
+						Error_Set(Error_Sensor,GP_start_sensor);
+					}
+				}
+			}
 		break;
 	////////////////封片工作/////////////////////
 	case GP_package:
@@ -416,6 +490,7 @@ void GP_RunningTask(void)
 			{
 				GP.sta = Ready;
 				GP.subtask = 1;
+				GP.running_tim=0;
 			}
 		}
 		else if (GP.subtask == 1) // 等待小气缸上升 盖玻片与载玻片水平
@@ -424,6 +499,7 @@ void GP_RunningTask(void)
 			{
 				GP.sta = Ready;
 				GP.subtask = 2;
+				GP.running_tim=0;
 			}
 		}
 		else if (GP.subtask == 2) // 等待吸盘1关闭
@@ -432,6 +508,7 @@ void GP_RunningTask(void)
 			{
 				GP.sta = Ready;
 				GP.subtask = 3;
+				GP.running_tim=0;
 			}
 		}
 		else if (GP.subtask == 3) // 等待吸盘2 吸盘气泵关闭
@@ -440,6 +517,7 @@ void GP_RunningTask(void)
 			{
 				GP.subtask = 0;
 				GP.sta = Finish;
+				GP.running_tim=0;
 			}
 		}
 		break;
@@ -456,8 +534,13 @@ void GP_FinishTask(void)
 	{
 	case GP_none:
 		break;
+	case GP_spray_test:
+		ITV0011_IIC_Disable();
+		GP.subtask=0;
+		GP.sta = Ready;
+		GP.task = GP_none;
+		break;
 	case GP_reset_on:
-		
 		GP.subtask=0;
 		GP.sta = Ready;
 		GP.task = GP_none;
@@ -472,6 +555,9 @@ void GP_FinishTask(void)
 		GP.sta = Ready;
 		GP.task = GP_none;
 		break;
+	case GP_sucker_start:
+		Resume_Task();
+	break;
 	case GP_cyl_start:
 		Resume_Task();
 		break;
@@ -498,31 +584,27 @@ void GP_FinishTask(void)
 	case GP_suck_glass:
 		if (GP_sucker_Sen == Sen_Block) // 检测到玻片
 		{
-			if ((GC.task == GC_rot_hor) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
-			{
 						GP.sta = Ready;
 						GP.task = GP_sucker_up;
 						GP.subtask=0;
-			}
 		}
 		else
 		{
-			if(GC.task==GC_finish)
+				Error_Set(Error_Cover_Glass, 0); // 报错 没有盖玻片
+		}
+		break;
+	case GP_sucker_up:
+			if ((GC.task == GC_rot_hor) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
+			{
+					GP.sta = Ready;
+					GP.task = GP_move_spray;
+					GP.subtask=0;
+			}else if(GC.task==GC_finish)
 			{
 				GP.task=GP_finish;
 				GP.sta=Ready;
 				GP.subtask=0;
-			}else
-			{
-				Error_Set(Error_Cover_Glass, 0); // 报错 没有盖玻片
 			}
-
-		}
-		break;
-	case GP_sucker_up:
-			GP.sta = Ready;
-			GP.task = GP_move_spray;
-			GP.subtask=0;
 		break;
 	case GP_move_spray:
 		GP.sta = Ready;
@@ -567,7 +649,7 @@ void GP_TaskThread(void)
 	}
 	if (GP.sta == Finish)
 	{
-		if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务跳转
+		if (!debug_flag) // debug 模式下不进行任务跳转 TaskThread_State != taskthread_debug
 		{
 			GP_FinishTask();
 		}

@@ -64,7 +64,7 @@ void GE_ReadyTask(void)
 		{
 			if (check_GC()) // Ç°ÍùÔ­µã
 			{
-				motorGo_acc(GE.motor, 0);
+				motorGo(GE.motor, 0, 0);
 				GE.sta = Running;
 			}
 		}

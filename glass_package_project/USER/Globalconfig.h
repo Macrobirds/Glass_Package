@@ -84,6 +84,11 @@
 #define GP_spray_Cyl PBout(1) //喷头
 #define GCV_motor_Break PEout(7) //GCV电机抱闸
 
+#define GP_ITV1100 PEout(3) //ITV电源开关
+
+#define ITV1100_DISABLE 0
+#define ITV1100_ENABLE 1
+
 #define DeveiceType_package 3
 
 // 默认设备选择 

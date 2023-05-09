@@ -16,8 +16,10 @@ enum gas_state{
 extern enum gas_state Gas_State;
 
 void Gas_Init(void);
-enum gas_state Gas_pump_Func(u8 ITV_value);
+enum gas_state Gas_pump_Func(void);
 enum gas_state Gas_release_Func(void);
+void Gas_Spray_Enable(void);
+void Gas_Spray_Disable(void);
 
 
 #endif

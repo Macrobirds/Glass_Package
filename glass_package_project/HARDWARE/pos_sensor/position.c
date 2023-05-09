@@ -1,6 +1,7 @@
 #include "position.h"
 
-#define DELAY_US 100
+#define DELAY_US 50
+#define POSITION_PRIORITY 2
 
 static void Exti_8_15_GPIO_Init(void) 
 { 
@@ -190,8 +191,8 @@ static void Exti_Init_8_15(void)
 		|| IoInput_10_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;		//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;			//子优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
 	}
@@ -199,7 +200,7 @@ static void Exti_Init_8_15(void)
 		|| IoInput_8_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -221,7 +222,7 @@ void postions_sensor_Init(void)
 		|| IoInput_10_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;		//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -233,7 +234,7 @@ void postions_sensor_Init(void)
 		||IoInput_9_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -241,7 +242,7 @@ void postions_sensor_Init(void)
 	if(IoInput_0_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -249,7 +250,7 @@ void postions_sensor_Init(void)
 	if(IoInput_1_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -257,7 +258,7 @@ void postions_sensor_Init(void)
 	if(IoInput_2_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -265,7 +266,7 @@ void postions_sensor_Init(void)
 		if(IoInput_3_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -273,7 +274,7 @@ void postions_sensor_Init(void)
 		if(IoInput_4_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
@@ -359,7 +360,7 @@ void EXTI9_5_IRQHandler(void)
 		{
 			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 			{
-				if(GO_ver_motor_struct.step>600) //确保移动到下一个槽
+				if(GO_ver_motor_struct.step>400) //确保移动到下一个槽
 				{
 					TIM_Cmd(TIM4,DISABLE);
 					GO_ver_motor_struct.motion=Stop;
@@ -387,7 +388,7 @@ void EXTI9_5_IRQHandler(void)
 	//GE_down_Sen
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
 	{
-		delay_us(300);
+		delay_us(DELAY_US);
 		#ifdef GE_UP_SENSOR_BEFORE
 		if(GE.task==GE_move_glass)
 		{
@@ -429,7 +430,7 @@ void EXTI9_5_IRQHandler(void)
 	//GE_up_Sen
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
-		delay_us(300);
+		delay_us(DELAY_US);
 		if(GE.task==GE_move_front||GE.task==GE_move_glass)
 		{
 			if(GE_up_Sen==Sen_Block) //上端照射
@@ -464,7 +465,7 @@ void EXTI15_10_IRQHandler(void)
 	//GC_rot_Sen
 	if(EXTI_GetITStatus(EXTI_Line11)!=RESET) //夹手旋转至原点
 	{
-		delay_us(DELAY_US+100);
+		delay_us(DELAY_US+150);
 		if(GC_rot_Sen!=Sen_Block) //夹手旋转停止
 		{
 			TIM_Cmd(TIM5,DISABLE);
@@ -477,7 +478,7 @@ void EXTI15_10_IRQHandler(void)
 	//GC_ver_Sen
 	if(EXTI_GetITStatus(EXTI_Line12)!=RESET) //夹手运动到垂直原点
 	{
-		delay_us(DELAY_US);
+		delay_us(DELAY_US+150);
 		if(GC_ver_Sen==Sen_Block) //夹手垂直停止
 		{
 			TIM_Cmd(TIM3,DISABLE);

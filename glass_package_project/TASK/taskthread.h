@@ -56,7 +56,7 @@ enum glass_enter_task_index
 	GE_move_glass, //移动到载玻片
 	GE_move_back, //移动到装载槽后端
 	GE_finish, //结束任务
-  GE_error,//异常上报任务
+  GE_error,//异常处理任务
     
 };
 
@@ -80,7 +80,7 @@ enum glass_claw_task_index
 	GC_rot_up, //夹手回到旋转原点
 	GC_rot_hor, //夹手旋转到水平位置
 	GC_finish, 
-  GC_error,//异常上报任务
+  GC_error,//异常处理任务
 };
 
 //玻片封装任务流程序号
@@ -88,8 +88,10 @@ enum glass_package_task_index
 {
 	GP_none=0,
 	/**************复用任务****************/
+	GP_spray_test, //进行滴胶测试
 	GP_move_start, //复位到轨道原点 basic
 	GP_cyl_start, //气缸复位到原点位置 basic
+	GP_sucker_start, //关闭吸盘 basic
 	GP_reset_on,//开机复位
 	GP_reset_off,//关机复位
 	/*************************************/
@@ -102,7 +104,7 @@ enum glass_package_task_index
 	GP_move_package, //移动到封片位置
 	GP_package, //开始封片
 	GP_finish, 
-  GP_error,//异常上报任务
+  GP_error,//异常处理任务
 };
 
 
@@ -125,7 +127,7 @@ enum glass_out_task_index
 	GO_out, //玻片出料
 	GO_next, //移动到下一存储器
 	GO_finish,
-  GO_error,//异常上报任务
+  GO_error,//异常处理任务
 };
 
 struct glass_enter_struct{

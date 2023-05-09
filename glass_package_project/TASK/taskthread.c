@@ -1,5 +1,7 @@
 #include "taskthread.h"
 
+#define TASK_PRIORIRY 3
+
 struct glass_enter_struct GE={
 	.task=GE_none,
 	.sta=Ready,
@@ -30,10 +32,13 @@ struct glass_package_struct GP={
 	.task=GP_none,
 	.sta=Ready,
 	.motor=&GP_motor_struct,
-	.sucker_pos=20000,
-	.spray_pos=14000,
-	.spray_len=268*20,
+	.sucker_pos=20000+268*5,
+	.spray_pos=19000,
+	.spray_len=268*15,
 	.spray_speed=268*30,
+	.delay_before=420,
+	.delay_after=120,
+	.spray_pressure=3,
 };
 
 
@@ -44,9 +49,9 @@ struct glass_out_struct GO={
 	.motor_v=&GO_ver_motor_struct,
 	.GOH_mid_pos=9210+400,
 	.GOH_end_pos=268*210,
-	.GOV_box_dis=800*25,
+	.GOV_box_dis=800*6,
 	.GOV_box_len=800*241+600,
-	.GOV_slot_dis=800*7,
+	.GOV_slot_dis=800*4,
 	.Storage_full=TRUE, //默认存储器满 需要通过出槽入槽重新装填来更新存储器状态
 };
 
@@ -178,7 +183,7 @@ void TaskThread_Init(void)
 
 	//中断优先级NVIC设置
 	NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;  //TIM6中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = TASK_PRIORIRY;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级3级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
