@@ -20,11 +20,12 @@ struct glass_claw_struct GC={
 	.sta=Ready,
 	.motor_v=&GC_ver_motor_struct,
 	.motor_r=&GC_rot_motor_struct,
-	.GCV_down_pos=33000,
+	.GCV_down_pos=33000+211*2,
 	.GCR_hor_pos=130,
 	.GCR_ver_pos=1720,
 	.main_subtask=0,
 	.main_task=GC_none,
+	.Glass_Ready=FALSE,
 };
 
 
@@ -49,7 +50,7 @@ struct glass_out_struct GO={
 	.motor_v=&GO_ver_motor_struct,
 	.GOH_mid_pos=9210+400,
 	.GOH_end_pos=268*210,
-	.GOV_box_dis=800*6,
+	.GOV_box_dis=800*10,
 	.GOV_box_len=800*241+600,
 	.GOV_slot_dis=800*4,
 	.Storage_full=TRUE, //默认存储器满 需要通过出槽入槽重新装填来更新存储器状态
@@ -266,6 +267,8 @@ void Resume_TaskThread(void)
 enum taskthread_state TaskThread_IsReady(void)
 {
 	
+	error_type=0;
+	sensor_error_idx=0;
 	//检测是否存在存储盒
 	if(GOV_box_Sen!=Sen_Block)
 	{
@@ -284,21 +287,22 @@ enum taskthread_state TaskThread_IsReady(void)
 	}
 	if(error_type)
 	{
-		Error_Set(Error_none,0); //上报错误
+		//Error_Set(Error_none,0); //上报错误
 		return taskthread_error;
 	}
 
 	//检测气压是否达到工作状态
-	if(Gas_State==gas_pumped)
+	if(Gas_State!=gas_pumped)
 	{
+		printf("gas error\r\n");
 		return taskthread_boost;
 	}
 	//检测各个电机位置是否校准
-	if(GE_motor_struct.postion<0&&GC_rot_motor_struct.postion<0&&
-		GC_ver_motor_struct.postion<0&&GP_motor_struct.postion<0&&
-		GO_hor_motor_struct.postion<0&&GO_ver_motor_struct.postion<0)
+	if(GE_motor_struct.postion<0||GC_rot_motor_struct.postion<0||
+		GC_ver_motor_struct.postion<0||GP_motor_struct.postion<0||
+		GO_hor_motor_struct.postion<0||GO_ver_motor_struct.postion<0)
 		{
-
+			printf("pos error \r\n");
 			return taskthread_boost;
 		}
 
@@ -320,9 +324,6 @@ void Boot_ResetTaskThread(void)
 	
 	GO.sta=Ready;
 	GO.task=GO_reset_on;
-
-
-
 }
 
 //开始运行任务

@@ -59,7 +59,7 @@ enum gas_state Gas_pump_Func(void)
 		return gas_pumping;
 	}
 //	 ITV0011_IIC_Enable(ITV_value);
-	return 0;
+	return Gas_State;
 }
 
 

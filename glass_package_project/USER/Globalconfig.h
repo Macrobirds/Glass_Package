@@ -20,8 +20,8 @@
 
 // 条件编译参数
 #define DEBUG_MODE
-//#define GE_UP_SENSOR_BEFORE 
-#define GE_DOWN_SENSOR_BEFORE
+#define GE_UP_SENSOR_BEFORE 
+//#define GE_DOWN_SENSOR_BEFORE
 
 
 //SPI Flash 参数

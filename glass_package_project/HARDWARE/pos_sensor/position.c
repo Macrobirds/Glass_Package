@@ -355,12 +355,12 @@ void EXTI9_5_IRQHandler(void)
 	//GOV_galss_Sen
 	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //检测到存储槽是否存在玻片
 	{
-		delay_us(DELAY_US);
+		delay_us(DELAY_US+100);
 		if(GO.task>GO_Box_Out)
 		{
 			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 			{
-				if(GO_ver_motor_struct.step>400) //确保移动到下一个槽
+				if(GO_ver_motor_struct.step>200) //确保移动到下一个槽
 				{
 					TIM_Cmd(TIM4,DISABLE);
 					GO_ver_motor_struct.motion=Stop;
@@ -394,7 +394,7 @@ void EXTI9_5_IRQHandler(void)
 		{
 					if(!flag)
 					{
-						if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //下端照射
+						if(GE_down_Sen==Sen_Block) //下端照射
 						{
 							TIM_Cmd(TIM1,DISABLE);
 							GE_motor_struct.motion=Stop;
@@ -431,7 +431,7 @@ void EXTI9_5_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
 		delay_us(DELAY_US);
-		if(GE.task==GE_move_front||GE.task==GE_move_glass)
+		if((GE.task==GE_move_front||GE.task==GE_move_glass)&&GC_ver_Sen==Sen_Block)
 		{
 			if(GE_up_Sen==Sen_Block) //上端照射
 			{
