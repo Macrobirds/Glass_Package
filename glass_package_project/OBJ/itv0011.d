@@ -38,17 +38,17 @@
 ..\obj\itv0011.o: ..\HARDWARE\PCF8591\PCF8591.h
 ..\obj\itv0011.o: ..\USER\Globalconfig.h
 ..\obj\itv0011.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\itv0011.o: ..\TASK\taskthread.h
-..\obj\itv0011.o: ..\HARDWARE\motor\motor.h
-..\obj\itv0011.o: ..\USER\Globalconfig.h
 ..\obj\itv0011.o: ..\SYSTEM\pwm\pwm.h
+..\obj\itv0011.o: ..\USER\Globalconfig.h
 ..\obj\itv0011.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\itv0011.o: ..\HARDWARE\gas\gas.h
 ..\obj\itv0011.o: ..\HARDWARE\PF6847\p6847.h
+..\obj\itv0011.o: ..\HARDWARE\motor\motor.h
 ..\obj\itv0011.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\itv0011.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\itv0011.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\itv0011.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\itv0011.o: ..\TASK\taskthread.h
 ..\obj\itv0011.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\itv0011.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\itv0011.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -60,3 +60,5 @@
 ..\obj\itv0011.o: ..\USER\codeGuard.h
 ..\obj\itv0011.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\itv0011.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\itv0011.o: ..\SYSTEM\delay\mydelay.h
+..\obj\itv0011.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

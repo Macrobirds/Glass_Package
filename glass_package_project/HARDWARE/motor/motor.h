@@ -11,6 +11,7 @@
 #define GP_DIR PCout(7)
 #define GOH_DIR PBout(3)
 #define GOV_DIR PBout(7)
+#define GP_CYL_DIR PCout(9)
 
 enum motor_index{
 	GE_motor,
@@ -19,6 +20,7 @@ enum motor_index{
 	GP_motor,
 	GO_hor_motor,
 	GO_ver_motor,
+	GP_big_cyl_motor,
 };
 
 enum motor_state{
@@ -55,13 +57,18 @@ typedef volatile struct{
 	TIM_TypeDef * TIM;
 }motor_struct;
 	
-	
-extern motor_struct GE_motor_struct;
-extern motor_struct GC_rot_motor_struct;
-extern motor_struct GC_ver_motor_struct;
-extern motor_struct GP_motor_struct;
-extern motor_struct GO_hor_motor_struct;
-extern motor_struct GO_ver_motor_struct;
+
+void motor_parameter_Init(void);
+u8 motorGo_acc(motor_struct * motor, long planPosition);
+void motorGo(motor_struct * motor, long planPosition,u32 freq);
+void stepperMotorStop(motor_struct * motor);
+
+//电机测试
+void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq);
+void motorAccGO_Debug(motor_struct * motor,u32 pulse);
+void motor_Set_Direction(motor_struct * motor);
+
+#endif
 
 //extern volatile int32_t GE_motor_struct_postion;
 //extern volatile u32 GE_motor_struct_step;
@@ -75,15 +82,3 @@ extern motor_struct GO_ver_motor_struct;
 //extern volatile u32 GO_hor_motor_struct_step;
 //extern volatile int32_t GO_ver_motor_struct_postion;
 //extern volatile u32 GO_ver_motor_struct_step;
-
-void motor_parameter_Init(void);
-u8 motorGo_acc(motor_struct * motor, long planPosition);
-void motorGo(motor_struct * motor, long planPosition,u32 freq);
-void stepperMotorStop(motor_struct * motor);
-
-//电机测试
-void motorGO_Debug(motor_struct * motor,u32 pulse,u32 freq);
-void motorAccGO_Debug(motor_struct * motor,u32 pulse);
-void motor_Set_Direction(motor_struct * motor);
-
-#endif

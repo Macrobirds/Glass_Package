@@ -14,8 +14,9 @@ void Gas_Init(void)
 	Main_Pump=GAS_ENABLE;
 	Main_in_Cyl=GAS_ENABLE;
 	Main_out_Cyl=GAS_DISABLE;
-	
+#ifdef BIG_CYLINDER
 	GP_big_Cyl=GAS_DISABLE; //大气缸推出
+#endif
 	GP_small_Cyl=GAS_DISABLE; //小气缸推回
 	GP_sucker1_Cyl=GAS_DISABLE;
 	GP_sucker2_Cyl=GAS_DISABLE;
@@ -67,14 +68,17 @@ enum gas_state Gas_release_Func(void)
 {
 		float Pressure=0;
 	//关闭所有气缸气阀
+	#ifdef BIG_CYLINDER
 		GP_big_Cyl=GAS_ENABLE;
+	#endif
 		GP_small_Cyl=GAS_ENABLE;
 		GP_sucker1_Cyl=GAS_DISABLE;
 		GP_sucker2_Cyl=GAS_DISABLE;
 		GP_sucker_Pump=GAS_DISABLE;
 		GP_spray_Cyl=GAS_DISABLE;
 		GC_claw_Cyl=GAS_DISABLE;
-	
+		Main_Pump=GAS_DISABLE;
+		Gas_Spray_Disable();
 		Pressure=P6847_adc_GetPressure();
 		if(Pressure<10)
 		{

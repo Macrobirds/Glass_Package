@@ -34,10 +34,8 @@
 ..\obj\codeguard.o: ..\SYSTEM\usart\usart.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\codeguard.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\codeguard.o: ..\TASK\taskthread.h
-..\obj\codeguard.o: ..\HARDWARE\motor\motor.h
-..\obj\codeguard.o: ..\USER\Globalconfig.h
 ..\obj\codeguard.o: ..\SYSTEM\pwm\pwm.h
+..\obj\codeguard.o: ..\USER\Globalconfig.h
 ..\obj\codeguard.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\codeguard.o: ..\HARDWARE\gas\gas.h
 ..\obj\codeguard.o: ..\HARDWARE\PCF8591\PCF8591.h
@@ -45,10 +43,12 @@
 ..\obj\codeguard.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\codeguard.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\codeguard.o: ..\SYSTEM\adc\adc.h
+..\obj\codeguard.o: ..\HARDWARE\motor\motor.h
 ..\obj\codeguard.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\codeguard.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\codeguard.o: ..\TASK\taskthread.h
 ..\obj\codeguard.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -60,3 +60,5 @@
 ..\obj\codeguard.o: codeGuard.h
 ..\obj\codeguard.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\codeguard.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\codeguard.o: ..\SYSTEM\delay\mydelay.h
+..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

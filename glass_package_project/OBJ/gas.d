@@ -40,16 +40,16 @@
 ..\obj\gas.o: ..\SYSTEM\usart\usart.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\gas.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\gas.o: ..\TASK\taskthread.h
-..\obj\gas.o: ..\HARDWARE\motor\motor.h
-..\obj\gas.o: ..\USER\Globalconfig.h
 ..\obj\gas.o: ..\SYSTEM\pwm\pwm.h
+..\obj\gas.o: ..\USER\Globalconfig.h
 ..\obj\gas.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\gas.o: ..\HARDWARE\gas\gas.h
+..\obj\gas.o: ..\HARDWARE\motor\motor.h
 ..\obj\gas.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\gas.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\gas.o: ..\TASK\taskthread.h
 ..\obj\gas.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -61,3 +61,5 @@
 ..\obj\gas.o: ..\USER\codeGuard.h
 ..\obj\gas.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\gas.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\gas.o: ..\SYSTEM\delay\mydelay.h
+..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

@@ -1,6 +1,5 @@
 ..\obj\glassclaw_task.o: glassclaw_task.c
-..\obj\glassclaw_task.o: ..\TASK\taskthread.h
-..\obj\glassclaw_task.o: ..\HARDWARE\motor\motor.h
+..\obj\glassclaw_task.o: Globalconfig.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\sys\sys.h
 ..\obj\glassclaw_task.o: ..\USER\stm32f10x.h
 ..\obj\glassclaw_task.o: ..\CORE\core_cm3.h
@@ -31,12 +30,10 @@
 ..\obj\glassclaw_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\glassclaw_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\glassclaw_task.o: ..\STM32F10x_FWLib\inc\misc.h
-..\obj\glassclaw_task.o: ..\USER\Globalconfig.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\delay\delay.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\usart\usart.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\glassclaw_task.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\glassclaw_task.o: ..\TASK\taskthread.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\pwm\pwm.h
 ..\obj\glassclaw_task.o: ..\USER\Globalconfig.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\GPIO\gpio.h
@@ -46,10 +43,12 @@
 ..\obj\glassclaw_task.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\glassclaw_task.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\adc\adc.h
+..\obj\glassclaw_task.o: ..\HARDWARE\motor\motor.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\glassclaw_task.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\glassclaw_task.o: ..\TASK\taskthread.h
 ..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -58,6 +57,8 @@
 ..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassclaw_task.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\glassclaw_task.o: ..\UCOSII\PORT\os_cpu.h
-..\obj\glassclaw_task.o: ..\USER\codeGuard.h
+..\obj\glassclaw_task.o: codeGuard.h
 ..\obj\glassclaw_task.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\glassclaw_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\glassclaw_task.o: ..\SYSTEM\delay\mydelay.h
+..\obj\glassclaw_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

@@ -1,4 +1,4 @@
-#include "taskthread.h"
+#include "Globalconfig.h"
 #define ADJUST_DIS 700 // pulse value
 #define ADJUST_DIS_full 200
 
@@ -74,10 +74,10 @@ void GO_ReadyTask(void)
 	{
 		GO.Storage_full = TRUE;
 	}
-		if(GO.task!=GO_none)
-		{
-			printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
-		}
+//		if(GO.task!=GO_none)
+//		{
+//			printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
+//		}
 	switch (GO.task)
 	{
 	case GO_none:
@@ -132,6 +132,8 @@ void GO_ReadyTask(void)
 		break;
 	////////////////////开机复位///////////////
 	case GO_reset_on:
+		GO.Storage_full = TRUE;
+		slot_num=0;		
 		if (GO.subtask == 0) // 检测水平原点传感器 若感应 离开原点 重新校准水平位置
 		{
 			if (GOH_start_Sen == Sen_Block)
@@ -180,24 +182,27 @@ void GO_ReadyTask(void)
 	case GO_reset_off:
 		if (GO.subtask == 0) // 回到水平原点
 		{
-			if (GOH_start_Sen == Sen_Block)
-			{
-				GO.sta = Ready;
-				GO.subtask = 1;
-			}
-			else
-			{
 				if (Check_GC())
-				{
-					Next_Task(GO.task, GOH_start);
+				{		
+						if(GOH_start_Sen==Sen_Block)
+						{
+							GO.subtask++;
+						}else
+						{
+							if(GC.motor_r->postion==GC.GCR_ver_pos&&GC.motor_r->motion==Stop)
+							{
+								Next_Task(GO_none, GOH_start);
+							}
+
+						}
+
 				}
-			}
 		}
 		else if (GO.subtask == 1)
 		{
 			if (GC_claw_Sen == Sen_Block) // 夹手处于夹紧状态  到水平工作点
 			{
-				if (GC.motor_r->postion == 0 && GC.motor_r->motion == Stop) // 等待夹手复位到原点
+				if (GC_rot_Sen!=Sen_Block&& GC.motor_r->motion == Stop) // 等待夹手复位到原点
 				{
 					motorGo_acc(GO.motor_h, GO.GOH_mid_pos);
 					GO.sta = Running;
@@ -212,12 +217,18 @@ void GO_ReadyTask(void)
 		{
 			if (Check_GC())
 			{
-				Next_Task(GO_none, GOH_start);
+				if(GC.motor_r->postion==GC.GCR_ver_pos&&GC.motor_r->motion==Stop)
+				{
+						Next_Task(GO_none, GOH_start);
+				}
+
 			}
 		}
 		break;
 	//////////////////存储器推出////////////////
 	case GO_Box_Out:
+		GO.Storage_full = TRUE;
+		slot_num=0;	
 		motorGo_acc(GO.motor_v, GO.GOV_box_len);
 		GO.sta = Running;
 		break;
@@ -351,6 +362,13 @@ void GO_ReadyTask(void)
 	case GO_finish:
 		break;
 	case GO_error:
+		if(error_type&Error_Out_Box)
+		{
+			GO.sta=Finish;
+		}else if(error_type&Error_StorageFull)
+		{
+			GO.sta=Finish;
+		}
 		break;
 	}
 }
@@ -601,16 +619,30 @@ void GO_FinishTask(void)
 			{
 				GO.task=GO_finish;
 				GO.sta=Ready;
+				//当不是由于暂停结束任务时，发送任务完成信息
+				if(TaskThread_State!=taskthread_pause)
+				{
+					//发送任务完成信息
+				}
 			}
 
 		}
 		break;
 	case GOH_package:
+		#ifdef BIG_CYLINDER
 		if (GC.motor_r->postion == GC.GCR_ver_pos && GP_big_cyl_Sen == Sen_Block) // 当夹手垂直 且大气缸复位
 		{
 			GO.sta = Ready;
 			GO.task = GOH_end;
 		}
+		#endif
+		#ifdef BIG_CYLINDER_MOTOR
+		if (GC.motor_r->postion == GC.GCR_ver_pos && GP_big_cyl_Sen == Sen_Block) // 当夹手垂直 且大气缸复位
+		{
+			GO.sta = Ready;
+			GO.task = GOH_end;
+		}
+		#endif
 		break;
 	case GOH_end:
 		OS_ENTER_CRITICAL();
@@ -662,36 +694,3 @@ void GO_TaskThread(void)
 	}
 }
 
-// if (GO.subtask == 0) // 水平复位到原点
-// {
-// 	if (GOH_start_Sen == Sen_Block)
-// 	{
-// 		GO.sta = Ready;
-// 		GO.subtask = 1;
-// 	}
-// 	else
-// 	{
-// 		motorGo_acc(GO.motor_h, 0);
-// 		GO.sta = Running;
-// 	}
-// }
-// else if (GO.subtask == 1) // 存储盒进入
-// {
-// 	if (GOV_box_Sen == Sen_Block)
-// 	{
-// 		motorGo_acc(GO.motor_v, 0);
-// 		GO.sta = Running;
-// 	}
-// 	else
-// 	{
-// 		Error_Set(Error_Out_Box, 0); // 报错没有存储盒
-// 	}
-// }
-// else if (GO.subtask == 2) // 对准存储槽
-// {
-// 	motorGo(GO.motor_v, GO.motor_v->postion + GO.GOV_box_dis, 0);
-// 	GO.sta = Running;
-// }
-// else if (GO.subtask == 3) // 调整存储槽位置
-// {
-// }

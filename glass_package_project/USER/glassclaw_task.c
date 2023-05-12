@@ -1,4 +1,4 @@
-#include "taskthread.h"
+#include "Globalconfig.h"
 #define DELAY_MS 100
 #define GLASS_DIS 16000
 
@@ -125,16 +125,18 @@ void GC_ReadyTask(void)
 		break;
 	////////////////夹手关机复位//////////////////
 	case GC_reset_off:
-		printf("GC reset on:%d\r\n ", GC.subtask);
 		if (GC.subtask == 0) // 复位至垂直原点
 		{
 			Next_Task(GC.task, GC_ver_start);
 		}
 		else if (GC.subtask == 1) // 复位至旋转原点
 		{
-			if (Check_GP())
+			if (GOH_start_Sen==Sen_Block)
 			{
-				Next_Task(GC.task, GC_rot_start);
+						Next_Task(GC.task, GC_rot_start);
+			}else if(GO.motor_h->postion==GO.GOH_mid_pos&&GO.motor_h->motion==Stop)
+			{
+				GC.subtask=3;
 			}
 		}
 		else if (GC.subtask == 2)
@@ -151,16 +153,24 @@ void GC_ReadyTask(void)
 			}
 			else
 			{
-				GC.sta = Finish; // 结束任务
+					GC.subtask=3;
 			}
 		}
 		else if (GC.subtask == 3) // 夹手释放
 		{
 			Next_Task(GC.task, GC_release);
 		}
-		else if (GC.subtask == 4) // 复位至旋转原点
+		else if (GC.subtask == 4) // 夹手旋转到垂直位置
 		{
-			Next_Task(GC_none, GC_rot_start);
+			motorGo(GC.motor_r,GC.GCR_ver_pos,0);
+			GC.sta=Running;
+		}else if(GC.subtask==5) //夹手旋转回原点
+		{
+			if(GOH_start_Sen==Sen_Block)
+			{
+				Next_Task(GC_none,GC_rot_start);
+			}
+
 		}
 		break;
 	///////////////////开始运行任务//////////////////////////
@@ -225,6 +235,12 @@ void GC_ReadyTask(void)
 	case GC_finish:
 		break;
 	case GC_error:
+		//发生夹取错误
+		if(error_type&Error_Grap)
+		{
+			motorGo(GC.motor_v, 0, 211 * 60);
+			GC.sta = Running;
+		}
 		break;
 	}
 }
@@ -303,8 +319,16 @@ void GC_RunningTask(void)
 		else if (GC.subtask == 3) // 夹手释放
 		{
 		}
-		else if (GC.subtask == 4) // 复位至旋转原点
+		else if (GC.subtask == 4) // 夹手旋转到垂直位置
 		{
+			if (GC.motor_r->motion == Stop)
+			{
+				GC.sta = Ready;
+				GC.subtask++;
+			}
+		}else if(GC.subtask==5)
+		{
+		
 		}
 		break;
 	/////////////////开始运行////////////////////
@@ -396,6 +420,17 @@ void GC_RunningTask(void)
 	case GC_finish:
 		break;
 	case GC_error:
+			if (GC_ver_Sen == Sen_Block)
+			{
+				GC.sta = Finish;
+			}
+			else
+			{
+				if (GC.motor_v->motion == Stop) // 垂直传感器错误 或电机错误
+				{
+					Error_Set(Error_Sensor, GC_ver_sensor);
+				}
+			}
 		break;
 	}
 }
@@ -452,7 +487,6 @@ void GC_FinishTask(void)
 				GC.task=GC_finish;
 				GC.sta=Ready;
 			}
-
 		}
 		break;
 	case GC_move_down:
@@ -530,126 +564,4 @@ void GC_TaskThread(void)
 	}
 }
 
-// if(GC.subtask==0) //复位至垂直原点
-// {
-// 	if(GC_ver_Sen!=Sen_Block)
-// 	{
-// 		GC.subtask=1;
-// 	}else
-// 	{
-// 		motorGo_acc(GC.motor_v,0);
-// 		GC.sta=Running;
-// 	}
-// }else if(GC.subtask==1) //旋转到旋转垂直点
-// {
-// 	if(GC.motor_r->postion==GC.GCR_ver_pos)
-// 	{
-// 		GC.subtask=2;
-// 	}else
-// 	{
-// 		if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片托盘回到原点
-// 		{
-// 			motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
-// 			GC.sta=Running;
-// 		}
-// 	}
-// }else if(GC.subtask==2) //旋转到旋转原点
-// {
-// 	if(GC_rot_Sen==Sen_Block)
-// 	{
-// 		GC.subtask=3;
-// 	}else
-// 	{
-// 		if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片吸盘装置离开原点
-// 		{
-// 			motorGo_acc(GC.motor_r,0);
-// 			GC.sta=Running;
-// 		}
-// 	}
-// }else if(GC.subtask==3) //旋转到旋转水平点
-// {
-// 	if(GOH_mid_Sen==Sen_Block&&GO.motor_h->motion==Stop) //等待玻片托盘到工作点
-// 	{
-// 		motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
-// 		GC.sta=Running;
-// 	}
-// }else if(GC.subtask==4) //夹手释放
-// {
-// 	GC_claw_Cyl=GAS_DISABLE;
 
-// }else if(GC.subtask==5) //旋转到旋转垂直点
-// {
-// 	if(GC_claw_Sen!=Sen_Block)
-// 	{
-// 		motorGo_acc(GC.motor_r,GC.GCR_ver_pos);
-// 		GC.sta=Running;
-// 	}
-
-// }
-
-// if(GC.subtask==0) //等待复位到垂直原点
-// {
-// 	if(GC_ver_Sen==Sen_Block)
-// 	{
-// 		stepperMotorStop(GC.motor_v);
-// 		GC.motor_v->postion=0;
-// 		GC.sta=Ready;
-// 		GC.subtask=1;
-// 	}else
-// 	{
-// 		if(GC.motor_v->motion==Stop) //垂直传感器错误 或电机错误
-// 		{
-// 			Error_Set(Error_Sensor,GC_ver_sensor);
-// 		}
-// 	}
-// }else if(GC.subtask==1) //等待旋转的旋转垂直位置
-// {
-// 	if(GC.motor_r->motion==Stop)
-// 	{
-// 		GC.sta=Ready;
-// 		GC.subtask=2;
-// 	}
-
-// }else if(GC.subtask==2) //等待旋转到旋转原点
-// {
-// 	if(GC_rot_Sen==Sen_Block)
-// 	{
-// 		stepperMotorStop(GC.motor_r);
-// 		GC.motor_r->postion=0;
-// 		GC.sta=Ready;
-// 		GC.subtask=3;
-// 	}else
-// 	{
-// 		if(GC.motor_r->motion==Stop)
-// 		{
-// 			Error_Set(Error_Sensor,GC_rot_sensor);
-// 		}
-// 	}
-// }else if(GC.subtask==3) //等待旋转到旋转水平
-// {
-// 	if(GC.motor_r->motion==Stop)
-// 	{
-// 		GC.sta=Ready;
-// 		GC.subtask=4;
-// 	}
-// }else if(GC.subtask==4) //等待夹手释放
-// {
-// 	if(GC.running_tim>DELAY_MS)
-// 	{
-// 		if(GC_claw_Sen!=Sen_Block) //夹手释放
-// 		{
-// 			GC.sta=Ready;
-// 			GC.subtask=5;
-// 		}
-
-// 	}
-
-// }else if(GC.subtask==5) //等待旋转到旋转垂直位置
-// {
-// 	if(GC.motor_r->motion==Stop)
-// 	{
-// 		GC.sta=Finish;
-// 		GC.subtask=0;
-// 	}
-
-// }

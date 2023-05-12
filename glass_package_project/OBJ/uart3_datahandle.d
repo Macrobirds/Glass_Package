@@ -36,10 +36,8 @@
 ..\obj\uart3_datahandle.o: ..\SYSTEM\usart\usart.h
 ..\obj\uart3_datahandle.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\uart3_datahandle.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\uart3_datahandle.o: ..\TASK\taskthread.h
-..\obj\uart3_datahandle.o: ..\HARDWARE\motor\motor.h
-..\obj\uart3_datahandle.o: ..\USER\Globalconfig.h
 ..\obj\uart3_datahandle.o: ..\SYSTEM\pwm\pwm.h
+..\obj\uart3_datahandle.o: ..\USER\Globalconfig.h
 ..\obj\uart3_datahandle.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\uart3_datahandle.o: ..\HARDWARE\gas\gas.h
 ..\obj\uart3_datahandle.o: ..\HARDWARE\PCF8591\PCF8591.h
@@ -47,9 +45,11 @@
 ..\obj\uart3_datahandle.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\uart3_datahandle.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\uart3_datahandle.o: ..\SYSTEM\adc\adc.h
+..\obj\uart3_datahandle.o: ..\HARDWARE\motor\motor.h
 ..\obj\uart3_datahandle.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\uart3_datahandle.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\uart3_datahandle.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\uart3_datahandle.o: ..\TASK\taskthread.h
 ..\obj\uart3_datahandle.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\uart3_datahandle.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\uart3_datahandle.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -61,3 +61,5 @@
 ..\obj\uart3_datahandle.o: ..\USER\codeGuard.h
 ..\obj\uart3_datahandle.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\uart3_datahandle.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\uart3_datahandle.o: ..\SYSTEM\delay\mydelay.h
+..\obj\uart3_datahandle.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

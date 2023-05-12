@@ -1,24 +1,6 @@
-#include "motor.h"
-#include "math.h"
 #include "Globalconfig.h"
-#include "position.h"
-#include "mydelay.h"
-#include "malloc.h"
 
 #define SCALE 10
-
-// volatile int32_t GE_motor_struct_postion=-1;
-// volatile u32 GE_motor_struct_step=0;
-// volatile int32_t GC_rot_motor_struct_postion=-1;
-// volatile u32 GC_rot_motor_struct_step=0;
-// volatile int32_t GC_ver_motor_struct_postion=-1;
-// volatile u32 GC_ver_motor_struct_step=0;
-// volatile int32_t GP_motor_struct_postion=-1;
-// volatile u32 GP_motor_struct_step=0;
-// volatile int32_t GO_hor_motor_struct_postion=-1;
-// volatile u32 GO_hor_motor_struct_step=0;
-// volatile int32_t GO_ver_motor_struct_postion=-1;
-// volatile u32 GO_ver_motor_struct_step=0;
 
 motor_struct GE_motor_struct = {
 	.name = GE_motor,
@@ -109,9 +91,28 @@ motor_struct GO_ver_motor_struct = {
 	.pulse_1mm = 800,
 	.maxfeq = 800 * 30,
 	.startfeq = 800 * 10,
-	.defaultfeq = 800 * 30,
+	.defaultfeq = 800 * 20,
 	.max_pos = 800 * 260,
 };
+
+
+#ifdef BIG_CYLINDER_MOTOR
+motor_struct GP_motor_big_cyl={
+	.name=GP_big_cyl_motor,
+	.motion=Stop,
+	.FRONT=0,
+	.TIM=TIM3,
+	.AccPeriodArray=NULL,
+	.postion = 0,
+	.pulse_1mm = 0,
+	.maxfeq = 0,
+	.startfeq = 0,
+	.defaultfeq = 0,
+	.max_pos = 0,
+	
+};
+
+#endif
 
 void motor_parameter_Init(void)
 {
@@ -273,6 +274,8 @@ u8 motor_Get_Start_Sen(enum motor_index motor_name)
 	case GO_ver_motor:
 		return GOV_start_Sen;
 		break;
+	case GP_big_cyl_motor:
+		return GP_big_cyl_Sen;
 	default:
 		break;
 	}
@@ -311,6 +314,9 @@ void motor_Set_Direction(motor_struct *motor)
 	case GO_ver_motor:
 		GOV_DIR = direction;
 		break;
+	case GP_big_cyl_motor:
+		GP_CYL_DIR=direction;
+	break;
 	default:
 		break;
 	}
@@ -318,16 +324,69 @@ void motor_Set_Direction(motor_struct *motor)
 
 void stepperMotorStop(motor_struct *motor)
 {
+	#ifdef BIG_CYLINDER_MOTOR
+	if(motor->TIM==TIM3)
+	{
+		if(motor->name==GC_ver_motor)
+		{
+			TIM_ITConfig(TIM3,TIM_IT_CC1,DISABLE);
+			GCV_motor_Break=GAS_DISABLE;
+		}else if(motor->name==GP_big_cyl_motor)
+		{
+			TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+		}
+	}else
+	{
+		TIM_Cmd(motor->TIM, DISABLE);
+	}
+
+	motor->motion = Stop;
+	#else	
 	TIM_Cmd(motor->TIM, DISABLE);
 	motor->motion = Stop;
 	if (motor->name == GC_ver_motor)
 	{
 		GCV_motor_Break = GAS_DISABLE; // 关闭刹车
 	}
+	#endif
 }
 
 void stepperMotorStart(motor_struct *motor, u16 arr)
 {
+	
+#ifdef BIG_CYLINDER_MOTOR
+	
+	switch (motor->name)
+	{
+	// TIM1 TIM8
+	case GE_motor:
+	case GP_motor:
+		TIM_SetAutoreload(motor->TIM, arr);
+		TIM_SetCompare1(motor->TIM, arr / 2);
+		TIM_Cmd(motor->TIM, ENABLE);
+		break;
+	// TIM2-5
+	case GC_rot_motor:
+	case GO_hor_motor:
+	case GO_ver_motor:
+		TIM_SetCompare1(motor->TIM, (motor->TIM->CNT + arr) % 0xffff);
+		TIM_Cmd(motor->TIM, ENABLE);
+		break;
+	case GC_ver_motor:
+		GCV_motor_Break = GAS_ENABLE; // 打开刹车
+		my_delay_ms(100);
+		TIM_SetCompare1(motor->TIM, (motor->TIM->CNT + arr) % 0xffff);
+		TIM_ITConfig(TIM3,TIM_IT_CC1,ENABLE);
+		break;
+	case GP_big_cyl_motor:
+		TIM_SetCompare3(motor->TIM, (motor->TIM->CNT + arr) % 0xffff);
+		TIM_ITConfig(TIM3,TIM_IT_CC3,ENABLE);
+	default:
+		break;
+	}
+	
+#else	
+	
 	switch (motor->name)
 	{
 	// TIM1 TIM8
@@ -351,50 +410,18 @@ void stepperMotorStart(motor_struct *motor, u16 arr)
 		break;
 	}
 	TIM_Cmd(motor->TIM, ENABLE);
+	
+#endif
 }
 
-// void stepperMotor_Set_planstep(motor_struct * motor,u32 planstep)
-//{
-//	switch(motor->name)
-//	{
-//		case GE_motor:
-//		GE_motor_struct_step=planstep;
-//		break;
-//		case GC_rot_motor:
-//		GC_rot_motor_struct_step=planstep;
-//		break;
-//		case GC_ver_motor:
-//		GC_ver_motor_struct_step=planstep;
-//		break;
-//		case GP_motor:
-//		GP_motor_struct_step=planstep;
-//		break;
-//		case GO_hor_motor:
-//		GO_hor_motor_struct_step=planstep;
-//		break;
-//		case GO_ver_motor:
-//		GO_ver_motor_struct_step=planstep;
-//		break;
-//		default: break;
-//
-//	}
-// }
-// void stepperMotor_Reset_Step(motor_struct * motor)
-//{
-//
-// }
 
-// volatile int32_t stepperMotor_Get_position(motor_struct *motor)
-//{
-
-//}
 
 // 匀速控制电机运行 电机结构体 电机状态 匀速运动频率 当速度频率为0时用默认匀速运动频率
 void motorGo(motor_struct *motor, long planPosition, u32 freq)
 {
 	enum motor_direction OldDirection = Front;
 	long planStepNumber = 0;
-	if (TaskThread_State == taskthread_pause) // 暂停状态 电机不启动
+	if (TaskThread_State == taskthread_emergency) // 暂停状态 电机不启动
 	{
 		return;
 	}
@@ -471,10 +498,6 @@ void setMixtureData(motor_struct *motor)
 	if (motor->planSetpNumber >= motor->pulse_1mm * 20)
 	{
 		motor->AccPeriodArray = mymalloc(SRAMIN, motor->accStepNumber * 2);
-		if (motor->AccPeriodArray != NULL)
-		{
-			printf("malloc success\r\n");
-		}
 		motor->t_m = motor->timerfeq / motor->maxfeq;
 		GetStepPeriodArrayOnAcc(motor->AccPeriodArray, motor->accStepNumber, motor->timerfeq, motor->startfeq, motor->maxfeq, motor->curvature);
 		motor->motion = AccMove; // 设置电机运动状态为加减速状态
@@ -494,7 +517,7 @@ u8 motorGo_acc(motor_struct *motor, long planPosition)
 	enum motor_direction OldDirection = Front;
 	long planStepNumber = 0;
 
-	if (TaskThread_State == taskthread_pause) // 暂停状态 电机不启动
+	if (TaskThread_State == taskthread_emergency) // 暂停状态 电机不启动
 	{
 		return FALSE;
 	}
@@ -521,8 +544,6 @@ u8 motorGo_acc(motor_struct *motor, long planPosition)
 		}
 		else
 		{
-			if (motor->postion <= 0)
-				motor->postion = motor->max_pos - 100;
 			planStepNumber = planPosition - motor->postion;
 		}
 	}
@@ -553,6 +574,7 @@ u8 motorGo_acc(motor_struct *motor, long planPosition)
 	stepperMotorStart(motor, motor->AccPeriodArray[0]);
 	return TRUE;
 }
+
 // 走指定脉冲的相对距离  freq=0 速度位defaultfeq
 void motorGO_Debug(motor_struct *motor, u32 pulse, u32 freq)
 {
@@ -585,3 +607,52 @@ void motorAccGO_Debug(motor_struct *motor, u32 pulse)
 	setMixtureData(motor);
 	stepperMotorStart(motor, motor->t_m);
 }
+
+// volatile int32_t GE_motor_struct_postion=-1;
+// volatile u32 GE_motor_struct_step=0;
+// volatile int32_t GC_rot_motor_struct_postion=-1;
+// volatile u32 GC_rot_motor_struct_step=0;
+// volatile int32_t GC_ver_motor_struct_postion=-1;
+// volatile u32 GC_ver_motor_struct_step=0;
+// volatile int32_t GP_motor_struct_postion=-1;
+// volatile u32 GP_motor_struct_step=0;
+// volatile int32_t GO_hor_motor_struct_postion=-1;
+// volatile u32 GO_hor_motor_struct_step=0;
+// volatile int32_t GO_ver_motor_struct_postion=-1;
+// volatile u32 GO_ver_motor_struct_step=0;
+
+// void stepperMotor_Set_planstep(motor_struct * motor,u32 planstep)
+//{
+//	switch(motor->name)
+//	{
+//		case GE_motor:
+//		GE_motor_struct_step=planstep;
+//		break;
+//		case GC_rot_motor:
+//		GC_rot_motor_struct_step=planstep;
+//		break;
+//		case GC_ver_motor:
+//		GC_ver_motor_struct_step=planstep;
+//		break;
+//		case GP_motor:
+//		GP_motor_struct_step=planstep;
+//		break;
+//		case GO_hor_motor:
+//		GO_hor_motor_struct_step=planstep;
+//		break;
+//		case GO_ver_motor:
+//		GO_ver_motor_struct_step=planstep;
+//		break;
+//		default: break;
+//
+//	}
+// }
+// void stepperMotor_Reset_Step(motor_struct * motor)
+//{
+//
+// }
+
+// volatile int32_t stepperMotor_Get_position(motor_struct *motor)
+//{
+
+//}

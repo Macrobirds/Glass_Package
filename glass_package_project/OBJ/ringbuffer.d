@@ -38,10 +38,8 @@
 ..\obj\ringbuffer.o: ..\SYSTEM\usart\usart.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\ringbuffer.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\ringbuffer.o: ..\TASK\taskthread.h
-..\obj\ringbuffer.o: ..\HARDWARE\motor\motor.h
-..\obj\ringbuffer.o: ..\USER\Globalconfig.h
 ..\obj\ringbuffer.o: ..\SYSTEM\pwm\pwm.h
+..\obj\ringbuffer.o: ..\USER\Globalconfig.h
 ..\obj\ringbuffer.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\ringbuffer.o: ..\HARDWARE\gas\gas.h
 ..\obj\ringbuffer.o: ..\HARDWARE\PCF8591\PCF8591.h
@@ -49,7 +47,9 @@
 ..\obj\ringbuffer.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\ringbuffer.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\ringbuffer.o: ..\SYSTEM\adc\adc.h
+..\obj\ringbuffer.o: ..\HARDWARE\motor\motor.h
 ..\obj\ringbuffer.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\ringbuffer.o: ..\TASK\taskthread.h
 ..\obj\ringbuffer.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -61,3 +61,5 @@
 ..\obj\ringbuffer.o: ..\USER\codeGuard.h
 ..\obj\ringbuffer.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\ringbuffer.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\ringbuffer.o: ..\SYSTEM\delay\mydelay.h
+..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

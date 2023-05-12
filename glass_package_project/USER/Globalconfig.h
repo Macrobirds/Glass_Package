@@ -16,11 +16,19 @@
 #include "rtc.h"
 #include "w25qxx.h"
 #include "RingBuffer.h"
+#include "mydelay.h"
+#include "math.h"
 
 
 // 条件编译参数
-#define DEBUG_MODE
+
 #define GE_UP_SENSOR_BEFORE 
+#define BIG_CYLINDER
+
+
+
+//#define BIG_CYLINDER_MOTOR
+//#define DEBUG_MODE
 //#define GE_DOWN_SENSOR_BEFORE
 
 
@@ -54,15 +62,31 @@
 #define GC_ver_Sen PEin(12) //玻片夹手垂直传感器
 #define GP_start_Sen PEin(13) //玻片封片起点传感器
 #define GOH_start_Sen PDin(3) //玻片承载起点传感器
-#define GOH_mid_Sen PDin(0) //玻片承载封片传感器
 #define GOH_end_Sen PDin(5)  //片承载终点传感器
 #define GOV_start_Sen PDin(6) //玻片出盒轨道原点传感器
-#define GOV_glass_Sen PDin(7) //玻片出盒玻片传感器
+#define GOV_glass_Sen PDin(0) //玻片出盒玻片传感器
+#ifdef BIG_CYLINDER_MOTOR
+#define GP_big_cyl_Sen PDin(7)
+#endif
 
-#define GP_sucker_Sen  PEin(15)//玻片封片玻片吸取检测传感器
-#define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
-#define GC_claw_Sen PCin(2) //玻片夹手夹手状态传感器
+//#define GOH_mid_Sen PDin(0) //玻片承载封片传感器
+
+#ifdef BIG_CYLINDER
 #define GP_big_cyl_Sen PEin(0) //大气缸传感器
+#endif
+
+//#define GP_sucker_Sen Sen_Block //默认吸取到玻片
+#define GP_sucker_Sen  PEin(15)//玻片封片玻片吸取检测传感器
+
+#define GP_spray_Sen Sen_Block //默认放置了喷头
+//#define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
+
+
+#define GC_claw_Sen PCin(2) //玻片夹手夹手状态传感器
+
+
+
+
 #define GP_small_cyl_Sen PDin(4) //小气缸传感器
 
 #define GOV_box_Sen PEin(14)  //玻片出盒玻片盒传感器
@@ -77,7 +101,10 @@
 #define GP_sucker2_Cyl PDout(15) //吸盘2阀
 #define GP_sucker_Pump PBout(0) //吸盘泵
 
+#ifdef BIG_CYLINDER
 #define GP_big_Cyl PDout(11) //大气缸
+#endif
+
 #define GP_small_Cyl PDout(12) //小气缸
 #define GC_claw_Cyl PDout(13) //夹手
 
@@ -113,7 +140,7 @@ enum Carrier_Versions {BMH = 1, BP = 2};
 
 enum sensor_index //总共17个传感器
 {
-	GE_sensor_none=0,
+	sensor_none=0,
 	GE_start_sensor=(1<<0),
 	GE_up_sensor =(1<<1),
 	GE_down_sensor =(1<<2),
@@ -211,5 +238,66 @@ void Set_Global_Parameter_Default(void);
 void setBCC(u8 *data, u8 dataLength);
 
 extern OS_CPU_SR cpu_sr;
+
+//motor struct
+extern motor_struct GE_motor_struct;
+extern motor_struct GC_rot_motor_struct;
+extern motor_struct GC_ver_motor_struct;
+extern motor_struct GP_motor_struct;
+extern motor_struct GO_hor_motor_struct;
+extern motor_struct GO_ver_motor_struct;
+
+#ifdef BIG_CYLINDER_MOTOR
+extern motor_struct GP_motor_big_cyl;
+
+#endif
+
+#ifdef BIG_CYLINDER_MOTOR
+struct glass_package_struct
+{
+	volatile enum glass_package_task_index task;
+	enum glass_package_task_index main_task;
+	volatile enum task_state sta;
+	enum glass_package_task_index resume_task;
+	motor_struct *motor;
+	motor_struct *motor_cyl;
+	volatile u32 running_tim;
+	u16 delay_before;
+	u16 delay_after;
+	u16 sucker_delay;
+	u32 sucker_pos;
+	u32 spray_pos;
+	u32 spray_len;
+	u16 spray_speed;
+	u32 sucker_down_pos;
+	u32 sucker_package_pos;
+	u32 sucker_finish_pos;
+	u8 spray_pressure;
+	u8 subtask;
+	u8 main_subtask;
+};
+#else
+struct glass_package_struct
+{
+	volatile enum glass_package_task_index task;
+	enum glass_package_task_index main_task;
+	volatile enum task_state sta;
+	enum glass_package_task_index resume_task;
+	motor_struct *motor;
+	volatile u32 running_tim;
+	u16 delay_before;
+	u16 delay_after;
+	u16 sucker_delay;
+	u32 sucker_pos;
+	u32 spray_pos;
+	u32 spray_len;
+	u16 spray_speed;
+	u8 spray_pressure;
+	u8 subtask;
+	u8 main_subtask;
+};
+#endif
+
+extern struct glass_package_struct GP;
 
 #endif

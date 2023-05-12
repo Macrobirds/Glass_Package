@@ -1,22 +1,14 @@
-#include "taskthread.h"
+#include "Globalconfig.h"
 
 // 夹手位于垂直原点，垂直静止
 static u8 check_GC(void)
 {
-	// #ifdef DEBUG_MODE
-	// 	return TRUE;
-	// #else
-	// 	return (GC_ver_Sen == Sen_Block) && (GC.motor_v->motion == Stop);
-	// #endif
 	return (GC_ver_Sen == Sen_Block) && (GC.motor_v->motion == Stop);
 }
 
 void GE_ReadyTask(void)
 {
-	//	if(GE.task!=GE_none)
-	//	{
-	//			printf("readytask%d subtask:%d\r\n",GE.task,GE.subtask);
-	//	}
+
 	switch (GE.task)
 	{
 	case GE_none:
@@ -145,8 +137,8 @@ void GE_ReadyTask(void)
 
 		// 装载槽缺少载玻片
 
-		GE.sta = Ready;
-		GE.task = GE_none;
+		GE.sta = Finish;
+
 		break;
 	}
 }
@@ -248,7 +240,7 @@ void GE_RunningTask(void)
 			{
 				GE.sta = Ready;
 				GE.task = GE_finish;
-				// Error_Set(Error_In_Box,0);
+				TaskThread_State=taskthread_finsih;
 			}
 		}
 		break;
@@ -292,6 +284,14 @@ void GE_RunningTask(void)
 
 void GE_FinishTask(void)
 {
+	if(TaskThread_State==taskthread_pause) //任务暂停 保存当前任务状态后跳转到结束任务
+	{
+		GE.resume_task=GE.task;
+		GE.task=GE_finish;
+		GE.sta=Ready;
+	}
+	
+	
 	switch (GE.task)
 	{
 	case GE_none:

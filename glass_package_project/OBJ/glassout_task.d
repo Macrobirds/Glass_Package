@@ -1,6 +1,5 @@
 ..\obj\glassout_task.o: glassout_task.c
-..\obj\glassout_task.o: ..\TASK\taskthread.h
-..\obj\glassout_task.o: ..\HARDWARE\motor\motor.h
+..\obj\glassout_task.o: Globalconfig.h
 ..\obj\glassout_task.o: ..\SYSTEM\sys\sys.h
 ..\obj\glassout_task.o: ..\USER\stm32f10x.h
 ..\obj\glassout_task.o: ..\CORE\core_cm3.h
@@ -31,12 +30,10 @@
 ..\obj\glassout_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\glassout_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\glassout_task.o: ..\STM32F10x_FWLib\inc\misc.h
-..\obj\glassout_task.o: ..\USER\Globalconfig.h
 ..\obj\glassout_task.o: ..\SYSTEM\delay\delay.h
 ..\obj\glassout_task.o: ..\SYSTEM\usart\usart.h
 ..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\glassout_task.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\glassout_task.o: ..\TASK\taskthread.h
 ..\obj\glassout_task.o: ..\SYSTEM\pwm\pwm.h
 ..\obj\glassout_task.o: ..\USER\Globalconfig.h
 ..\obj\glassout_task.o: ..\SYSTEM\GPIO\gpio.h
@@ -46,10 +43,12 @@
 ..\obj\glassout_task.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\glassout_task.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\glassout_task.o: ..\SYSTEM\adc\adc.h
+..\obj\glassout_task.o: ..\HARDWARE\motor\motor.h
 ..\obj\glassout_task.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\glassout_task.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\glassout_task.o: ..\TASK\taskthread.h
 ..\obj\glassout_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -58,6 +57,8 @@
 ..\obj\glassout_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassout_task.o: ..\UCOSII\CONFIG\os_cfg.h
 ..\obj\glassout_task.o: ..\UCOSII\PORT\os_cpu.h
-..\obj\glassout_task.o: ..\USER\codeGuard.h
+..\obj\glassout_task.o: codeGuard.h
 ..\obj\glassout_task.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\glassout_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\glassout_task.o: ..\SYSTEM\delay\mydelay.h
+..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

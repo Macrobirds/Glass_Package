@@ -1,4 +1,4 @@
-#include "taskthread.h"
+#include "Globalconfig.h"
 
 #define TASK_PRIORIRY 3
 
@@ -9,7 +9,7 @@ struct glass_enter_struct GE={
 	.GE_box_len=212*120,
 	.GE_box_dis=212*80,
 	.glass_Exist=FALSE,
-	.box_Exist=FALSE,
+	.box_Exist=FALSE, 
 	.subtask=0,
 
 };
@@ -29,6 +29,27 @@ struct glass_claw_struct GC={
 };
 
 
+
+#ifdef BIG_CYLINDER_MOTOR
+struct glass_package_struct GP={
+	.task=GP_none,
+	.sta=Ready,
+	.motor=&GP_motor_struct,
+	.motor_cyl=&GP_motor_big_cyl,
+	.sucker_pos=20000+268*5,
+	.spray_pos=19000,
+	.spray_len=268*15,
+	.spray_speed=268*30,
+	.sucker_down_pos=1,
+	.sucker_package_pos=1,
+	.sucker_finish_pos=1,
+	.delay_before=420,
+	.delay_after=120,
+	.spray_pressure=3,
+	.main_subtask=0,
+	.main_task=GP_none,
+};
+#else
 struct glass_package_struct GP={
 	.task=GP_none,
 	.sta=Ready,
@@ -40,7 +61,10 @@ struct glass_package_struct GP={
 	.delay_before=420,
 	.delay_after=120,
 	.spray_pressure=3,
+	.main_subtask=0,
+	.main_task=GP_none,
 };
+#endif
 
 
 struct glass_out_struct GO={
@@ -54,6 +78,8 @@ struct glass_out_struct GO={
 	.GOV_box_len=800*241+600,
 	.GOV_slot_dis=800*4,
 	.Storage_full=TRUE, //默认存储器满 需要通过出槽入槽重新装填来更新存储器状态
+	.main_subtask=0,
+	.main_task=GO_none,
 };
 
 enum taskthread_state TaskThread_State=taskthread_boost; //任务线程运行状态 
@@ -79,38 +105,100 @@ u8 TaskThread_CheckIdle(void)
 		return FALSE;
 }
 
+
+//发送错误码信息
+static void Error_Mesg_Send(void)
+{
+		//发送错误信息
+		/************************/
+		printf("error:%d error_sensor%d\r\n",error_type,sensor_error_idx);
+		/***********************/
+}
+
+
+//错误码设置 进入错误处理任务
 void Error_Set(enum task_error error,u32 error_sen)
 {
-
-
-
-	
 	#ifndef DEBUG_MODE
-	//暂停当前任务
-	Pause_TaskThread();
-
-	//进入报错程序 处理
-	GE.subtask=0;
-	GE.sta=Running;
-	GE.task=GE_error;
-
-	GC.subtask=0;
-	GC.sta=Running;
-	GC.task=GC_error;
-
-	GP.subtask=0;
-	GP.sta=Running;
-	GP.task=GP_error;
-
-	GO.subtask=0;
-	GO.sta=Running;
-	GO.task=GO_error;
-
+	
+	//更新报错警报状态
 	error_type|=error;
-	if(error_sen)
+	sensor_error_idx|=error_sen;
+	
+
+	//如果为传感器错误或者任务超时错误 需要紧急停止任务
+	if(error_type&(Error_OverTime+Error_Sensor))
 	{
-		sensor_error_idx|=error_sen;
+		Emergency_TaskThread();		//进入紧急停止模式
+		Error_Mesg_Send();
+		//进入报错程序 处理
+		GE.subtask=0;
+		GE.sta=Ready;
+		GE.task=GE_error;
+
+		GC.subtask=0;
+		GC.sta=Ready;
+		GC.task=GC_error;
+
+		GP.subtask=0;
+		GP.sta=Ready;
+		GP.task=GP_error;
+
+		GO.subtask=0;
+		GO.sta=Ready;
+		GO.task=GO_error;
+		return;
 	}
+	Error_Mesg_Send();
+	
+	//根据不同的错误设置解除错误后恢复运行后执行的任务
+	//缺少盖玻片
+	if(error_type&Error_Cover_Glass)
+	{
+		GP.resume_task=GP_sucker_down;
+		GP.sta=Ready;
+		GP.task=GP_error;
+	}
+	//缺少喷胶头
+	if(error_type&Error_Spray)
+	{
+		GP.resume_task=GP.task;
+		GP.sta=Ready;
+		GP.task=GP_error;
+	}
+	//缺少存储盒
+	if(error_type&Error_Out_Box)
+	{
+		GO.resume_task=GO.task;
+		GO.sta=Ready;
+		GO.task=GO_error;
+	}
+	//存储盒满
+	if(error_type&Error_StorageFull)
+	{
+		GO.resume_task=GO.task;
+		GO.sta=Ready;
+		GO.task=GO_error;
+	}
+	//夹取失败
+	if(error_type&Error_Grap)
+	{
+		GC.resume_task=GC_move_down;
+		GC.sta=Ready;
+		GC.task=GC_error;
+	}
+	//吸取玻片失败
+	if(error_type&Error_Sucker)
+	{
+		GP.resume_task=GP_sucker_down;
+		GP.sta=Ready;
+		GP.task=GP_error;
+	}
+	
+	TaskThread_State=taskthread_error; //进入错误处理任务
+
+
+
 	#else
 	printf("Errror:%d,Error_sensor:%d",error,error_sen);
 	stepperMotorStop(&GE_motor_struct);
@@ -190,9 +278,9 @@ void TaskThread_Init(void)
 	NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
 
 	TIM_Cmd(TIM6,ENABLE);
-	#ifndef DEBUG_MODE
-	TaskThread_Parm_Init();
-	#endif
+//	#ifndef DEBUG_MODE
+//	TaskThread_Parm_Init();
+//	#endif
 }
 
 void TIM6_IRQHandler(void) //TIM6中断
@@ -201,7 +289,7 @@ void TIM6_IRQHandler(void) //TIM6中断
 	{
 
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
-		if(TaskThread_State!=taskthread_pause) //不等于暂停状态
+		if(TaskThread_State!=taskthread_emergency) //不等于紧急暂停状态
 		{
 			//GE 玻片入料任务线程
 			GE_TaskThread();
@@ -213,88 +301,108 @@ void TIM6_IRQHandler(void) //TIM6中断
 			GO_TaskThread();		
 		}else
 		{
-			if(error_type) //因为发生错误而暂停 运行错误处理程序
+			if(error_type) //如果时因为发生错误而紧急停止
 			{
-				TaskThread_State=taskthread_error; 
+				//确保将任务设置为错误处理任务
+				Emergency_TaskThread();		
+				GE.subtask=0;
+				GE.sta=Ready;
+				GE.task=GE_error;
+
+				GC.subtask=0;
+				GC.sta=Ready;
+				GC.task=GC_error;
+
+				GP.subtask=0;
+				GP.sta=Ready;
+				GP.task=GP_error;
+
+				GO.subtask=0;
+				GO.sta=Ready;
+				GO.task=GO_error;  
+				
+				TaskThread_State=taskthread_error;
+				
 			}
 		}
-
-		
-
 	}
 
 }
 
+
 //暂停运行
 void Pause_TaskThread(void)
 {
-	//pause all step motor
-	OldTaskThread_State=TaskThread_State; //保存当前运行模式
 	TaskThread_State=taskthread_pause;
+}
+
+//紧急暂停运行
+void Emergency_TaskThread(void)
+{
+	//停止所有电机的运行
 	stepperMotorStop(&GE_motor_struct);
 	stepperMotorStop(&GC_ver_motor_struct);
 	stepperMotorStop(&GC_rot_motor_struct);
 	stepperMotorStop(&GP_motor_struct);
 	stepperMotorStop(&GO_hor_motor_struct);
 	stepperMotorStop(&GO_ver_motor_struct);
-	//保存当前运行状态
-	GE.resume_task=GE.task;
-	GC.resume_task=GC.task;
-	GP.resume_task=GP.task;
-	GO.resume_task=GO.task;
-
-
+	
+	TaskThread_State=taskthread_emergency; //设置状态为紧急停止状态
 }
-//恢复运行
+//从暂停任务中恢复运行
 void Resume_TaskThread(void)
 {
-	if(error_type<Error_Slide_Glass) //未发生元器件机构错误
-	{
-		GE.sta=Ready;
+
+		GE.sta=Finish;
 		GE.task=GE.resume_task;
-		GC.sta=Ready;
-		GC.task=GC.resume_task;
-		GP.sta=Ready;
-		GP.task=GP.resume_task;
-		GO.sta=Ready;
-		GP.task=GP.resume_task;
-		TaskThread_State=OldTaskThread_State; //恢复之前的运行模式
-	}
-
-
+		GC.sta=Finish;
+		GC.task=GC_rot_down;
+		GP.sta=Finish;
+		GP.task=GP_start;
+		GO.sta=Finish;
+		GO.task=GOH_start;
+	
+		TaskThread_State=taskthread_running;
 }
 
-enum taskthread_state TaskThread_IsReady(void)
+
+//从错误暂停中恢复运行
+void Resume_Error_TaskThread(void)
 {
-	
-	error_type=0;
-	sensor_error_idx=0;
-	//检测是否存在存储盒
-	if(GOV_box_Sen!=Sen_Block)
+	//根据不同的错误设置解除错误后恢复运行后执行的任务
+
+	//缺少盖玻片 缺少喷胶头
+	if(error_type&(Error_Cover_Glass+Error_Spray+Error_Sucker))
 	{
-		error_type|=Error_Out_Box; 
-	}
-	//检测存储槽是否检测到玻片 存储槽是否正确放置
-	if(GOV_glass_Sen==Sen_Block)
-	{
-		error_type|=Error_Sensor;
-		sensor_error_idx|=GOV_glass_sensor; 
-	}
-	//检测是否存在滴胶头
-	if(GP_spray_Sen!=Sen_Block)
-	{
-		error_type|=Error_Spray;
-	}
-	if(error_type)
-	{
-		//Error_Set(Error_none,0); //上报错误
-		return taskthread_error;
+		error_type&=~(Error_Cover_Glass+Error_Spray+Error_Sucker); //清除对应错误码
+		GP.task=GP.resume_task;
+		GP.sta=Ready;
 	}
 
+	//缺少存储盒 存储盒满
+	if(error_type&(Error_Out_Box+Error_StorageFull))
+	{
+		error_type&=~(Error_Out_Box+Error_StorageFull);
+		GO.task=GO.resume_task;
+		GO.sta=Ready;
+	}
+	//夹取失败
+	if(error_type&Error_Grap)
+	{
+		error_type&=~(Error_Grap);
+		GC.task=GC.resume_task;
+		GC.sta=Ready;
+	}
+	
+		TaskThread_State=taskthread_running;
+}
+
+//检测设备状态是否运行就绪
+enum taskthread_state TaskThread_IsReady(void)
+{
 	//检测气压是否达到工作状态
 	if(Gas_State!=gas_pumped)
 	{
-		printf("gas error\r\n");
 		return taskthread_boost;
 	}
 	//检测各个电机位置是否校准
@@ -302,9 +410,39 @@ enum taskthread_state TaskThread_IsReady(void)
 		GC_ver_motor_struct.postion<0||GP_motor_struct.postion<0||
 		GO_hor_motor_struct.postion<0||GO_ver_motor_struct.postion<0)
 		{
-			printf("pos error \r\n");
 			return taskthread_boost;
-		}
+		}	
+	
+	//检测是否存在存储盒
+	if(GOV_box_Sen!=Sen_Block)
+	{
+		error_type|=Error_Out_Box; 
+	}else
+	{
+		error_type&=~Error_Out_Box;
+	}
+	//检测是否存在滴胶头
+	if(GP_spray_Sen!=Sen_Block)
+	{
+		error_type|=Error_Spray;
+	}else
+	{
+		error_type&=~Error_Spray;
+	}
+	//未放置存储盒
+	if(GO.Storage_full==TRUE)
+	{
+		error_type|=Error_StorageFull;
+	}else
+	{
+		error_type&=~Error_StorageFull;
+	}
+	
+	if(error_type>Error_OverTime) 
+	{
+		Error_Mesg_Send(); //上报错误
+		return taskthread_error;
+	}
 
 	return taskthread_ready;
 	
@@ -313,33 +451,67 @@ enum taskthread_state TaskThread_IsReady(void)
 //开机复位任务
 void Boot_ResetTaskThread(void)
 {
-	GE.sta=Ready;
-	GE.task=GE_reset_on;
-	
-	GC.sta=Ready;
-	GC.task=GC_reset_on;
-	
-	GP.sta=Ready;
-	GP.task=GP_reset_on;
-	
-	GO.sta=Ready;
-	GO.task=GO_reset_on;
+	//清空错误警报
+	error_type=0;
+	sensor_error_idx=0;
+	//开启复位任务
+
+	if(Gas_State==gas_pumped)
+	{
+		GE.subtask=0;
+		GE.sta=Ready;
+		GE.task=GE_reset_on;
+		
+		GC.subtask=0;
+		GC.sta=Ready;
+		GC.task=GC_reset_on;
+		
+		GP.subtask=0;
+		GP.sta=Ready;
+		GP.task=GP_reset_on;
+		
+		GO.subtask=0;
+		GO.sta=Ready;
+		GO.task=GO_reset_on;
+	}
+	TaskThread_State=taskthread_boost;
 }
 
 //开始运行任务
 void Start_TaskThread(void)
 {
+	//检测系统是否就绪
+	if(TaskThread_IsReady()==taskthread_boost)
+	{
+		if(TaskThread_CheckIdle())
+		{
+			Boot_ResetTaskThread();
+		}
+		return;
+	}else if(TaskThread_IsReady()==taskthread_error)
+	{
+		return;
+	}else
+	{
+		TaskThread_State=taskthread_ready;
+	}
+	
+	
 	if(TaskThread_State==taskthread_ready)
 	{
+		GE.subtask=0;
 		GE.sta=Ready;
 		GE.task=GE_start;
 
+		GC.subtask=0;
 		GC.sta=Ready;
-		GC.task=GC_rot_down;
+		GC.task=GC_start;
 
+		GP.subtask=0;
 		GP.sta=Ready;
 		GP.task=GP_start;
 
+		GO.subtask=0;
 		GO.sta=Ready;
 		GO.task=GO_start;
 
@@ -350,19 +522,23 @@ void Start_TaskThread(void)
 //关闭运行任务
 void Close_TaskThread(void)
 {
-	if(TaskThread_State==taskthread_finsih) //如果运行结束 直接关机复位
+	if(TaskThread_State!=taskthread_running) //如果不在运行状态 直接关机复位
 	{
+		GE.subtask=0;
 		GE.sta=Ready;
-		GE.task=GE_none;
+		GE.task=GE_reset_off;
 
+		GC.subtask=0;
 		GC.sta=Ready;
 		GC.task=GC_reset_off;
 
+		GP.subtask=0;
 		GP.sta=Ready;
 		GP.task=GP_reset_off;
 
+		GO.subtask=0;
 		GO.sta=Ready;
-		GO.task=GO_none;
+		GO.task=GO_reset_off;
 	}
 
 	TaskThread_State=taskthread_close;

@@ -108,10 +108,10 @@ static void query_state_sensor(u8 Index)
 	{
 		tempbuf[3] = (1 << 0);
 	}
-	if (GOH_mid_Sen == Sen_Block)
-	{
-		tempbuf[3] = (1 << 1);
-	}
+//	if (GOH_mid_Sen == Sen_Block)
+//	{
+//		tempbuf[3] = (1 << 1);
+//	}
 	if (GOH_end_Sen == Sen_Block)
 	{
 		tempbuf[3] = (1 << 2);
@@ -407,7 +407,9 @@ void set_state_gas(u8 data)
 	}
 	if (data & (1 << 4))
 	{
+		#ifdef BIG_CYLINDER
 		GP_big_Cyl = GAS_ENABLE;
+		#endif
 	}
 	if (data & (1 << 5))
 	{
@@ -707,13 +709,12 @@ void screenUart_protocolParse(void)
 				// 系统正在运行状态，需要停止系统
 				if (TaskThread_State == taskthread_running)
 				{
-					Pause_TaskThread();
+
 					delay_ms(100);
 				}
 
 				// 进行开机复位
 				Boot_ResetTaskThread();
-				TaskThread_State = taskthread_reset;
 				// 是否需要应答标志位
 				if (data[0] == OnOffState_on)
 				{

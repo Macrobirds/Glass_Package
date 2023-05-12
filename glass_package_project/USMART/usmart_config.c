@@ -7,17 +7,7 @@
 #include "sys.h"
 #include "motor.h"
 
-static void Set_motor_dir(u8 dir)
-{
-	if (dir)
-	{
-		GOH_DIR = 1;
-	}
-	else
-	{
-		GOH_DIR = 0;
-	}
-}
+
 
 void gpio_test(u8 state, u8 pin)
 {
@@ -63,13 +53,12 @@ void gpio_test(u8 state, u8 pin)
 
 void close_device(void)
 {
-	Pause_TaskThread();
-	TaskThread_State = taskthread_close;
+	Close_TaskThread();
 }
 
 void boost_device_test(u8 task)
 {
-	TaskThread_State = taskthread_boost;
+	Boot_ResetTaskThread();
 }
 
 void motor_test(u8 dir, u8 motor, u32 pulse, u32 freq)
@@ -156,37 +145,6 @@ void motor_test(u8 dir, u8 motor, u32 pulse, u32 freq)
 		break;
 	}
 }
-void motoracc_test(u8 dir, u8 motor, u32 pulse)
-{
-	switch (motor)
-	{
-	case 1: // GE motor
-		if (dir)
-		{
-			GE_motor_struct.dir = Front;
-		}
-		else
-		{
-			GE_motor_struct.dir = Back;
-		}
-		// set the dir
-		motor_Set_Direction(&GE_motor_struct);
-
-		motorAccGO_Debug(&GE_motor_struct, pulse);
-
-		break;
-	case 2:
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
-	case 6:
-		break;
-	}
-}
 
 void boost_test(u8 task, u8 task_index)
 {
@@ -236,7 +194,7 @@ void boost_test(u8 task, u8 task_index)
 
 void debug_test(u8 task, u8 task_index)
 {
-//	TaskThread_State = taskthread_debug; // 进入debug 模式 不允许任务自动跳转
+	TaskThread_State = taskthread_debug; // 进入debug 模式 不允许任务自动跳转
 	switch (task)
 	{
 	case 1: // GE task
@@ -274,7 +232,7 @@ void debug_test(u8 task, u8 task_index)
 
 void thread_test(u8 task)
 {
-	TaskThread_State=taskthread_ready;
+	TaskThread_State=taskthread_running;
 	switch(task)
 	{
 		case 1:
@@ -288,6 +246,9 @@ void thread_test(u8 task)
 		GC.task=GC_start;
 		break;
 		case 3:
+		GP.sta=Ready;
+		GP.subtask=0;
+		GP.task=GP_start;
 		break;
 		case 4:
 		GO.sta=0;
@@ -295,9 +256,36 @@ void thread_test(u8 task)
 		GO.task=GO_start;
 		break;
 	}
-
 }
 
+void pause_test(void)
+{
+	Pause_TaskThread();
+}
+
+void resume_test(void)
+{
+	if(TaskThread_State==taskthread_error)
+	{
+		Resume_Error_TaskThread();
+		return;
+	}
+	
+	if(TaskThread_State==taskthread_pause)
+	{
+		Resume_TaskThread();
+	}
+}
+
+void emergency_test(void)
+{
+	Emergency_TaskThread();
+}
+
+void start_test(void)
+{
+	Start_TaskThread();
+}
 // 函数名列表初始化(用户自己添加)
 // 用户直接在这里输入要执行的函数名及其查找串
 struct _m_usmart_nametab usmart_nametab[] =
@@ -312,8 +300,6 @@ struct _m_usmart_nametab usmart_nametab[] =
 		"void delay_ms(u16 nms)",
 		(void *)delay_us,
 		"void delay_us(u32 nus)",
-		(void *)Set_motor_dir,
-		"void Set_motor_dir(u8 dir)",
 		(void *)gpio_test,
 		"void gpio_test(u8 state,u8 pin)",
 		(void *)close_device,
@@ -321,15 +307,21 @@ struct _m_usmart_nametab usmart_nametab[] =
 		(void *)boost_device_test,
 		"void boost_device_test(u8 task)",
 		(void *)motor_test,
-		"void motor_test(u8 dir,u8 motor,u32 pulse,u32 freq)",
-		(void *)motoracc_test,
-		"void motoracc_test(u8 dir,u8 motor,u32 pulse)",
+		"void motor_test(u8 dir, u8 motor, u32 pulse, u32 freq)",
 		(void *)boost_test,
 		"void boost_test(u8 task,u8 task_index)",
 		(void *)debug_test,
 		"void debug_test(u8 task, u8 task_index)",
 		(void *)thread_test,
 		"void thread_test(u8 task)",
+		(void *)pause_test,
+		"void pause_test(void)",
+		(void *)resume_test,
+		"void resume_test(void)",
+		(void *)emergency_test,
+		"void emergency_test(void)",
+		(void *) start_test,
+		"void start_test(void)",
 };
 ///////////////////////////////////END///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////

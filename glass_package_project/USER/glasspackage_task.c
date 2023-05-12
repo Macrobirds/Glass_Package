@@ -1,5 +1,4 @@
-#include "taskthread.h"
-#include "gas.h"
+#include "Globalconfig.h"
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
@@ -81,15 +80,23 @@ void GP_ReadyTask(void)
 		else
 		{
 			GP_small_Cyl = GAS_DISABLE; // 小气缸失能
+			#ifdef BIG_CYLINDER
 			GP_big_Cyl = GAS_DISABLE;	// 大气缸失能
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+			motorGo(GP.motor_cyl,0,0);
+			#endif
 			GP.sta = Running;
 		}
+		
+
 		break;
 	//////////////吸盘复位//////////////////// basic
 	case GP_sucker_start:
 		GP_sucker_Pump = GAS_DISABLE;
 		GP_sucker1_Cyl = GAS_DISABLE;
 		GP_sucker2_Cyl = GAS_DISABLE;
+		Gas_Spray_Disable();
 		GP.sta = Running;
 		break;
 	/////////////开机复位///////////////
@@ -131,9 +138,9 @@ void GP_ReadyTask(void)
 		{
 			Next_Task(GP.task, GP_cyl_start);
 		}
-		else if (GP.subtask == 2) // 原点复位
+		else if (GP.subtask == 2) 
 		{
-			if (GC_rot_Sen != Sen_Block && GOH_start_Sen == Sen_Block && GC_claw_Sen != Sen_Block) // 夹手释放回到旋转原点并且托盘回到原点
+			if (GC_claw_Sen != Sen_Block) // 夹手释放
 			{
 				Next_Task(GP_none, GP_move_start);
 			}
@@ -145,7 +152,7 @@ void GP_ReadyTask(void)
 		}
 		else if (GP.subtask == 3)
 		{
-			if (GC_claw_Sen != Sen_Block)
+			if (GC_claw_Sen != Sen_Block) //等待夹手释放
 			{
 				Next_Task(GP_none, GP_move_start);
 			}
@@ -165,6 +172,7 @@ void GP_ReadyTask(void)
 			}
 			else if(GP.subtask==2)
 			{
+				GC.Glass_Ready = FALSE; //封片处理完毕
 				GP.sta=Finish;
 			}
 		}
@@ -184,7 +192,12 @@ void GP_ReadyTask(void)
 		}
 		else if (GP.subtask == 1)
 		{
+			#ifdef BIG_CYLINDER
 			GP_big_Cyl = GAS_ENABLE;
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+			motorGo(GP.motor_cyl,GP.sucker_down_pos,0);
+			#endif
 			GP.sta = Running;
 		}
 		break;
@@ -205,7 +218,13 @@ void GP_ReadyTask(void)
 		break;
 	///////////玻片吸盘上升///////////
 	case GP_sucker_up:
+		#ifdef BIG_CYLINDER
 		GP_big_Cyl = GAS_DISABLE;
+		#endif
+		#ifdef BIG_CYLINDER_MOTOR
+		motorGo(GP.motor_cyl,0,0);
+		#endif
+	
 		GP.sta = Running;
 		break;
 	/////////////移动到喷胶位置/////////
@@ -252,11 +271,20 @@ void GP_ReadyTask(void)
 	case GP_package:
 		if (GP.subtask == 0)
 		{
+			#ifdef BIG_CYLINDER
 			GP_big_Cyl = GAS_ENABLE; // 大气缸下降
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+			motorGo(GP.motor_cyl,GP.sucker_package_pos,0);
+			#endif
+			
 			GP.sta = Running;
 		}
 		else if (GP.subtask == 1)
 		{
+			#ifdef BIG_CYLINDER_MOTOR
+			motorGo(GP.motor_cyl,GP.sucker_finish_pos,0);
+			#endif
 			GP_small_Cyl = GAS_DISABLE; // 小气缸上升
 			GP.sta = Running;
 		}
@@ -278,6 +306,29 @@ void GP_ReadyTask(void)
 	case GP_finish:
 		break;
 	case GP_error:
+		//缺少盖玻片
+		if(error_type&Error_Cover_Glass)
+		{
+			//大气缸上升
+			#ifdef BIG_CYLINDER
+			GP_big_Cyl=GAS_DISABLE;
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+			motorGo(GP.motor_cyl,0,0);
+			#endif
+			
+			GP.sta=Running;
+		}else if(error_type&Error_Spray)
+		{
+			GP.sta=Finish;
+		}else if(error_type&Error_Sucker)
+		{
+			GP_sucker_Pump = GAS_DISABLE;
+			GP_sucker1_Cyl = GAS_DISABLE;
+			GP_sucker2_Cyl = GAS_DISABLE;
+			Gas_Spray_Disable();
+			GP.sta = Finish;
+		}
 		break;
 	}
 }
@@ -312,6 +363,7 @@ void GP_RunningTask(void)
 		break;
 	////////////////大小气缸复位///////////////// basic
 	case GP_cyl_start:
+		#ifdef BIG_CYLINDER
 		if (GP.running_tim > MAX(DELAY_BIG_CYLIDER, DELAY_SMALL_CYLIDER))
 		{
 			if ((GP_big_cyl_Sen == Sen_Block) && (GP_small_cyl_Sen == Sen_Block))
@@ -323,6 +375,21 @@ void GP_RunningTask(void)
 				Error_Set(Error_Sensor, GP_big_cyl_sensor | GP_small_cyl_sensor);
 			}
 		}
+		#endif
+		#ifdef BIG_CYLINDER_MOTOR
+		if(GP_big_cyl_Sen==Sen_Block&&GP_small_cyl_Sen)
+		{
+			GP.sta=Finish;
+		}else
+		{
+			if(GP.motor_cyl->motion==Stop&&GP_small_cyl_Sen==Sen_Block)
+			{
+				Error_Set(Error_Sensor,GP_big_cyl_sensor);
+			}
+		}
+		#endif
+	
+	
 		break;
 	//////////////吸盘复位//////////////////// basic
 	case GP_sucker_start:
@@ -396,6 +463,7 @@ void GP_RunningTask(void)
 		}
 		else if (GP.subtask == 1)
 		{
+			#ifdef BIG_CYLINDER
 			if (GP.running_tim > DELAY_BIG_CYLIDER) // 等待大气缸下降
 			{
 				if (GP_big_cyl_Sen != Sen_Block)
@@ -404,7 +472,16 @@ void GP_RunningTask(void)
 					GP.sta = Finish;
 				}
 			}
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+			if(GP.motor_cyl->motion==Stop)
+			{
+				GP.subtask=0;
+				GP.sta=Finish;
+			}	
+			#endif
 		}
+		
 		break;
 	/////////吸取盖玻片///////////////
 	case GP_suck_glass:
@@ -422,6 +499,7 @@ void GP_RunningTask(void)
 		break;
 	///////////玻片吸盘上升///////////
 	case GP_sucker_up:
+		#ifdef BIG_CYLINDER
 		if (GP.running_tim > DELAY_BIG_CYLIDER)
 		{
 			if (GP_big_cyl_Sen == Sen_Block)
@@ -433,6 +511,21 @@ void GP_RunningTask(void)
 				Error_Set(Error_Sensor, GP_big_cyl_sensor);
 			}
 		}
+		#endif
+		#ifdef BIG_CYLINDER_MOTOR
+		if(GP_big_cyl_Sen==Sen_Block)
+		{
+			GP.sta=Finish;
+		}else
+		{
+			if(GP.motor_cyl->motion==Stop)
+			{
+				Error_Set(Error_Sensor,GP_big_cyl_sensor);
+			}
+		}
+		
+		#endif
+	
 		break;
 	/////////////移动到喷胶位置/////////
 	case GP_move_spray:
@@ -487,12 +580,21 @@ void GP_RunningTask(void)
 	case GP_package:
 		if (GP.subtask == 0)
 		{
+			#ifdef BIG_CYLINDER
 			if (GP.running_tim > GP.delay_before) // 等待大气缸下降 盖玻片与载玻片接触
 			{
 				GP.sta = Ready;
 				GP.subtask = 1;
 				GP.running_tim = 0;
 			}
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+			if(GP.motor_cyl->motion==Stop)
+			{
+				GP.sta=Ready;
+				GP.subtask=1;
+			}
+			#endif
 		}
 		else if (GP.subtask == 1) // 等待小气缸上升 盖玻片与载玻片水平
 		{
@@ -514,17 +616,54 @@ void GP_RunningTask(void)
 		}
 		else if (GP.subtask == 3) // 等待吸盘2 吸盘气泵关闭
 		{
-			if (GP.running_tim > DELAY_SUCKER)
+			#ifdef BIG_CYLINDER_MOTOR
+			if (GP.running_tim > 1000&&GP.motor_cyl->motion==Stop)
 			{
 				GP.subtask = 0;
 				GP.sta = Finish;
 				GP.running_tim = 0;
 			}
+			#endif
+			#ifdef BIG_CYLINDER
+			if (GP.running_tim > 1000)
+			{
+				GP.subtask = 0;
+				GP.sta = Finish;
+				GP.running_tim = 0;
+			}
+			#endif
+			
 		}
 		break;
 	case GP_finish:
 		break;
 	case GP_error:
+		#ifdef BIG_CYLINDER
+		if(GP.running_tim>DELAY_BIG_CYLIDER)
+		{
+			if(GP_big_cyl_Sen==Sen_Block)
+			{
+				GP.sta=Finish;
+			}else
+			{
+				Error_Set(Error_Sensor,GP_big_cyl_sensor);
+			}
+		}
+		#endif
+		#ifdef BIG_CYLINDER_MOTOR
+			if(GP_big_cyl_Sen==Sen_Block)
+			{
+				GP.sta=Finish;
+			}else
+			{
+				if(GP.motor_cyl->motion==Stop)
+				{
+					Error_Set(Error_Sensor,GP_big_cyl_sensor);
+				}
+
+			}
+		#endif
+	
 		break;
 	}
 }
@@ -607,9 +746,16 @@ void GP_FinishTask(void)
 	case GP_sucker_up:
 		if ((GC.task == GC_rot_hor) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
 		{
-			GP.sta = Ready;
-			GP.task = GP_move_spray;
-			GP.subtask = 0;
+			if(GP_sucker_Sen==Sen_Block)
+			{
+				GP.sta = Ready;
+				GP.task = GP_move_spray;
+				GP.subtask = 0;
+			}else
+			{
+				Error_Set(Error_Sucker,0);
+			}
+
 		}
 		else if (GC.task == GC_finish)
 		{
@@ -629,13 +775,24 @@ void GP_FinishTask(void)
 		GP.subtask = 0;
 		break;
 	case GP_package:
+		#ifdef BIG_CYLINDER
 		if (GP_big_cyl_Sen != Sen_Block && GP_small_cyl_Sen == Sen_Block) // 等待大小气缸到位
 		{
-			GC.Glass_Ready = FALSE;
 			GP.subtask = 0;
 			GP.sta = Ready;
 			GP.task = GP_start;
 		}
+		#endif
+		#ifdef BIG_CYLINDER_MOTOR
+		if (GP.motor_cyl->motion==Stop && GP_small_cyl_Sen == Sen_Block) 
+		{
+			GP.subtask = 0;
+			GP.sta = Ready;
+			GP.task = GP_start;
+		}
+		#endif
+		
+	
 		break;
 	case GP_finish:
 		break;

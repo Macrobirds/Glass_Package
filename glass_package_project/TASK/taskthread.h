@@ -1,22 +1,23 @@
 #ifndef __TASKTHREAD_H
 #define __TASKTHREAD_H
 #include "motor.h"
-#include "Globalconfig.h"
+
+
 
 #define OVERTIME 20000 // 20 Second
 
 // 任务线程状态
 enum taskthread_state
 {
-	taskthread_boost,	// 启动状态
+	taskthread_emergency, //紧急暂停状态 
 	taskthread_pause,	// 暂停状态
 	taskthread_debug,	// 调试状态
 	taskthread_error,	// 错误状态
+	taskthread_boost,	// 启动状态
 	taskthread_ready,	// 运行准备状态
 	taskthread_running, // 运行进行状态
 	taskthread_finsih,	// 运行结束状态
 	taskthread_close,	// 关机状态
-	taskthread_reset,	// 复位状态
 
 };
 
@@ -31,14 +32,16 @@ enum task_state
 enum task_error
 {
 	Error_none = 0,
-	Error_Cover_Glass = 1 << 0, // 缺少盖玻片
-	Error_Spray = 1 << 1,		// 缺少滴胶头
+	Error_Sensor = 1 << 0, //  传感器错误
+	Error_OverTime = 1 << 1,		//  任务超时错误
 	Error_Slide_Glass = 1 << 2, // 缺少载玻片
 	Error_In_Box = 1 << 3,		// 缺少进料槽
 	Error_Out_Box = 1 << 4,		// 缺少装载槽
-	Error_Sensor = 1 << 5,		// 传感器错误
-	Error_OverTime = 1 << 6,	// 任务超时错误
+	Error_Cover_Glass = 1 << 5,		// 缺少盖玻片
+	Error_Spray = 1 << 6,	// 缺少滴胶头
 	Error_StorageFull = 1 << 7, // 存储槽满
+	Error_Grap=1<<8, //夹取失败
+	Error_Sucker=1<<9, //吸取失败 玻片损坏或者吸盘损坏 
 };
 
 // 玻片进入槽任务流程序号
@@ -134,13 +137,13 @@ struct glass_enter_struct
 	volatile enum glass_enter_task_index task; // 任务序列
 	volatile enum task_state sta;			   // 任务状态
 	volatile motor_struct *motor;			   // 电机结构体指针
+	enum glass_enter_task_index resume_task;   // 恢复任务序列
 	u32 running_tim;						   // 运行时间 ms
 	u32 GE_box_len;							   // 装载槽长度
 	u32 GE_box_dis;							   // 装载槽间距
 	u8 box_Exist;							   // 装载槽检测信号
 	u8 glass_Exist;							   // 载玻片检测信号
 	u8 subtask;								   // 子任务
-	enum glass_enter_task_index resume_task;   // 恢复任务序列
 	u8 Index;
 	u8 WaitAck;
 };
@@ -149,6 +152,7 @@ struct glass_claw_struct
 {
 	volatile enum glass_claw_task_index task;
 	enum glass_claw_task_index main_task;
+	enum glass_claw_task_index resume_task;
 	volatile enum task_state sta;
 	volatile motor_struct *motor_v; // 垂直电机
 	volatile motor_struct *motor_r; // 旋转电机
@@ -159,34 +163,18 @@ struct glass_claw_struct
 	u8 subtask;						// 子任务
 	u8 main_subtask;
 	volatile u8 Glass_Ready;
-	enum glass_claw_task_index resume_task; // 恢复任务序列
 };
 
-struct glass_package_struct
-{
-	volatile enum glass_package_task_index task;
-	enum glass_package_task_index main_task;
-	volatile enum task_state sta;
-	motor_struct *motor;
-	volatile u32 running_tim;
-	u16 delay_before;
-	u16 delay_after;
-	u16 sucker_delay;
-	u32 sucker_pos;
-	u32 spray_pos;
-	u32 spray_len;
-	u16 spray_speed;
-	u8 spray_pressure;
-	u8 subtask;
-	u8 main_subtask;
-	enum glass_package_task_index resume_task; // 恢复任务序列
-};
+
+
+
 
 struct glass_out_struct
 {
 	volatile enum glass_out_task_index task;
 	enum glass_out_task_index main_task;
 	volatile enum task_state sta;
+	enum glass_out_task_index resume_task;
 	volatile motor_struct *motor_h;
 	volatile motor_struct *motor_v;
 	volatile u32 running_tim;
@@ -199,7 +187,6 @@ struct glass_out_struct
 	u8 main_subtask; //
 	volatile u8 glass_num;
 	volatile u8 box_num;
-	enum glass_out_task_index resume_task; // 恢复任务序列
 	u8 Index;
 	u8 WaitAck;
 	u8 Storage_full;
@@ -211,35 +198,52 @@ extern enum taskthread_state OldTaskThread_State;
 
 extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
-extern struct glass_package_struct GP;
+
 extern struct glass_out_struct GO;
 
 extern volatile u32 sensor_filter;
+
 // 任务线程结构体初始化 任务定时器TIM6初始化
 void TaskThread_Init(void);
-// 检测机器是否可以准备运行
-enum taskthread_state TaskThread_IsReady(void);
+//GE任务线程
 void GE_TaskThread(void);
+//GC任务线程
 void GC_TaskThread(void);
+//GP任务线程
 void GP_TaskThread(void);
+//GO任务线程
 void GO_TaskThread(void);
 
+//错误处理
 void Error_Set(enum task_error error, u32 error_sen);
+
+//从错误暂停中恢复运行
+void Resume_Error_TaskThread(void);
 
 // 任务是否处于空闲状态
 u8 TaskThread_CheckIdle(void);
 
+// 检测机器是否可以准备运行
+enum taskthread_state TaskThread_IsReady(void);
+
 // 开机复位任务
 void Boot_ResetTaskThread(void);
+
 // 开始运行任务
 void Start_TaskThread(void);
+
 // 关闭运行任务
 void Close_TaskThread(void);
 
-// 暂停任务
+// 紧急暂停任务
+void Emergency_TaskThread(void);
+
+//暂停任务
 void Pause_TaskThread(void);
+
 // 恢复任务
 void Resume_TaskThread(void);
+
 // 任务参数初始化
 void TaskThread_Parm_Init(void);
 

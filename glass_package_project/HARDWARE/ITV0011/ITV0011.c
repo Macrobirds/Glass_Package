@@ -16,13 +16,13 @@ void ITV0011_IIC_Init()
 
 void ITV0011_IIC_Enable(u8 volt)
 {
-	printf("ITV0011_IIC_Enable %d\r\n",volt);
+
 	GP_ITV1100=ITV1100_ENABLE;
 	PCF8591_DAC_Output(0x90,0x40,volt);
 }
 void ITV0011_IIC_Disable()
 {
-	printf("ITV0011_IIC_Disable\r\n");
+
 	GP_ITV1100=ITV1100_DISABLE;
 	PCF8591_DAC_Output(0x90,0x40,0);
 }
@@ -41,7 +41,6 @@ u32 ITV0011_IIC_GetPressure()
 			return 0;
 	}else
 	{
-			printf("ITV pressure%d kpa\r\n",(u32)((sum-53)/204.0*90+10));
 		 return (sum-53)/204*90+10;
 	}
 }

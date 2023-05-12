@@ -117,6 +117,14 @@ void TIM3_PWM_Init(u16 psc)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	#ifdef BIG_CYLINDER_MOTOR
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	
+	#endif
 
 	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;
 	TIM_TimeBaseStructure.TIM_Prescaler = psc - 1;
@@ -132,8 +140,22 @@ void TIM3_PWM_Init(u16 psc)
 	//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
 	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
 	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Disable);
-
+	
+	
+	
+	#ifdef BIG_CYLINDER_MOTOR
+	TIM_OC3Init(TIM3,&TIM_OCInitStructure);
+	TIM_OC3PreloadConfig(TIM3,TIM_OCPreload_Disable);
+	//开启定时器
+	TIM_Cmd(TIM3,ENABLE);
+	//需要手动开启中断
+	TIM_ITConfig(TIM3,TIM_IT_CC1,DISABLE);
+	TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+	#else
 	TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);
+	#endif
+
+	
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -440,13 +462,16 @@ void TIM2_IRQHandler(void) // TIM2 中断 GO_hor_motor
 
 void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 {
-	static volatile u8 tim_cnt = 0;
+	static volatile u8 tim_cnt1 = 0;
+	#ifdef BIG_CYLINDER_MOTOR
+	static volatile u8 tim_cnt2 = 0;
+	#endif
 	if (TIM_GetITStatus(TIM3, TIM_IT_CC1) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM3, TIM_IT_CC1);
-		tim_cnt++;
-		tim_cnt %= 2;
-		if (!tim_cnt)
+		tim_cnt1++;
+		tim_cnt1 %= 2;
+		if (!tim_cnt1)
 		{
 			if (GC_ver_motor_struct.dir == Front) // 计算当前位置
 			{
@@ -460,7 +485,11 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 
 			if (GC_ver_motor_struct.planSetpNumber <= GC_ver_motor_struct.step) // 到达指定步数,电机停止
 			{
+				#ifdef BIG_CYLINDER_MOTOR
+				TIM_ITConfig(TIM3,TIM_IT_CC1,DISABLE);
+				#else
 				TIM_Cmd(TIM3, DISABLE);
+				#endif
 				GCV_motor_Break = GAS_DISABLE;
 				GC_ver_motor_struct.motion = Stop;
 				return;
@@ -468,7 +497,11 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 
 			if (GC_ver_motor_struct.max_pos <= GC_ver_motor_struct.postion) // 到达轨道最大距离
 			{
+				#ifdef BIG_CYLINDER_MOTOR
+				TIM_ITConfig(TIM3,TIM_IT_CC1,DISABLE);
+				#else
 				TIM_Cmd(TIM3, DISABLE);
+				#endif
 				GCV_motor_Break = GAS_DISABLE;
 				GC_ver_motor_struct.motion = Stop;
 				return;
@@ -509,6 +542,76 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 			}
 		}
 	}
+	#ifdef BIG_CYLINDER_MOTOR
+	if (TIM_GetITStatus(TIM3, TIM_IT_CC3) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
+		tim_cnt2++;
+		tim_cnt2 %= 2;
+		if (!tim_cnt2)
+		{
+			if (GP_motor_big_cyl.dir == Front) // 计算当前位置
+			{
+				GP_motor_big_cyl.postion++;
+			}
+			else
+			{
+				GP_motor_big_cyl.postion--;
+			}
+			GP_motor_big_cyl.step++; // 计算当前步数
+
+			if (GP_motor_big_cyl.planSetpNumber <= GP_motor_big_cyl.step) // 到达指定步数,电机停止
+			{
+				TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+				GP_motor_big_cyl.motion = Stop;
+				return;
+			}
+
+			if (GP_motor_big_cyl.max_pos <= GP_motor_big_cyl.postion) // 到达轨道最大距离
+			{
+				TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+				GP_motor_big_cyl.motion = Stop;
+				return;
+			}
+		}
+
+		// 在不同任务下判断需要停止时电机方向和传感器状态
+		/***/
+		if(GP.task==GP_sucker_down&&GP.subtask==1)
+		{
+			if(GP_sucker_Sen==Sen_Block)
+			{
+				TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+				GP_motor_big_cyl.motion = Stop;
+			}
+		}
+
+		/****/
+
+		if (GP_motor_big_cyl.motion == ConstMove) // 电机匀速运动
+		{
+			TIM_SetCompare3(TIM3, (TIM3->CNT + GP_motor_big_cyl.t_m) % 0xffff);
+		}
+		else if (GP_motor_big_cyl.motion == AccMove)
+		{
+			// 加速运动
+			if (GP_motor_big_cyl.step <= GP_motor_big_cyl.accStepNumber)
+			{
+				TIM_SetCompare3(TIM3, (TIM3->CNT + GP_motor_big_cyl.AccPeriodArray[GP_motor_big_cyl.step]) % 0xffff);
+			} // 减速运动
+			else if (GP_motor_big_cyl.step >= GP_motor_big_cyl.planSetpNumber - GP_motor_big_cyl.accStepNumber)
+			{
+				TIM_SetCompare3(TIM3, (TIM3->CNT + GP_motor_big_cyl.AccPeriodArray[GP_motor_big_cyl.planSetpNumber - GP_motor_big_cyl.step]) % 0xffff);
+			} // 匀速运动
+			else
+			{
+				TIM_SetCompare3(TIM3, (TIM3->CNT + GP_motor_big_cyl.t_m) % 0xffff);
+			}
+		}
+	}
+	
+	#endif
+	
 }
 
 void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
@@ -543,7 +646,6 @@ void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
 				GO_ver_motor_struct.motion = Stop;
 				GO.Storage_full=TRUE;
 				printf("full the pos is %d\r\n",GO_ver_motor_struct.postion);
-				
 				return;
 			}
 		}

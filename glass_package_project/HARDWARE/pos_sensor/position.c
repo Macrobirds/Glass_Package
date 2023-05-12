@@ -1,4 +1,4 @@
-#include "position.h"
+#include "Globalconfig.h"
 
 #define DELAY_US 50
 #define POSITION_PRIORITY 2
@@ -42,7 +42,7 @@ static void Exti_Init_0_7(void)
 	{
 		//GPIOD 0
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, GPIO_PinSource0);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //上升沿触发
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; //上升沿触发
 		EXTI_InitStructure.EXTI_Line = EXTI_Line0;
 		EXTI_Init(&EXTI_InitStructure);
 	}
@@ -242,8 +242,8 @@ void postions_sensor_Init(void)
 	if(IoInput_0_Enable)
 	{
 		NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;			//中断向量
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = POSITION_PRIORITY;	//抢占优先级
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;			//子优先级
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;	//抢占优先级
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			//子优先级
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;				//使能外部中断通道
 		NVIC_Init(&NVIC_InitStructure);
 	}
@@ -283,22 +283,52 @@ void postions_sensor_Init(void)
 
 void EXTI0_IRQHandler(void)
 {
-		//GOH_mid_Sen
-	if(EXTI_GetITStatus(EXTI_Line0)!=RESET) //水平出料电机经过工作点
+//GOV_galss_Sen
+	if(EXTI_GetITStatus(EXTI_Line0)!=RESET) //检测到存储槽是否存在玻片
 	{
-		if(GO_hor_motor_struct.dir==Front) //向终点方向
+		delay_us(DELAY_US);
+		if(GO.task>GO_Box_Out)
 		{
-			delay_us(DELAY_US);
-			if(GOH_mid_Sen==Sen_Block) //到达工作点停止
+			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 			{
-				TIM_Cmd(TIM2,DISABLE);
-				GO_hor_motor_struct.postion=GO.GOH_mid_pos;
-				GO_hor_motor_struct.motion=Stop;
+				if(GO_ver_motor_struct.step>200) //确保移动到下一个槽
+				{
+					TIM_Cmd(TIM4,DISABLE);
+					GO_ver_motor_struct.motion=Stop;
+					GO_ver_motor_struct.step=0;
+				}else
+				{
+
+				}
+			}
+		}else if(GO.task==GO_Box_In&&GO.subtask==1)
+		{
+			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
+			{
+				TIM_Cmd(TIM4,DISABLE);
+				GO_ver_motor_struct.motion=Stop;
 			}
 		}
+		//printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line0);
-		printf("exti 1\r\n");
-	}
+	}	
+	
+//		//GOH_mid_Sen
+//	if(EXTI_GetITStatus(EXTI_Line0)!=RESET) //水平出料电机经过工作点
+//	{
+//		if(GO_hor_motor_struct.dir==Front) //向终点方向
+//		{
+//			delay_us(DELAY_US);
+//			if(GOH_mid_Sen==Sen_Block) //到达工作点停止
+//			{
+//				TIM_Cmd(TIM2,DISABLE);
+//				GO_hor_motor_struct.postion=GO.GOH_mid_pos;
+//				GO_hor_motor_struct.motion=Stop;
+//			}
+//		}
+//		EXTI_ClearITPendingBit(EXTI_Line0);
+//		printf("exti 1\r\n");
+//	}
 }
 void EXTI1_IRQHandler(void);
 void EXTI2_IRQHandler(void);
@@ -352,39 +382,24 @@ void EXTI9_5_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line6);
 		printf("GOV_start_Sen\r\n");
 	}
-	//GOV_galss_Sen
-	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //检测到存储槽是否存在玻片
+	#ifdef BIG_CYLINDER_MOTOR
+	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //垂直出料槽到达原点
 	{
-		delay_us(DELAY_US+100);
-		if(GO.task>GO_Box_Out)
+		delay_us(DELAY_US);
+		if(GP_big_cyl_Sen==Sen_Block)
 		{
-			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
-			{
-				if(GO_ver_motor_struct.step>200) //确保移动到下一个槽
-				{
-					TIM_Cmd(TIM4,DISABLE);
-					GO_ver_motor_struct.motion=Stop;
-					GO_ver_motor_struct.step=0;
-					printf("glass stop\r\n");
-				}else
-				{
-					printf("glass error\r\n");
-				}
-
-
-			}
-		}else if(GO.task==GO_Box_In&&GO.subtask==1)
-		{
-			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
-			{
-				TIM_Cmd(TIM4,DISABLE);
-				GO_ver_motor_struct.motion=Stop;
-				printf("GOV_galss_sen\r\n");
-			}
+			TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
+			GP_motor_big_cyl.postion=0;
+			GP_motor_big_cyl.motion=Stop;
 		}
-		//printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line7);
+		printf("big cyl motor sen\r\n");
 	}
+	
+	#endif
+	
+	
+	
 	//GE_down_Sen
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
 	{
@@ -420,11 +435,6 @@ void EXTI9_5_IRQHandler(void)
 		}
 		
 		#endif
-		
-		
-		
-
-		
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
 	//GE_up_Sen
@@ -476,9 +486,24 @@ void EXTI15_10_IRQHandler(void)
 		printf("GC_rot_Sen\r\n");
 	}
 	//GC_ver_Sen
+	#ifdef BIG_CYLINDER_MOTOR
 	if(EXTI_GetITStatus(EXTI_Line12)!=RESET) //夹手运动到垂直原点
 	{
-		delay_us(DELAY_US+150);
+		delay_us(DELAY_US);
+		if(GC_ver_Sen==Sen_Block) //夹手垂直停止
+		{
+			TIM_ITConfig(TIM3,TIM_IT_CC1,DISABLE);
+			GCV_motor_Break=GAS_DISABLE;
+			GC_ver_motor_struct.postion=0;
+			GC_ver_motor_struct.motion=Stop;
+		}
+		EXTI_ClearITPendingBit(EXTI_Line12);
+		printf("GC_ver_sen\r\n");
+	}
+	#else
+	if(EXTI_GetITStatus(EXTI_Line12)!=RESET) //夹手运动到垂直原点
+	{
+		delay_us(DELAY_US);
 		if(GC_ver_Sen==Sen_Block) //夹手垂直停止
 		{
 			TIM_Cmd(TIM3,DISABLE);
@@ -490,6 +515,10 @@ void EXTI15_10_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line12);
 		printf("GC_ver_sen\r\n");
 	}
+	#endif
+	
+	
+	
 	//GP_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line13)!=RESET) //封片运动到原点
 	{

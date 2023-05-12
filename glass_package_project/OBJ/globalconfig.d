@@ -34,10 +34,8 @@
 ..\obj\globalconfig.o: ..\SYSTEM\usart\usart.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\globalconfig.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\globalconfig.o: ..\TASK\taskthread.h
-..\obj\globalconfig.o: ..\HARDWARE\motor\motor.h
-..\obj\globalconfig.o: ..\USER\Globalconfig.h
 ..\obj\globalconfig.o: ..\SYSTEM\pwm\pwm.h
+..\obj\globalconfig.o: ..\USER\Globalconfig.h
 ..\obj\globalconfig.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\globalconfig.o: ..\HARDWARE\gas\gas.h
 ..\obj\globalconfig.o: ..\HARDWARE\PCF8591\PCF8591.h
@@ -45,10 +43,12 @@
 ..\obj\globalconfig.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\globalconfig.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\globalconfig.o: ..\SYSTEM\adc\adc.h
+..\obj\globalconfig.o: ..\HARDWARE\motor\motor.h
 ..\obj\globalconfig.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\globalconfig.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\globalconfig.o: ..\TASK\taskthread.h
 ..\obj\globalconfig.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -60,3 +60,5 @@
 ..\obj\globalconfig.o: codeGuard.h
 ..\obj\globalconfig.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\globalconfig.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\globalconfig.o: ..\SYSTEM\delay\mydelay.h
+..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

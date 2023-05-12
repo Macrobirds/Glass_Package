@@ -36,10 +36,8 @@
 ..\obj\main.o: ..\USMART\usmart_str.h
 ..\obj\main.o: ..\USER\Globalconfig.h
 ..\obj\main.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\main.o: ..\TASK\taskthread.h
-..\obj\main.o: ..\HARDWARE\motor\motor.h
-..\obj\main.o: ..\USER\Globalconfig.h
 ..\obj\main.o: ..\SYSTEM\pwm\pwm.h
+..\obj\main.o: ..\USER\Globalconfig.h
 ..\obj\main.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\main.o: ..\HARDWARE\gas\gas.h
 ..\obj\main.o: ..\HARDWARE\PCF8591\PCF8591.h
@@ -47,10 +45,12 @@
 ..\obj\main.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\main.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\main.o: ..\SYSTEM\adc\adc.h
+..\obj\main.o: ..\HARDWARE\motor\motor.h
 ..\obj\main.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\main.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\main.o: ..\TASK\taskthread.h
 ..\obj\main.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,3 +62,5 @@
 ..\obj\main.o: ..\USER\codeGuard.h
 ..\obj\main.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\main.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\main.o: ..\SYSTEM\delay\mydelay.h
+..\obj\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

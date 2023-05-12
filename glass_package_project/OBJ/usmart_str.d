@@ -36,10 +36,8 @@
 ..\obj\usmart_str.o: ..\SYSTEM\usart\usart.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\usmart_str.o: ..\HARDWARE\pos_sensor\position.h
-..\obj\usmart_str.o: ..\TASK\taskthread.h
-..\obj\usmart_str.o: ..\HARDWARE\motor\motor.h
-..\obj\usmart_str.o: ..\USER\Globalconfig.h
 ..\obj\usmart_str.o: ..\SYSTEM\pwm\pwm.h
+..\obj\usmart_str.o: ..\USER\Globalconfig.h
 ..\obj\usmart_str.o: ..\SYSTEM\GPIO\gpio.h
 ..\obj\usmart_str.o: ..\HARDWARE\gas\gas.h
 ..\obj\usmart_str.o: ..\HARDWARE\PCF8591\PCF8591.h
@@ -47,10 +45,12 @@
 ..\obj\usmart_str.o: ..\HARDWARE\PF6847\p6847.h
 ..\obj\usmart_str.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\usmart_str.o: ..\SYSTEM\adc\adc.h
+..\obj\usmart_str.o: ..\HARDWARE\motor\motor.h
 ..\obj\usmart_str.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\usmart_str.o: ..\SYSTEM\ringbuf\RingBuffer.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\usmart_str.o: ..\TASK\taskthread.h
 ..\obj\usmart_str.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,3 +62,5 @@
 ..\obj\usmart_str.o: ..\USER\codeGuard.h
 ..\obj\usmart_str.o: ..\HARDWARE\Rtc\rtc.h
 ..\obj\usmart_str.o: ..\HARDWARE\SpiFlash\w25qxx.h
+..\obj\usmart_str.o: ..\SYSTEM\delay\mydelay.h
+..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h

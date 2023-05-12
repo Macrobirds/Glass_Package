@@ -3,7 +3,7 @@
 #include "stm32f10x_conf.h"
 #include "sys.h"
 #include "delay.h"
-#include "taskthread.h"
+
 
 #define IoInput_0_Enable					1
 #define IoInput_1_Enable					0
