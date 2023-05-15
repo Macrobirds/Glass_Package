@@ -130,15 +130,29 @@ void GP_ReadyTask(void)
 		break;
 	/////////////关机复位//////////////
 	case GP_reset_off:
-		if (GP.subtask == 0) // 关闭吸盘
+		if(GP.subtask==0)
+		{
+			if(GP_sucker_Sen==Sen_Block)
+			{
+				motorGo_acc(GP.motor,GP.sucker_pos);
+				GP.sta=Running;
+			}else
+			{
+				GP.subtask=2;
+			}
+		}else if(GP.subtask==1)
+		{
+			GP_big_Cyl=GAS_ENABLE;
+			GP.sta=Running;
+		}else if (GP.subtask == 2) // 关闭吸盘
 		{
 			Next_Task(GP.task, GP_sucker_start);
 		}
-		else if (GP.subtask == 1) // 气缸复位
+		else if (GP.subtask == 3) // 气缸复位
 		{
 			Next_Task(GP.task, GP_cyl_start);
 		}
-		else if (GP.subtask == 2) 
+		else if (GP.subtask == 4) 
 		{
 			if (GC_claw_Sen != Sen_Block) // 夹手释放
 			{
@@ -150,13 +164,15 @@ void GP_ReadyTask(void)
 				GP.sta = Running;
 			}
 		}
-		else if (GP.subtask == 3)
+		else if (GP.subtask == 5)
 		{
 			if (GC_claw_Sen != Sen_Block) //等待夹手释放
 			{
 				Next_Task(GP_none, GP_move_start);
 			}
-		}
+		}		
+	
+
 		break;
 	/////////开始运行/////////////////
 	case GP_start:
@@ -245,7 +261,7 @@ void GP_ReadyTask(void)
 		else
 		{
 
-			if (GP.subtask == 0) // 延时200ms等待ITV0011响应
+			if (GP.subtask == 0) // 延时1000ms等待ITV0011响应
 			{
 				GP.sta = Running;
 				Gas_Spray_Enable(); // 开始喷胶
@@ -255,7 +271,7 @@ void GP_ReadyTask(void)
 				GP.sta = Running;
 				motorGo(GP.motor, GP.spray_pos - GP.spray_len, GP.spray_speed); // 按喷胶速度匀速运动到封片点
 			}
-			else if (GP.subtask == 2) // 延时200ms等待胶全部喷出
+			else if (GP.subtask == 2) // 延时100ms等待胶全部喷出
 			{
 				GP.sta = Running;
 				Gas_Spray_Disable(); // 停止喷胶
@@ -418,13 +434,28 @@ void GP_RunningTask(void)
 		}
 		break;
 	case GP_reset_off:
-		if (GP.subtask == 0) // 关闭吸盘
+		if(GP.subtask==0)
+		{
+			if (GP.motor->motion == Stop)
+			{
+				GP.subtask = 1;
+				GP.sta = Ready;
+			}		
+		}else if(GP.subtask==1)
+		{
+			if(GP.running_tim>DELAY_BIG_CYLIDER)
+			{
+				GP.subtask=2;
+				GP.sta=Ready;
+			}
+		
+		}else if (GP.subtask == 2) // 关闭吸盘
 		{
 		}
-		else if (GP.subtask == 1) // 气缸复位
+		else if (GP.subtask == 3) // 气缸复位
 		{
 		}
-		else if (GP.subtask == 2) // 原点复位
+		else if (GP.subtask == 4) // 运动到吸片处
 		{
 
 			if (GP.motor->motion == Stop)
@@ -433,7 +464,7 @@ void GP_RunningTask(void)
 				GP.sta = Ready;
 			}
 		}
-		else if (GP.subtask == 3)
+		else if (GP.subtask == 5)
 		{
 		}
 		break;
@@ -675,7 +706,9 @@ void GP_FinishTask(void)
 	case GP_none:
 		break;
 	case GP_spray_test:
-		ITV0011_IIC_Disable();
+		Gas_Spray_Disable();
+		GP.main_subtask=0;
+		GP.main_task=GP_none;
 		GP.subtask = 0;
 		GP.sta = Ready;
 		GP.task = GP_none;
@@ -690,11 +723,15 @@ void GP_FinishTask(void)
 		Resume_Task();
 		break;
 	case GP_reset_on:
+		GP.main_subtask=0;
+		GP.main_task=GP_none;
 		GP.subtask = 0;
 		GP.sta = Ready;
 		GP.task = GP_none;
 		break;
 	case GP_reset_off:
+		GP.main_subtask=0;
+		GP.main_task=GP_none;
 		GP.subtask = 0;
 		GP.sta = Ready;
 		GP.task = GP_none;
@@ -711,6 +748,7 @@ void GP_FinishTask(void)
 			{
 				GP.task=GP_finish;
 				GP.sta=Ready;
+				GP.subtask = 0;
 			}
 		}
 		break;
@@ -814,7 +852,8 @@ void GP_TaskThread(void)
 		GP.running_tim++;
 		if (GP.running_tim > OVERTIME)
 		{
-			Error_Set(Error_OverTime, 0);
+			Error_OverTime_Set(GP_idx,GP.task);
+			//Error_Set(Error_OverTime, 0);
 		}
 	}
 	if (GP.sta == Finish)
@@ -826,3 +865,32 @@ void GP_TaskThread(void)
 	}
 }
 //! debug_flag
+
+	
+//		if (GP.subtask == 0) // 关闭吸盘
+//		{
+//			Next_Task(GP.task, GP_sucker_start);
+//		}
+//		else if (GP.subtask == 1) // 气缸复位
+//		{
+//			Next_Task(GP.task, GP_cyl_start);
+//		}
+//		else if (GP.subtask == 2) 
+//		{
+//			if (GC_claw_Sen != Sen_Block) // 夹手释放
+//			{
+//				Next_Task(GP_none, GP_move_start);
+//			}
+//			else // 离开原点位 等待夹手释放复位
+//			{
+//				motorGo_acc(GP.motor, GP.sucker_pos);
+//				GP.sta = Running;
+//			}
+//		}
+//		else if (GP.subtask == 3)
+//		{
+//			if (GC_claw_Sen != Sen_Block) //等待夹手释放
+//			{
+//				Next_Task(GP_none, GP_move_start);
+//			}
+//		}

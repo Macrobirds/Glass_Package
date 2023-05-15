@@ -62,3 +62,4 @@
 ..\obj\itv0011.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\itv0011.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\itv0011.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\itv0011.o: ..\SCREENUART\uart3_dataHandle.h

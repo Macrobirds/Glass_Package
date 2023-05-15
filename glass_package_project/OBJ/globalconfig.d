@@ -62,3 +62,4 @@
 ..\obj\globalconfig.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\globalconfig.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\globalconfig.o: ..\SCREENUART\uart3_dataHandle.h

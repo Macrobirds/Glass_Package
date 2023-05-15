@@ -26,7 +26,7 @@ void ITV0011_IIC_Disable()
 	GP_ITV1100=ITV1100_DISABLE;
 	PCF8591_DAC_Output(0x90,0x40,0);
 }
-u32 ITV0011_IIC_GetPressure()
+u8 ITV0011_IIC_GetPressure()
 {	
 	u8 i=0;
 	int32_t sum=0;

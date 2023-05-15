@@ -93,7 +93,6 @@ void GC_ReadyTask(void)
 		break;
 	///////////////开机复位//////////////////////
 	case GC_reset_on:
-
 		if (GC.subtask == 0) // 夹手释放
 		{
 			Next_Task(GC.task, GC_release);
@@ -204,11 +203,11 @@ void GC_ReadyTask(void)
 		break;
 	////////////////夹手旋转至水平位置/////////////////////
 	case GC_check_glass:
-		motorGo_acc(GC.motor_v, GC.GCV_down_pos - GLASS_DIS); // 向上移动一定距离 检测是否存在玻片
+		motorGo_acc(GC.motor_v, GC.GCV_down_pos - GC.GCV_glass_len); // 向上移动一定距离 检测是否存在玻片
 		GC.sta = Running;
 		break;
 	case GC_move_up:
-		motorGo(GC.motor_v, 0, 211 * 60);
+		motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq*2);
 		GC.sta = Running;
 		break;
 	case GC_rot_up:
@@ -220,7 +219,7 @@ void GC_ReadyTask(void)
 		{
 			if (Check_GP())
 			{
-				motorGo(GC.motor_r, 0, 1600);
+				motorGo(GC.motor_r, 0, GC.motor_r->defaultfeq*2);
 				GC.sta = Running;
 			}
 		}
@@ -228,7 +227,8 @@ void GC_ReadyTask(void)
 	case GC_rot_hor:
 		if (GO.motor_h->postion == GO.GOH_mid_pos && GO.motor_h->motion == Stop)
 		{
-			motorGo(GC.motor_r, GC.GCR_hor_pos, 0);
+			//motorGo(GC.motor_r, GC.GCR_hor_pos, 0);
+			motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
 			GC.sta = Running;
 		}
 		break;
@@ -238,7 +238,7 @@ void GC_ReadyTask(void)
 		//发生夹取错误
 		if(error_type&Error_Grap)
 		{
-			motorGo(GC.motor_v, 0, 211 * 60);
+			motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq*2);
 			GC.sta = Running;
 		}
 		break;
@@ -484,6 +484,7 @@ void GC_FinishTask(void)
 		{
 			if(GE.task==GE_finish)
 			{
+				GC.subtask = 0;
 				GC.task=GC_finish;
 				GC.sta=Ready;
 			}
@@ -496,6 +497,7 @@ void GC_FinishTask(void)
 	case GC_check_glass:
 		GC.sta = Ready;
 		GC.task = GC_move_up;
+		GC.subtask = 0;
 		//		if(GE_up_Sen==Sen_Block)	//夹取到玻片
 		//		{
 		//			GC.sta=Ready;
@@ -511,6 +513,7 @@ void GC_FinishTask(void)
 	case GC_move_up:
 		if (GO.task == GO_start && GO.sta == Finish && GP.motor->postion == GP.sucker_pos) // 托盘位于原点 且封片装置在吸片位置
 		{
+			GC.subtask = 0;
 			GC.sta = Ready;
 			GC.task = GC_rot_up;
 		}
@@ -518,6 +521,7 @@ void GC_FinishTask(void)
 	case GC_rot_up:
 		if (GO.task == GOH_package && GO.sta == Finish && GP.motor->postion == GP.sucker_pos) // 托盘位于工作点 且封片装置在吸片位置
 		{
+			GC.subtask = 0;
 			GC.sta = Ready;
 			GC.task = GC_rot_hor;
 		}
@@ -526,6 +530,7 @@ void GC_FinishTask(void)
 	case GC_rot_hor:
 		if (GC.Glass_Ready == FALSE) // 封片结束
 		{
+			GC.subtask = 0;
 			GC.sta = Ready;
 			GC.task = GC_start;
 		}
@@ -552,15 +557,25 @@ void GC_TaskThread(void)
 		GC.running_tim++;
 		if (GC.running_tim > OVERTIME)
 		{
-			Error_Set(Error_OverTime, 0);
+			Error_OverTime_Set(GC_idx,GC.task);
+			//Error_Set(Error_OverTime, 0);
 		}
 	}
 	if (GC.sta == Finish)
 	{
-		if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务自动跳转
+		if(GC.task<=GC_reset_off)
 		{
 			GC_FinishTask();
+		}else
+		{
+			if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务自动跳转
+			{
+				GC_FinishTask();
+			}			
 		}
+		
+		
+
 	}
 }
 

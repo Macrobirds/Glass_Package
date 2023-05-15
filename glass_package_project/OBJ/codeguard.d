@@ -62,3 +62,4 @@
 ..\obj\codeguard.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\codeguard.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\codeguard.o: ..\SCREENUART\uart3_dataHandle.h

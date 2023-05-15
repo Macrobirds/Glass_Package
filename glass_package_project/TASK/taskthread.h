@@ -35,8 +35,8 @@ enum task_error
 	Error_Sensor = 1 << 0, //  传感器错误
 	Error_OverTime = 1 << 1,		//  任务超时错误
 	Error_Slide_Glass = 1 << 2, // 缺少载玻片
-	Error_In_Box = 1 << 3,		// 缺少进料槽
-	Error_Out_Box = 1 << 4,		// 缺少装载槽
+	Error_In_Box = 1 << 3,		// 缺少装载盒
+	Error_Out_Box = 1 << 4,		// 缺少存储盒
 	Error_Cover_Glass = 1 << 5,		// 缺少盖玻片
 	Error_Spray = 1 << 6,	// 缺少滴胶头
 	Error_StorageFull = 1 << 7, // 存储槽满
@@ -44,10 +44,19 @@ enum task_error
 	Error_Sucker=1<<9, //吸取失败 玻片损坏或者吸盘损坏 
 };
 
+enum task_index{
+	GE_idx=1,
+	GC_idx=2,
+	GP_idx=3,
+	GO_idx=4,
+
+};
+
 // 玻片进入槽任务流程序号
 enum glass_enter_task_index
 {
 	GE_none = 0,  // none 空任务
+	/*************复用任务***********/
 	GE_reset_on,  //  开机复位
 	GE_reset_off, // 关机复位
 	GE_Box_In,	  // 进缸
@@ -118,11 +127,11 @@ enum glass_out_task_index
 	GOV_start, // 复位到垂直原点位置 basic
 	GOH_start, // 玻片复位到水平原点位置 basic
 	GO_adjust, // 调整存储槽对准玻片 basic
-	/*******************************/
 	GO_reset_on,  // 开机复位
 	GO_reset_off, // 关机复位
 	GO_Box_In,	  // 进槽
 	GO_Box_Out,	  // 出槽
+	/*******************************/
 	GO_start,	  // 开始运行
 	GOH_package,  // 玻片托盘移动到水平封片位置
 	GOH_end,	  // 玻片托盘移动到水平终点位置
@@ -140,7 +149,7 @@ struct glass_enter_struct
 	enum glass_enter_task_index resume_task;   // 恢复任务序列
 	u32 running_tim;						   // 运行时间 ms
 	u32 GE_box_len;							   // 装载槽长度
-	u32 GE_box_dis;							   // 装载槽间距
+	u32 GE_box_speed;
 	u8 box_Exist;							   // 装载槽检测信号
 	u8 glass_Exist;							   // 载玻片检测信号
 	u8 subtask;								   // 子任务
@@ -160,6 +169,7 @@ struct glass_claw_struct
 	u16 GCR_hor_pos;				// 旋转水平位置
 	u16 GCR_ver_pos;				// 旋转垂直位置
 	u32 GCV_down_pos;				// 垂直下降位置
+	u32 GCV_glass_len;		//检测是否夹取玻片成功上升高度
 	u8 subtask;						// 子任务
 	u8 main_subtask;
 	volatile u8 Glass_Ready;
@@ -183,6 +193,8 @@ struct glass_out_struct
 	u32 GOV_box_dis;
 	u32 GOV_slot_dis;
 	u32 GOV_box_len;
+	u16 GOV_adjust;
+	u16 GOV_adjust_start;
 	u8 subtask;		 // 子任务
 	u8 main_subtask; //
 	volatile u8 glass_num;
@@ -193,7 +205,7 @@ struct glass_out_struct
 };
 
 extern volatile enum task_error error_type;
-extern enum taskthread_state TaskThread_State; // 任务线程运行状态 运行/暂停
+extern enum taskthread_state TaskThread_State; // 任务线程运行状态 
 extern enum taskthread_state OldTaskThread_State;
 
 extern struct glass_enter_struct GE;
@@ -216,6 +228,9 @@ void GO_TaskThread(void);
 
 //错误处理
 void Error_Set(enum task_error error, u32 error_sen);
+
+//超时错误处理
+void Error_OverTime_Set(enum task_index task,u8 task_index);
 
 //从错误暂停中恢复运行
 void Resume_Error_TaskThread(void);
@@ -246,5 +261,14 @@ void Resume_TaskThread(void);
 
 // 任务参数初始化
 void TaskThread_Parm_Init(void);
+
+//装载槽进入
+u8 TaskThread_GEIn(void);
+//装载槽推出
+u8 TaskThread_GEOut(void);
+//存储盒进入
+u8 TaskThread_GOIn(void);
+//存储盒推出
+u8 TaskThread_GOOut(void);
 
 #endif

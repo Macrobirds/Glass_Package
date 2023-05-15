@@ -62,3 +62,4 @@
 ..\obj\motor.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\motor.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\motor.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\motor.o: ..\SCREENUART\uart3_dataHandle.h

@@ -63,3 +63,4 @@
 ..\obj\gas.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\gas.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\gas.o: ..\SCREENUART\uart3_dataHandle.h

@@ -62,3 +62,4 @@
 ..\obj\glassenter_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\glassenter_task.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\glassenter_task.o: ..\SCREENUART\uart3_dataHandle.h

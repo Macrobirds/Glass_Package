@@ -1,5 +1,5 @@
-#include "uart3_dataHandle.h"
 #include "Globalconfig.h"
+
 /* *************************************** 常量 *********************************** */
 
 /* *************************************** 函数实现 *********************************** */
@@ -7,52 +7,87 @@
 // 大端数据转换未小端数据 返回下一目标指针
 static u8 *mymemcpy1(void *dst, void *src, size_t size)
 {
-	// uint8_t temp_buff[4]={0};
-	// uint8_t *src_ptr=(uint8_t *)src;
-	// uint8_t temp_cnt=0;
-	// uint8_t size_cnt=size;
-	// src_ptr+=size_cnt;
-	// while(size_cnt)
-	// {
-	//     size_cnt--;
-	//     src_ptr--;
-	//     temp_buff[temp_cnt]=*src_ptr;
-	//     temp_cnt++;
-	// }
-	// memcpy(dst,temp_buff,size);
-	uint8_t size_cnt = size;
-	uint8_t *src_ptr = (uint8_t *)src;
-	uint8_t *dst_ptr = (uint8_t *)dst;
-	src_ptr += size_cnt;
-	while (size_cnt)
+
+	switch (size)
 	{
-		size_cnt--;
-		src_ptr--;
-		*dst_ptr = *src_ptr;
-		dst_ptr++;
+	case sizeof(uint8_t):
+		*(uint8_t *)dst = *(uint8_t *)src;
+		break;
+	case sizeof(uint16_t):
+		*(uint16_t *)dst = *(uint16_t *)src;
+		*(uint16_t *)dst = __REV16(*(uint16_t *)dst);
+		break;
+	case sizeof(uint32_t):
+		*(uint32_t *)dst = *(uint32_t *)src;
+		*(uint32_t *)dst = __REV(*(uint32_t *)dst);
+		break;
+	default:
+		break;
 	}
-	dst_ptr++;
-	return dst_ptr;
+	return (uint8_t *)dst + size;
 }
+// uint8_t temp_buff[4]={0};
+// uint8_t *src_ptr=(uint8_t *)src;
+// uint8_t temp_cnt=0;
+// uint8_t size_cnt=size;
+// src_ptr+=size_cnt;
+// while(size_cnt)
+// {
+//     size_cnt--;
+//     src_ptr--;
+//     temp_buff[temp_cnt]=*src_ptr;
+//     temp_cnt++;
+// }
+// memcpy(dst,temp_buff,size);
+
+// uint8_t size_cnt = size;
+// uint8_t *src_ptr = (uint8_t *)src;
+// uint8_t *dst_ptr = (uint8_t *)dst;
+// src_ptr += size_cnt;
+// while (size_cnt)
+// {
+// 	size_cnt--;
+// 	src_ptr--;
+// 	*dst_ptr = *src_ptr;
+// 	dst_ptr++;
+// }
+// dst_ptr++;
+// return dst_ptr;
 
 // 大端数据转换未小端数据 返回下一源指针
 static u8 *mymemcpy2(void *src, void *dst, size_t size)
 {
-
-	uint8_t size_cnt = size;
-	uint8_t *src_ptr = (uint8_t *)src;
-	uint8_t *dst_ptr = (uint8_t *)dst;
-	src_ptr += size_cnt;
-	while (size_cnt)
+	switch (size)
 	{
-		size_cnt--;
-		src_ptr--;
-		*dst_ptr = *src_ptr;
-		dst_ptr++;
+	case sizeof(uint8_t):
+		*(uint8_t *)dst = *(uint8_t *)src;
+		break;
+	case sizeof(uint16_t):
+		*(uint16_t *)dst = *(uint16_t *)src;
+		*(uint16_t *)dst = __REV16(*(uint16_t *)dst);
+		break;
+	case sizeof(uint32_t):
+		*(uint32_t *)dst = *(uint32_t *)src;
+		*(uint32_t *)dst = __REV(*(uint32_t *)dst);
+		break;
+	default:
+		break;
 	}
-	src_ptr++;
-	return src_ptr;
+	return (uint8_t *)src + size;
 }
+// uint8_t size_cnt = size;
+// uint8_t *src_ptr = (uint8_t *)src;
+// uint8_t *dst_ptr = (uint8_t *)dst;
+// src_ptr += size_cnt;
+// while (size_cnt)
+// {
+// 	size_cnt--;
+// 	src_ptr--;
+// 	*dst_ptr = *src_ptr;
+// 	dst_ptr++;
+// }
+// src_ptr++;
+// return src_ptr;
 
 // 返回传感器数据
 static void query_state_sensor(u8 Index)
@@ -108,10 +143,10 @@ static void query_state_sensor(u8 Index)
 	{
 		tempbuf[3] = (1 << 0);
 	}
-//	if (GOH_mid_Sen == Sen_Block)
-//	{
-//		tempbuf[3] = (1 << 1);
-//	}
+	//	if (GOH_mid_Sen == Sen_Block)
+	//	{
+	//		tempbuf[3] = (1 << 1);
+	//	}
 	if (GOH_end_Sen == Sen_Block)
 	{
 		tempbuf[3] = (1 << 2);
@@ -134,33 +169,56 @@ static void query_state_sensor(u8 Index)
 	tempbuf = 0;
 }
 
+// 查询气动系统状态
 static void query_state_gas(u8 Index)
 {
-	u8 tmpBuf = 0;
+	u8 *tmpBuf = mymalloc(SRAMIN, 6);
+	u32 pressures = 0;
+	memset(tmpBuf, 0, 6);
+	pressures = P6847_adc_GetPressure();
+	mymemcpy1(&(tmpBuf[0]), &pressures, sizeof(pressures));
+	tmpBuf[4] = ITV0011_IIC_GetPressure();
 	// 主气泵阀
 	if (Gas_State == gas_pumping)
 	{
-		tmpBuf |= (1 << 0);
+		tmpBuf[5] |= (1 << 0);
 	}
 	// 吸盘气泵
-
+	if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0))
+	{
+		tmpBuf[5] |= (1 << 1);
+	}
 	// 夹手阀
 	if (GC_claw_Sen == Sen_Block)
 	{
-		tmpBuf |= (1 << 2);
+		tmpBuf[5] |= (1 << 2);
 	}
 	if (GP_small_cyl_Sen == Sen_Block)
 	{
-		tmpBuf |= (1 << 3);
+		tmpBuf[5] |= (1 << 3);
 	}
 	if (GP_big_cyl_Sen == Sen_Block)
 	{
-		tmpBuf |= (1 << 4);
+		tmpBuf[5] |= (1 << 4);
 	}
 	// 吸盘1
+	if (GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_14))
+	{
+		tmpBuf[5] |= (1 << 5);
+	}
 	// 吸盘2
+	if (GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_15))
+	{
+		tmpBuf[5] |= (1 << 6);
+	}
 	// 滴胶阀
-	ack(Index, Type_queryAck, Fc_state, Extra_state_gas, tmpBuf);
+	if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1))
+	{
+		tmpBuf[5] |= (1 << 7);
+	}
+	screenUart_ack_array(Index, Type_queryAck, Fc_state, Extra_state_gas, tmpBuf, 6);
+	myfree(SRAMIN, tmpBuf);
+	tmpBuf = 0;
 }
 
 static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
@@ -212,21 +270,16 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 static void query_param_motor(u8 *bufptr)
 {
 	u8 *tmpptr = bufptr;
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GE_1mm, sizeof(Global_Parm.MOT.GE_1mm));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GE_max_speed, sizeof(Global_Parm.MOT.GE_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GE_min_speed, sizeof(Global_Parm.MOT.GE_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GCV_1mm, sizeof(Global_Parm.MOT.GCV_1mm));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GCV_max_speed, sizeof(Global_Parm.MOT.GCV_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GCV_min_speed, sizeof(Global_Parm.MOT.GCV_min_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GCR_max_speed, sizeof(Global_Parm.MOT.GCR_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GCR_min_speed, sizeof(Global_Parm.MOT.GCR_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GP_1mm, sizeof(Global_Parm.MOT.GP_1mm));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GP_max_speed, sizeof(Global_Parm.MOT.GP_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GP_min_speed, sizeof(Global_Parm.MOT.GP_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GOH_1mm, sizeof(Global_Parm.MOT.GOH_1mm));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GOH_max_speed, sizeof(Global_Parm.MOT.GOH_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GOH_min_speed, sizeof(Global_Parm.MOT.GOH_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GOV_1mm, sizeof(Global_Parm.MOT.GOV_1mm));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GOV_max_speed, sizeof(Global_Parm.MOT.GOV_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT.GOV_min_speed, sizeof(Global_Parm.MOT.GOV_min_speed));
 	tmpptr = 0;
@@ -238,42 +291,36 @@ static void query_param_calw(u8 *bufptr)
 	u8 *tempptr = bufptr;
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GCR_hor_pos, sizeof(Global_Parm.GCS.GCR_hor_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GCR_ver_pos, sizeof(Global_Parm.GCS.GCR_ver_pos));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GCR_max_pos, sizeof(Global_Parm.GCS.GCR_max_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GCV_down_pos, sizeof(Global_Parm.GCS.GCV_down_pos));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GCV_max_pos, sizeof(Global_Parm.GCS.GCV_max_pos));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GCV_glass_len, sizeof(Global_Parm.GCS.GCV_glass_len));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GOH_mid_pos, sizeof(Global_Parm.GCS.GOH_mid_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GOH_end_pos, sizeof(Global_Parm.GCS.GOH_end_pos));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS.GOH_max_pos, sizeof(Global_Parm.GCS.GOH_max_pos));
 	tempptr = 0;
 }
 
 static void query_param_package(u8 *bufptr)
 {
 	u8 *tempptr = bufptr;
-
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.delay_before, sizeof(Global_Parm.GP.delay_before));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.delay_after, sizeof(Global_Parm.GP.delay_after));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.sucker_delay, sizeof(Global_Parm.GP.sucker_delay));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.max_pos, sizeof(Global_Parm.GP.max_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.sucker_pos, sizeof(Global_Parm.GP.sucker_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_pos, sizeof(Global_Parm.GP.spray_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_len, sizeof(Global_Parm.GP.spray_len));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_speed, sizeof(Global_Parm.GP.spray_speed));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_pressure, sizeof(Global_Parm.GP.spray_pressure));
-
 	tempptr = 0;
 }
 
 static void query_param_outin(u8 *bufptr)
 {
 	u8 *tempptr = bufptr;
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.delay_before, sizeof(Global_Parm.GP.delay_before));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.delay_after, sizeof(Global_Parm.GP.delay_after));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.sucker_delay, sizeof(Global_Parm.GP.sucker_delay));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.max_pos, sizeof(Global_Parm.GP.max_pos));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.sucker_pos, sizeof(Global_Parm.GP.sucker_pos));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_pos, sizeof(Global_Parm.GP.spray_pos));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_len, sizeof(Global_Parm.GP.spray_len));
-	tempptr = mymemcpy1(tempptr, &Global_Parm.GP.spray_pressure, sizeof(Global_Parm.GP.spray_pressure));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GOV_box_dis, sizeof(Global_Parm.GIO.GOV_box_dis));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GOV_slot_dis, sizeof(Global_Parm.GIO.GOV_slot_dis));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GOV_box_len, sizeof(Global_Parm.GIO.GOV_box_len));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GOV_adjust, sizeof(Global_Parm.GIO.GOV_adjust));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GOV_adjust_start, sizeof(Global_Parm.GIO.GOV_adjust_start));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GE_box_len, sizeof(Global_Parm.GIO.GE_box_len));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GIO.GE_box_speed, sizeof(Global_Parm.GIO.GE_box_speed));
 	tempptr = 0;
 }
 
@@ -281,28 +328,27 @@ static void query_param_outin(u8 *bufptr)
 u8 set_param_motor(u8 *data, u8 dataLength)
 {
 	u8 *tmpptr = data;
-	if (dataLength != 32)
+	if (dataLength != 14)
 	{
 		tmpptr = 0;
 		return 0;
 	}
-
+	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
+	{
+		tmpptr = 0;
+		return 0;
+	}
 	// 写入电机参数到全局变量
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GE_1mm, sizeof(Global_Parm.MOT.GE_1mm));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GE_max_speed, sizeof(Global_Parm.MOT.GE_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GE_min_speed, sizeof(Global_Parm.MOT.GE_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GCV_1mm, sizeof(Global_Parm.MOT.GCV_1mm));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GCV_max_speed, sizeof(Global_Parm.MOT.GCV_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GCV_min_speed, sizeof(Global_Parm.MOT.GCV_min_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GCR_max_speed, sizeof(Global_Parm.MOT.GCR_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GCR_min_speed, sizeof(Global_Parm.MOT.GCR_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GP_1mm, sizeof(Global_Parm.MOT.GP_1mm));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GP_max_speed, sizeof(Global_Parm.MOT.GP_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GP_min_speed, sizeof(Global_Parm.MOT.GP_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GOH_1mm, sizeof(Global_Parm.MOT.GOH_1mm));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GOH_max_speed, sizeof(Global_Parm.MOT.GOH_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GOH_min_speed, sizeof(Global_Parm.MOT.GOH_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GOV_1mm, sizeof(Global_Parm.MOT.GOV_1mm));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GOV_max_speed, sizeof(Global_Parm.MOT.GOV_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT.GOV_min_speed, sizeof(Global_Parm.MOT.GOV_min_speed));
 	tmpptr = 0;
@@ -316,7 +362,12 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 static u8 set_param_claw(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 34)
+	if (datalen != 20)
+	{
+		tempptr = 0;
+		return 0;
+	}
+	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
 	{
 		tempptr = 0;
 		return 0;
@@ -324,12 +375,10 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 	// 写入夹手参数
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GCR_hor_pos, sizeof(Global_Parm.GCS.GCR_hor_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GCR_ver_pos, sizeof(Global_Parm.GCS.GCR_ver_pos));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GCR_max_pos, sizeof(Global_Parm.GCS.GCR_max_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GCV_down_pos, sizeof(Global_Parm.GCS.GCV_down_pos));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GCV_max_pos, sizeof(Global_Parm.GCS.GCV_max_pos));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GCV_glass_len, sizeof(Global_Parm.GCS.GCV_glass_len));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GOH_mid_pos, sizeof(Global_Parm.GCS.GOH_mid_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GOH_end_pos, sizeof(Global_Parm.GCS.GOH_end_pos));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS.GOH_max_pos, sizeof(Global_Parm.GCS.GOH_max_pos));
 	tempptr = 0;
 	// 更新任务参数
 	TaskThread_Parm_Init();
@@ -341,18 +390,22 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 static u8 set_param_package(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 33)
+	if (datalen != 18)
+	{
+		tempptr = 0;
+		return 0;
+	}
+	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
 	{
 		tempptr = 0;
 		return 0;
 	}
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.delay_before, sizeof(Global_Parm.GP.delay_before));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.delay_after, sizeof(Global_Parm.GP.delay_after));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.sucker_delay, sizeof(Global_Parm.GP.sucker_delay));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.max_pos, sizeof(Global_Parm.GP.max_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.sucker_pos, sizeof(Global_Parm.GP.sucker_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_pos, sizeof(Global_Parm.GP.spray_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_len, sizeof(Global_Parm.GP.spray_len));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_speed, sizeof(Global_Parm.GP.spray_speed));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_pressure, sizeof(Global_Parm.GP.spray_pressure));
 	tempptr = 0;
 	// 更新任务参数
@@ -365,19 +418,23 @@ static u8 set_param_package(u8 *data, u8 datalen)
 static u8 set_param_outin(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 36)
+	if (datalen != 24)
 	{
 		tempptr = 0;
 		return 0;
 	}
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.delay_before, sizeof(Global_Parm.GP.delay_before));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.delay_after, sizeof(Global_Parm.GP.delay_after));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.sucker_delay, sizeof(Global_Parm.GP.sucker_delay));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.max_pos, sizeof(Global_Parm.GP.max_pos));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.sucker_pos, sizeof(Global_Parm.GP.sucker_pos));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_pos, sizeof(Global_Parm.GP.spray_pos));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_len, sizeof(Global_Parm.GP.spray_len));
-	tempptr = mymemcpy2(tempptr, &Global_Parm.GP.spray_pressure, sizeof(Global_Parm.GP.spray_pressure));
+	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
+	{
+		tempptr = 0;
+		return 0;
+	}
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GOV_box_dis, sizeof(Global_Parm.GIO.GOV_box_dis));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GOV_slot_dis, sizeof(Global_Parm.GIO.GOV_slot_dis));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GOV_box_len, sizeof(Global_Parm.GIO.GOV_box_len));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GOV_adjust, sizeof(Global_Parm.GIO.GOV_adjust));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GOV_adjust_start, sizeof(Global_Parm.GIO.GOV_adjust_start));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GE_box_len, sizeof(Global_Parm.GIO.GE_box_len));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GIO.GE_box_speed, sizeof(Global_Parm.GIO.GE_box_speed));
 
 	tempptr = 0;
 	// 更新任务参数
@@ -387,8 +444,12 @@ static u8 set_param_outin(u8 *data, u8 datalen)
 	return 1;
 }
 
-void set_state_gas(u8 data)
+static u8 set_state_gas(u8 data)
 {
+	if (TaskThread_CheckIdle())
+	{
+		return 0;
+	}
 	if (data & (1 << 0))
 	{
 		Main_Pump = GAS_ENABLE;
@@ -407,9 +468,9 @@ void set_state_gas(u8 data)
 	}
 	if (data & (1 << 4))
 	{
-		#ifdef BIG_CYLINDER
+#ifdef BIG_CYLINDER
 		GP_big_Cyl = GAS_ENABLE;
-		#endif
+#endif
 	}
 	if (data & (1 << 5))
 	{
@@ -423,6 +484,8 @@ void set_state_gas(u8 data)
 	{
 		GP_spray_Cyl = GAS_ENABLE;
 	}
+	TaskThread_State = taskthread_debug; // 进入debug模式
+	return 1;
 }
 
 // 接收到的数据进行协议解析
@@ -466,17 +529,18 @@ void screenUart_protocolParse(void)
 			} // 设备状态
 			case Extra_state_deviceState:
 			{
-				tmpBuf = mymalloc(SRAMIN, 8);
-				memset(tmpBuf, 0, 8);
-				tmpBuf[0] = GE.task;
-				tmpBuf[1] = GE.sta;
-				tmpBuf[2] = GC.task;
-				tmpBuf[3] = GC.sta;
-				tmpBuf[4] = GP.task;
-				tmpBuf[5] = GP.sta;
-				tmpBuf[6] = GO.task;
-				tmpBuf[7] = GO.sta;
-				screenUart_ack_array(Index, Type_queryAck, FC, Extra, tmpBuf, 8);
+				tmpBuf = mymalloc(SRAMIN, 9);
+				memset(tmpBuf, 0, 9);
+				tmpBuf[0] = TaskThread_State;
+				tmpBuf[1] = GE.task;
+				tmpBuf[2] = GE.sta;
+				tmpBuf[3] = GC.task;
+				tmpBuf[4] = GC.sta;
+				tmpBuf[5] = GP.task;
+				tmpBuf[6] = GP.sta;
+				tmpBuf[7] = GO.task;
+				tmpBuf[8] = GO.sta;
+				screenUart_ack_array(Index, Type_queryAck, FC, Extra, tmpBuf, 9);
 				myfree(SRAMIN, tmpBuf);
 				tmpBuf = 0;
 				break;
@@ -486,16 +550,16 @@ void screenUart_protocolParse(void)
 				tmpBuf = mymalloc(SRAMIN, 24);
 				memset(tmpBuf, 0, 24);
 				tempptr = tmpBuf;
-				tempptr = mymemcpy1(tempptr, &GE.motor->postion, sizeof(GE.motor->postion));
-				tempptr = mymemcpy1(tempptr, &GC.motor_v->postion, sizeof(GC.motor_v->postion));
-				tempptr = mymemcpy1(tempptr, &GC.motor_r->postion, sizeof(GC.motor_r->postion));
-				tempptr = mymemcpy1(tempptr, &GP.motor->postion, sizeof(GP.motor->postion));
-				tempptr = mymemcpy1(tempptr, &GO.motor_h->postion, sizeof(GO.motor_h->postion));
-				tempptr = mymemcpy1(tempptr, &GO.motor_v->postion, sizeof(GO.motor_v->postion));
+				tempptr = mymemcpy1(tempptr, &(GE.motor->postion), sizeof(GE.motor->postion));
+				tempptr = mymemcpy1(tempptr, &(GC.motor_v->postion), sizeof(GC.motor_v->postion));
+				tempptr = mymemcpy1(tempptr, &(GC.motor_r->postion), sizeof(GC.motor_r->postion));
+				tempptr = mymemcpy1(tempptr, &(GP.motor->postion), sizeof(GP.motor->postion));
+				tempptr = mymemcpy1(tempptr, &(GO.motor_h->postion), sizeof(GO.motor_h->postion));
+				tempptr = mymemcpy1(tempptr, &(GO.motor_v->postion), sizeof(GO.motor_v->postion));
+				tempptr = 0;
 				screenUart_ack_array(Index, Type_queryAck, FC, Extra, tmpBuf, 24);
 				myfree(SRAMIN, tmpBuf);
 				tmpBuf = 0;
-				tempptr = 0;
 				break;
 			}
 			case Extra_state_gas:
@@ -516,7 +580,7 @@ void screenUart_protocolParse(void)
 			switch (Extra)
 			{
 			case Extra_param_motor:
-				query_param(Index, 32, Extra_param_motor, query_param_motor);
+				query_param(Index, 22, Extra_param_motor, query_param_motor);
 				break;
 			case Extra_param_deviceInfo:
 			{
@@ -540,13 +604,13 @@ void screenUart_protocolParse(void)
 
 				break;
 			case Extra_param_claw:
-				query_param(Index, 34, Extra_param_claw, query_param_calw);
+				query_param(Index, 28, Extra_param_claw, query_param_calw);
 				break;
 			case Extra_param_package:
-				query_param(Index, 33, Extra_param_package, query_param_package);
+				query_param(Index, 27, Extra_param_package, query_param_package);
 				break;
 			case Extra_param_outin:
-				query_param(Index, 36, Extra_param_outin, query_param_outin);
+				query_param(Index, 32, Extra_param_outin, query_param_outin);
 				break;
 			}
 			break;
@@ -565,15 +629,17 @@ void screenUart_protocolParse(void)
 			{
 			case Extra_param_motor:
 			{
-				// 参数设置成功
+
 				if (set_param_motor(data, dataLength))
 				{
-					//									// 根据深孔板型号更新全局硬件参数
-					//									update_globalParam();
+					// 电机参数设置成功
 					ack(Index, Type_setAck, FC, Extra, AckResult_ackSucceed);
 				}
 				else
+				{
 					ack(Index, Type_setAck, FC, Extra, AckResult_ackFailed);
+				}
+
 				break;
 			}
 			case Extra_param_serialNumber:
@@ -642,13 +708,14 @@ void screenUart_protocolParse(void)
 			}
 			break;
 		}
-		// 直接控制状态
-		case Fc_state:
 		// 设置气阀打开状态
 		case Extra_state_gas:
-			TaskThread_State = taskthread_debug; // 进入debug模式
-			set_state_gas(data[0]);
-
+			if (set_state_gas(data[0]))
+			{
+				ack(Index, Type_setAck, FC, Extra, AckResult_ackSucceed);
+			}
+			else
+				ack(Index, Type_setAck, FC, Extra, AckResult_ackFailed);
 			break;
 		}
 		break;
@@ -664,33 +731,30 @@ void screenUart_protocolParse(void)
 			TaskThread_State = taskthread_debug; // 进入debug模式
 			switch (Extra)
 			{
-			case Extra_debug_reset:
-				//
-				break;
 			// 调整到指定测试任务程序
 			case Extra_debug_GE:
-				if (data[0] <= GE_finish)
+				if (data[0] <= GE_finish && data[0] >= GE_start)
 				{
 					GE.task = data[0];
 					GE.sta = Ready;
 				}
 				break;
 			case Extra_debug_GC:
-				if (data[0] <= GC_finish)
+				if (data[0] <= GC_finish && data[0] >= GC_start)
 				{
 					GC.task = data[0];
 					GC.sta = Ready;
 				}
 				break;
 			case Extra_debug_GP:
-				if (data[0] <= GP_finish)
+				if (data[0] <= GP_finish && data[0] >= GP_start)
 				{
 					GP.task = data[0];
 					GP.sta = Ready;
 				}
 				break;
 			case Extra_debug_GO:
-				if (data[0] <= GO_finish)
+				if (data[0] <= GO_finish && data[0] >= GO_start)
 				{
 					GO.task = data[0];
 					GO.sta = Ready;
@@ -705,16 +769,30 @@ void screenUart_protocolParse(void)
 			case Extra_run_Reset:
 			{
 				if (dataLength != 1)
-					break;
-				// 系统正在运行状态，需要停止系统
-				if (TaskThread_State == taskthread_running)
 				{
+					if (data[0])
+					{
+						ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
+					}
 
-					delay_ms(100);
+					break;
 				}
-
-				// 进行开机复位
-				Boot_ResetTaskThread();
+				// 需要系统空闲
+				if (TaskThread_State != taskthread_error)
+				{
+					if (TaskThread_CheckIdle())
+					{
+						// 进行开机复位
+						Boot_ResetTaskThread();
+						if (data[0])
+							ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
+					}
+					else
+					{
+						if (data[0])
+							ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
+					}
+				}
 				// 是否需要应答标志位
 				if (data[0] == OnOffState_on)
 				{
@@ -724,18 +802,21 @@ void screenUart_protocolParse(void)
 				break;
 			}
 			// 进槽动作
-			case Extra_run_GEIn:
+			case Extra_run_GEInOut:
 			{
 				if (dataLength != 1)
-					break;
-
-				if (TaskThread_State == taskthread_running)
 				{
-					Pause_TaskThread();
-					delay_ms(1000);
-				}
+					if (data[0])
+					{
+						ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
+					}
 
-				TaskThread_State=taskthread_boost;
+					break;
+				}
+				// 系统正在运行状态，需要停止系统
+	
+
+				TaskThread_State = taskthread_boost;
 				// 开启进槽任务
 				GE.sta = Ready;
 				GE.task = GE_Box_In;
@@ -758,7 +839,7 @@ void screenUart_protocolParse(void)
 					Pause_TaskThread();
 					delay_ms(1000);
 				}
-				TaskThread_State=taskthread_boost;
+				TaskThread_State = taskthread_boost;
 				// 开启进槽任务
 				GE.sta = Ready;
 				GE.task = GE_BOx_Out;
@@ -780,10 +861,10 @@ void screenUart_protocolParse(void)
 					Pause_TaskThread();
 					delay_ms(1000);
 				}
-				TaskThread_State=taskthread_boost;
+				TaskThread_State = taskthread_boost;
 				// 开启进槽任务
-				GO.sta=Ready;
-				GO.task=GO_Box_In;
+				GO.sta = Ready;
+				GO.task = GO_Box_In;
 				// 是否需要应答标志位
 				if (data[0] == OnOffState_on)
 				{
@@ -801,10 +882,10 @@ void screenUart_protocolParse(void)
 					Pause_TaskThread();
 					delay_ms(1000);
 				}
-				TaskThread_State=taskthread_boost;
+				TaskThread_State = taskthread_boost;
 				// 开启进槽任务
-				GO.sta=Ready;
-				GO.task=GO_Box_Out;
+				GO.sta = Ready;
+				GO.task = GO_Box_Out;
 				// 是否需要应答标志位
 				if (data[0] == OnOffState_on)
 				{
@@ -814,17 +895,16 @@ void screenUart_protocolParse(void)
 				break;
 			// 开始运行
 			case Extra_run_Start:
-				if(dataLength!=1)
-				break;
-				//检测运行准备状态
-				if(TaskThread_IsReady()!=taskthread_ready) //
+				if (dataLength != 1)
+					break;
+				// 检测运行准备状态
+				if (TaskThread_IsReady() != taskthread_ready) //
 				{
-
 				}
 
-				if(TaskThread_State==taskthread_pause)
+				if (TaskThread_State == taskthread_pause)
 				{
-					
+
 					Resume_TaskThread();
 				}
 				break;
@@ -855,6 +935,19 @@ void ack(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte)
 	tmpBuf[6] = ackByte;
 	setBCC(tmpBuf, sizeof(tmpBuf));
 	screenUart_sendStr((const char *)tmpBuf, sizeof(tmpBuf));
+}
+
+// 任务线程中调用应答-应答1位数据
+void ack_task(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte)
+{
+	u8 tmpBuf[9] = {0x3A, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x23};
+	tmpBuf[2] = Index;
+	tmpBuf[3] = TYPE;
+	tmpBuf[4] = FC;
+	tmpBuf[5] = Extra;
+	tmpBuf[6] = ackByte;
+	setBCC(tmpBuf, sizeof(tmpBuf));
+	screenUart_sendStr_task((const char *)tmpBuf, sizeof(tmpBuf));
 }
 
 // 通用应答-应答0位数据
@@ -919,6 +1012,28 @@ void screenUart_ack_array(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 *data, u8 dataL
 	myfree(SRAMIN, tmpBuf);
 	tmpBuf = 0;
 }
+
+// 任务线程中调用应答-应答多位数组
+void screenUart_ack_array_task(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 *data, u8 dataLength)
+{
+	u8 *tmpBuf = 0;
+	u8 tmpBufLength = dataLength + 8;
+	tmpBuf = mymalloc(SRAMIN, tmpBufLength);
+	tmpBuf[0] = 0x3A;
+	tmpBuf[1] = tmpBufLength;
+	tmpBuf[2] = Index;
+	tmpBuf[3] = TYPE;
+	tmpBuf[4] = FC;
+	tmpBuf[5] = Extra;
+	if (dataLength > 0)
+		memcpy(tmpBuf + 6, data, dataLength);
+	setBCC(tmpBuf, tmpBufLength);
+	tmpBuf[tmpBufLength - 1] = 0x23;
+	screenUart_sendStr_task((const char *)tmpBuf, tmpBufLength);
+	myfree(SRAMIN, tmpBuf);
+	tmpBuf = 0;
+}
+
 
 // 通用请求 2data
 void sendProtocol_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 data1, u8 data2)

@@ -63,3 +63,4 @@
 ..\obj\ringbuffer.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\ringbuffer.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\ringbuffer.o: ..\SCREENUART\uart3_dataHandle.h

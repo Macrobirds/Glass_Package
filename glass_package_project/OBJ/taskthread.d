@@ -62,3 +62,4 @@
 ..\obj\taskthread.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\taskthread.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\taskthread.o: ..\SCREENUART\uart3_dataHandle.h

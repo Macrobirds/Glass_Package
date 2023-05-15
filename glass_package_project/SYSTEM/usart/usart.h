@@ -37,6 +37,9 @@ extern u8 screenUart_RecvCompleteBuf[MaxProtocolLength];
 extern u8 screenUart_RecvCompleteBufLength;
 extern u8 screenUart_lastRecvIndex;
 extern volatile unsigned char screenUart_RecvCompleteFlag;
+extern RingBuffer * RingBuf_Send;
+
+extern RingBuffer * RingBuf_Task;
 
 //如果想串口中断接收，请不要注释以下宏定义
 void dmaRecv_makeProtocol_uart2(void);
@@ -46,6 +49,7 @@ void MYDMA_Enable(DMA_Channel_TypeDef*DMA_CHx);
 void MYDMA_Config_Usart2(DMA_Channel_TypeDef* DMA_CHx,u32 cpar,u32 cmar,u16 cndtr);
 void screenUart_sendByte(unsigned char data);
 void screenUart_sendStr(const char Str[], u8 length);
+void screenUart_sendStr_task(const char Str[],u8 length);
 u8 checkBCC(u8 *data, u8 dataLength);
 
 #endif

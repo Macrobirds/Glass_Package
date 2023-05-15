@@ -45,6 +45,7 @@ u8 screenUart_lastRecvIndex = 0;
 volatile unsigned char screenUart_RecvCompleteFlag = 0;
 
 RingBuffer * RingBuf_Send=0;
+RingBuffer * RingBuf_Task=0;
 //////////////////////////////////////////////////////////////////
 //加入以下代码,支持printf函数,而不需要选择use MicroLIB	 
 
@@ -352,22 +353,28 @@ void dmaRecv_makeProtocol_uart2(void)
 			}
 	}
 }
+
 void screenUart_sendByte(unsigned char data)
 {
     while((USART2->SR&0X40)==0);//循环发送,直到发送完毕
     USART2->DR = (u8) data;
 }
 
-
+//放入发送环形数组中等待串口发送
 void screenUart_sendStr(const char Str[], u8 length)
 {
+	RingBuffer_In(RingBuf_Send,Str,length);
+}
+
 //    unsigned char n = 0;
 //    for(; n < length; n++)
 //        screenUart_sendByte(Str[n]);
-	
-	//放入发送环形数组中等待串口发送
-	RingBuffer_In(RingBuf_Send,Str,length);
+
+void screenUart_sendStr_task(const char Str[],u8 length)
+{
+	RingBuffer_In(RingBuf_Task,Str,length);
 }
+
 
 u8 checkBCC(u8 *data, u8 dataLength)
 {

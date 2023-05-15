@@ -18,6 +18,7 @@
 #include "RingBuffer.h"
 #include "mydelay.h"
 #include "math.h"
+#include "uart3_dataHandle.h"
 
 
 // 条件编译参数
@@ -75,12 +76,12 @@
 #define GP_big_cyl_Sen PEin(0) //大气缸传感器
 #endif
 
-//#define GP_sucker_Sen Sen_Block //默认吸取到玻片
+
 #define GP_sucker_Sen  PEin(15)//玻片封片玻片吸取检测传感器
+//#define GP_sucker_Sen Sen_Block //默认吸取到玻片
 
-#define GP_spray_Sen Sen_Block //默认放置了喷头
-//#define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
-
+#define GP_spray_Sen PDin(1) //玻片封片出油喷头检测传感器
+//#define GP_spray_Sen Sen_Block //默认放置了喷头
 
 #define GC_claw_Sen PCin(2) //玻片夹手夹手状态传感器
 
@@ -163,21 +164,16 @@ enum sensor_index //总共17个传感器
 
 
 typedef struct{
-	u16 GE_1mm;
 	u8 GE_max_speed;
 	u8 GE_min_speed;
-	u16 GCV_1mm;
 	u8 GCV_max_speed;
 	u8 GCV_min_speed;
 	u16 GCR_max_speed;
 	u16 GCR_min_speed;
-	u16 GP_1mm;
 	u8 GP_max_speed;
 	u8 GP_min_speed;
-	u16 GOH_1mm;
 	u8 GOH_max_speed;
 	u8 GOH_min_speed;
-	u16 GOV_1mm;
 	u8 GOV_max_speed;
 	u8 GOV_min_speed;
 }Motor_Data; 
@@ -186,19 +182,15 @@ typedef struct{
 typedef struct{
 	u16 GCR_hor_pos;
 	u16 GCR_ver_pos;
-	u16 GCR_max_pos;
 	u32 GCV_down_pos;
-	u32 GCV_max_pos;
+	u32 GCV_glass_len;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;
-	u32 GOH_max_pos;
 }Glass_ClawSupport__data;
 
 typedef struct{
 	u16 delay_before;
 	u16 delay_after;
-	u16 sucker_delay;
-	u32 max_pos;
 	u32 sucker_pos;
 	u32 spray_pos;
 	u32 spray_len;
@@ -210,10 +202,10 @@ typedef struct{
 	u32 GOV_box_dis;
 	u32 GOV_slot_dis;
 	u32 GOV_box_len;
-	u32 GOV_max_pos;
+	u16 GOV_adjust;
+	u16 GOV_adjust_start;
 	u32 GE_box_len;
-	u32 GE_box_dis;
-	u32 GE_max_pos;
+	u32 GE_box_speed;
 }Glass_In_Out_Date;
 
 
@@ -224,8 +216,6 @@ struct Global_Parameter_struct{
 	Glass_Package_Data GP;
 	Glass_In_Out_Date GIO;
 };
-
-extern u8 debug_flag;
 
 extern struct Global_Parameter_struct Global_Parm; 
 extern enum sensor_index sensor_error_idx;
@@ -299,5 +289,7 @@ struct glass_package_struct
 #endif
 
 extern struct glass_package_struct GP;
+
+
 
 #endif

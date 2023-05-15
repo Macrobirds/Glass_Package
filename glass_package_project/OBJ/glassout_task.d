@@ -62,3 +62,4 @@
 ..\obj\glassout_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\glassout_task.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\glassout_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\glassout_task.o: ..\SCREENUART\uart3_dataHandle.h

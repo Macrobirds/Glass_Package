@@ -64,3 +64,4 @@
 ..\obj\usmart_config.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\usmart_config.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\usmart_config.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\usmart_config.o: ..\SCREENUART\uart3_dataHandle.h

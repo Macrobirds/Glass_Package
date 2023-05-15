@@ -10,10 +10,12 @@ void screenUart_protocolSend(void);
 
 
 void ack(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte);
+void ack_task(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte);
 void ack_0data(u8 Index, u8 TYPE, u8 FC, u8 Extra);
 void ack_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte, u8 ackByte_2);
 void ack_3data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte, u8 ackByte_2, u8 ackByte_3);
 void screenUart_ack_array(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 *data, u8 dataLength);
+void screenUart_ack_array_task(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 *data, u8 dataLength);
 void sendProtocol_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 data1, u8 data2);
 void control_debug(u8 Index, u8 Extra);
 //void query_param_motor(u8 Index);
@@ -77,38 +79,40 @@ enum Data
 //调试
 enum Debug
 {
-	Extra_debug_reset = 1,
-	Extra_debug_GE=2,
-	Extra_debug_GC=3,
-	Extra_debug_GP=4,
-	Extra_debug_GO=5,
-	
-
+	Extra_debug_GE=1,
+	Extra_debug_GC=2,
+	Extra_debug_GP=3,
+	Extra_debug_GO=4,
 };
 //运行
 enum Run
 {
 	Extra_run_Reset = 1,
-	Extra_run_GEIn=2,
-	Extra_run_GEOut=3,
-	Extra_run_GOIn=4,
-	Extra_run_GOOut=5,
-	Extra_run_Start=6,
-	Extra_run_Pause=7,
-	Extar_run_Finish=8,
-	Extra_run_Close=9,
+	Extra_run_GEInOut,
+	Extra_run_GOInOut,
+	Extra_run_Start,
+	Extra_run_Pause,
+	Extar_run_Finish,
+	Extra_run_Close,
 };
 
 //警报
 enum Error
 {
-	Extra_error_slideglass = 1,
-	Extra_error_coverglass=2,
-	Extra_error_InBox=3,
-	Extra_error_OutBox=4,
-	Extra_error_sen=5,
-	Extra_error_spray=6,
-	Extra_error_overtime=7,
+	Extra_error_sensor=1,
+	Extra_error_overtime_GE,
+	Extra_error_overtime_GC,
+	Extra_error_overtime_GP,
+	Extra_error_overtime_GO,
+	Extra_error_slideglass ,
+	Extra_error_InBox,
+	Extra_error_OutBox,
+	Extra_error_coverglass,
+	Extra_error_spray,
+	Extra_error_full,
+	Extra_error_grap,
+	Extar_error_suck,
+
 };
 
 // 开关状态

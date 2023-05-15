@@ -4,6 +4,8 @@
         "taskthread.h": "c",
         "globalconfig.h": "c",
         "usart.h": "c",
-        "position.h": "c"
+        "position.h": "c",
+        "uart3_datahandle.h": "c",
+        "itv0011.h": "c"
     }
 }

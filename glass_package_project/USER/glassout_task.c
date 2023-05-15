@@ -109,7 +109,7 @@ void GO_ReadyTask(void)
 		{
 			if (Check_GC())
 			{
-				motorGo(GO.motor_h, 0, 268 * 80);
+				motorGo(GO.motor_h, 0, 0);
 				GO.sta = Running;
 			}
 		}
@@ -122,12 +122,12 @@ void GO_ReadyTask(void)
 		if (GOV_start_Sen == Sen_Block)
 		{
 			printf("dual box\r\n");
-			motorGO_Debug(GO.motor_v, ADJUST_DIS - ADJUST_DIS_full, 0);
+			motorGO_Debug(GO.motor_v, GO.GOV_adjust_start, 0);
 		}
 		else
 		{
 			printf("singal box\r\n");
-			motorGO_Debug(GO.motor_v, ADJUST_DIS, 0);
+			motorGO_Debug(GO.motor_v,GO.GOV_adjust, 0);
 		}
 		break;
 	////////////////////开机复位///////////////
@@ -259,17 +259,29 @@ void GO_ReadyTask(void)
 		}
 		else if (GO.subtask == 2) // 调整存储器位置
 		{
-			// 存储器状态更新
-			if (GOV_start_Sen == Sen_Block)
+			if(GOV_box_Sen==Sen_Block)
 			{
-				slot_num = SLOT_NUM * 2;
-			}
-			else
+				//存储槽个数+1
+				OS_ENTER_CRITICAL();
+				GO.box_num++;
+				OS_EXIT_CRITICAL();
+				// 存储器状态更新
+				if (GOV_start_Sen == Sen_Block)
+				{
+					slot_num = SLOT_NUM * 2;
+				}
+				else
+				{
+					slot_num = SLOT_NUM;
+				}
+				GO.Storage_full = FALSE;
+				Next_Task(GO_none, GO_adjust);
+			}else
 			{
-				slot_num = SLOT_NUM;
+				GO.task=GO_none;
+				GO.sta=Ready;
+				Error_Set(Error_Out_Box,0);
 			}
-			GO.Storage_full = FALSE;
-			Next_Task(GO_none, GO_adjust);
 		}
 		break;
 	////////////////开始运行///////////////////////
@@ -595,18 +607,22 @@ void GO_FinishTask(void)
 		GO.subtask = 0;
 		break;
 	case GO_Box_Out: 
+		GO.subtask = 0;
 		GO.main_subtask = 0;
 		GO.main_task = GO_none;
+		#ifdef DEBUG_MDOE
 		GO.sta = Ready;
 		GO.task = GO_none;
-		GO.subtask = 0;
+		#endif
 		break;
 	case GO_Box_In:
 		GO.main_subtask = 0;
 		GO.main_task = GO_none;
+		GO.subtask = 0;
+
 		GO.sta = Ready;
 		GO.task = GO_none;
-		GO.subtask = 0;
+
 		break;
 	case GO_start:
 		if (GC.task == GC_rot_up && GC.sta == Finish)
@@ -682,7 +698,8 @@ void GO_TaskThread(void)
 		GO.running_tim++;
 		if (GO.running_tim > OVERTIME)
 		{
-			Error_Set(Error_OverTime, 0);
+			Error_OverTime_Set(GO_idx,GO.task);
+			//Error_Set(Error_OverTime, 0);
 		}
 	}
 	if (GO.sta == Finish)

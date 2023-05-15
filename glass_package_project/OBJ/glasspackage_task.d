@@ -62,3 +62,4 @@
 ..\obj\glasspackage_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\glasspackage_task.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\glasspackage_task.o: ..\SCREENUART\uart3_dataHandle.h
