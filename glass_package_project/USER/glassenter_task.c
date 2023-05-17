@@ -304,7 +304,6 @@ void GE_FinishTask(void)
 				GE.WaitAck = 0;
 				ack_task(GE.Index, Type_controlAck, Fc_run, Extra_run_Reset, AckResult_executeSucceed);
 			}
-
 			GE.task = GE_none;
 			GE.sta = Ready;
 			GE.subtask = 0;
@@ -329,8 +328,19 @@ void GE_FinishTask(void)
 	case GE_Box_In:
 		GE.task = GE_none;
 		GE.sta = Ready;
+		if (GE.WaitAck)
+		{
+			GE.WaitAck = 0;
+			ack_task(GE.Index, Type_controlAck, Fc_run, Extra_run_GEInOut, AckResult_executeSucceed);
+		}
+
 		break;
 	case GE_BOx_Out: // ±£Áô³öºÐ×´Ì¬
+		if (GE.WaitAck)
+		{
+			GE.WaitAck = 0;
+			ack_task(GE.Index, Type_controlAck, Fc_run, Extra_run_GOInOut, AckResult_executeSucceed);
+		}
 #ifdef DEBUG_MODE
 		GE.task = GE_none;
 		GE.sta = Ready;

@@ -2,6 +2,7 @@
 
 #define TASK_PRIORIRY 3
 
+/*任务线程结构体初始化*/
 struct glass_enter_struct GE = {
 	.task = GE_none,
 	.sta = Ready,
@@ -79,6 +80,7 @@ struct glass_out_struct GO = {
 	.Storage_full = TRUE, // 默认存储器满 需要通过出槽入槽重新装填来更新存储器状态
 	.main_subtask = 0,
 	.main_task = GO_none,
+	.GOH_waste_pos=268*36+9210 + 400,
 };
 
 enum taskthread_state TaskThread_State = taskthread_boost;	  // 任务线程运行状态
@@ -114,7 +116,7 @@ static void Error_Mesg_Send(void)
 
 void Error_OverTime_Set(enum task_index task, u8 task_index)
 {
-	Emergency_TaskThread(); // 进入紧急停止模式
+	TaskThread_Emergency(); // 进入紧急停止模式
 	GE.subtask = 0;
 	GE.sta = Ready;
 	GE.task = GE_error;
@@ -150,28 +152,28 @@ void Error_Set(enum task_error error, u32 error_sen)
 	// 如果为传感器错误或者任务超时错误 需要紧急停止任务
 	if (error_type & (Error_Sensor))
 	{
-		Emergency_TaskThread(); // 进入紧急停止模式
+		TaskThread_Emergency(); // 进入紧急停止模式
 		Error_Mesg_Send();
 		// 进入报错程序 处理
 		GE.subtask = 0;
-		GE.sta = Ready;
+		GE.sta = Finish;
 		GE.task = GE_error;
 
 		GC.subtask = 0;
-		GC.sta = Ready;
+		GC.sta = Finish;
 		GC.task = GC_error;
 
 		GP.subtask = 0;
-		GP.sta = Ready;
+		GP.sta = Finish;
 		GP.task = GP_error;
 
 		GO.subtask = 0;
-		GO.sta = Ready;
+		GO.sta = Finish;
 		GO.task = GO_error;
 		return;
 	}
-	Error_Mesg_Send();
 
+	Error_Mesg_Send();
 	// 根据不同的错误设置解除错误后恢复运行后执行的任务
 	// 缺少盖玻片
 	if (error_type & Error_Cover_Glass)
@@ -211,9 +213,24 @@ void Error_Set(enum task_error error, u32 error_sen)
 	// 吸取玻片失败
 	if (error_type & Error_Sucker)
 	{
-		GP.resume_task = GP_sucker_down;
+		GP.resume_task = GP_start;
 		GP.sta = Ready;
 		GP.task = GP_error;
+		GP.subtask=0;
+
+		GO.resume_task=GO_start;
+		GO.sta=Ready;
+		GO.task=GO_error;
+		GO.subtask=0;
+
+		if(GC.task>GC_move_up)
+		{
+			GC.resume_task=GC_move_up;
+			GC.sta=Ready;
+			GC.task=GC_error;
+			GC.subtask=0;
+		}
+	
 	}
 
 	TaskThread_State = taskthread_error; // 进入错误处理任务
@@ -249,27 +266,27 @@ void Error_Set(enum task_error error, u32 error_sen)
 void TaskThread_Parm_Init(void)
 {
 	// set GE task parm
-	GE.GE_box_len = Global_Parm.GIO.GE_box_len;
-	GE.GE_box_speed = Global_Parm.GIO.GE_box_speed;
+	GE.GE_box_len = Global_Parm.GIO->GE_box_len;
+	GE.GE_box_speed = Global_Parm.GIO->GE_box_speed;
 	// set GC task parm
-	GC.GCR_hor_pos = Global_Parm.GCS.GCR_hor_pos;
-	GC.GCR_ver_pos = Global_Parm.GCS.GCR_ver_pos;
-	GC.GCV_down_pos = Global_Parm.GCS.GCV_down_pos;
-	GC.GCV_glass_len = Global_Parm.GCS.GCV_glass_len;
+	GC.GCR_hor_pos = Global_Parm.GCS->GCR_hor_pos;
+	GC.GCR_ver_pos = Global_Parm.GCS->GCR_ver_pos;
+	GC.GCV_down_pos = Global_Parm.GCS->GCV_down_pos;
+	GC.GCV_glass_len = Global_Parm.GCS->GCV_glass_len;
 	// set GP parm
-	GP.delay_after = Global_Parm.GP.delay_after;
-	GP.delay_before = Global_Parm.GP.delay_before;
-	GP.sucker_pos = Global_Parm.GP.sucker_pos;
-	GP.spray_pos = Global_Parm.GP.spray_pos;
-	GP.spray_len = Global_Parm.GP.spray_len;
-	GP.spray_speed = Global_Parm.GP.spray_speed;
-	GP.spray_pressure = Global_Parm.GP.spray_pressure;
+	GP.delay_after = Global_Parm.GP->delay_after;
+	GP.delay_before = Global_Parm.GP->delay_before;
+	GP.sucker_pos = Global_Parm.GP->sucker_pos;
+	GP.spray_pos = Global_Parm.GP->spray_pos;
+	GP.spray_len = Global_Parm.GP->spray_len;
+	GP.spray_speed = Global_Parm.GP->spray_speed;
+	GP.spray_pressure = Global_Parm.GP->spray_pressure;
 	// set GO parm
-	GO.GOH_end_pos = Global_Parm.GCS.GOH_end_pos;
-	GO.GOH_mid_pos = Global_Parm.GCS.GOH_mid_pos;
-	GO.GOV_box_dis = Global_Parm.GIO.GOV_box_dis;
-	GO.GOV_slot_dis = Global_Parm.GIO.GOV_slot_dis;
-	GO.GOV_box_len = Global_Parm.GIO.GOV_box_len;
+	GO.GOH_end_pos = Global_Parm.GCS->GOH_end_pos;
+	GO.GOH_mid_pos = Global_Parm.GCS->GOH_mid_pos;
+	GO.GOV_box_dis = Global_Parm.GIO->GOV_box_dis;
+	GO.GOV_slot_dis = Global_Parm.GIO->GOV_slot_dis;
+	GO.GOV_box_len = Global_Parm.GIO->GOV_box_len;
 }
 
 void TaskThread_Init(void)
@@ -348,13 +365,13 @@ void TIM6_IRQHandler(void) // TIM6中断
 }
 
 // 暂停运行
-void Pause_TaskThread(void)
+void TaskThread_Pause(void)
 {
 	TaskThread_State = taskthread_pause;
 }
 
 // 紧急暂停运行
-void Emergency_TaskThread(void)
+void TaskThread_Emergency(void)
 {
 	// 停止所有电机的运行
 	stepperMotorStop(&GE_motor_struct);
@@ -367,9 +384,9 @@ void Emergency_TaskThread(void)
 	TaskThread_State = taskthread_emergency; // 设置状态为紧急停止状态
 }
 // 从暂停任务中恢复运行
-void Resume_TaskThread(void)
+void TaskThread_Resume(void)
 {
-
+	TIM_Cmd(TIM6, DISABLE);
 	GE.sta = Finish;
 	GE.task = GE.resume_task;
 	GC.sta = Finish;
@@ -378,15 +395,15 @@ void Resume_TaskThread(void)
 	GP.task = GP_start;
 	GO.sta = Finish;
 	GO.task = GOH_start;
-
+	TIM_Cmd(TIM6, ENABLE);
 	TaskThread_State = taskthread_running;
 }
 
 // 从错误暂停中恢复运行
-void Resume_Error_TaskThread(void)
+void TaskThread_Resume_Error(void)
 {
 	// 根据不同的错误设置解除错误后恢复运行后执行的任务
-
+	TIM_Cmd(TIM6, DISABLE);
 	// 缺少盖玻片 缺少喷胶头
 	if (error_type & (Error_Cover_Glass + Error_Spray + Error_Sucker))
 	{
@@ -408,8 +425,15 @@ void Resume_Error_TaskThread(void)
 		error_type &= ~(Error_Grap);
 		GC.task = GC.resume_task;
 		GC.sta = Ready;
-	}
 
+		GO.task = GO.resume_task;
+		GO.sta = Ready;
+
+		GP.task = GP.resume_task;
+		GP.sta = Ready;
+
+	}
+	TIM_Cmd(TIM6, ENABLE);
 	TaskThread_State = taskthread_running;
 }
 
@@ -467,7 +491,7 @@ enum taskthread_state TaskThread_IsReady(void)
 }
 
 // 开机复位任务
-void Boot_ResetTaskThread(void)
+void TaskThread_BootReset(void)
 {
 	// 清空错误警报
 	error_type = 0;
@@ -476,6 +500,7 @@ void Boot_ResetTaskThread(void)
 
 	if (Gas_State == gas_pumped)
 	{
+		TIM_Cmd(TIM6, DISABLE);
 		GE.subtask = 0;
 		GE.sta = Ready;
 		GE.task = GE_reset_on;
@@ -491,33 +516,30 @@ void Boot_ResetTaskThread(void)
 		GO.subtask = 0;
 		GO.sta = Ready;
 		GO.task = GO_reset_on;
+		TIM_Cmd(TIM6, ENABLE);
 	}
 	TaskThread_State = taskthread_boost;
 }
 
 // 开始运行任务
-void Start_TaskThread(void)
+u8 TaskThread_Start(void)
 {
 	// 检测系统是否就绪
 	if (TaskThread_IsReady() == taskthread_boost)
 	{
 		if (TaskThread_CheckIdle())
 		{
-			Boot_ResetTaskThread();
+			TaskThread_BootReset();
 		}
-		return;
+		return FALSE;
 	}
 	else if (TaskThread_IsReady() == taskthread_error)
 	{
-		return;
+		return FALSE;
 	}
 	else
 	{
-		TaskThread_State = taskthread_ready;
-	}
-
-	if (TaskThread_State == taskthread_ready)
-	{
+		TIM_Cmd(TIM6, DISABLE);
 		GE.subtask = 0;
 		GE.sta = Ready;
 		GE.task = GE_start;
@@ -533,16 +555,19 @@ void Start_TaskThread(void)
 		GO.subtask = 0;
 		GO.sta = Ready;
 		GO.task = GO_start;
-
+		TIM_Cmd(TIM6, ENABLE);
 		TaskThread_State = taskthread_running;
+		return TRUE;
 	}
+
+	return FALSE;
 }
 // 关闭运行任务
-void Close_TaskThread(void)
+void TaskThread_Close(void)
 {
 	if (TaskThread_State != taskthread_running) // 如果不在运行状态 直接关机复位
 	{
-		TIM_Cmd(TIM6,DISABLE);
+		TIM_Cmd(TIM6, DISABLE);
 		GE.subtask = 0;
 		GE.sta = Ready;
 		GE.task = GE_reset_off;
@@ -558,7 +583,7 @@ void Close_TaskThread(void)
 		GO.subtask = 0;
 		GO.sta = Ready;
 		GO.task = GO_reset_off;
-		TIM_Cmd(TIM6,ENABLE);
+		TIM_Cmd(TIM6, ENABLE);
 	}
 
 	TaskThread_State = taskthread_close;
@@ -573,10 +598,10 @@ u8 TaskThread_GEIn(void)
 	}
 	if (GE.task == GE_BOx_Out && GE.sta == Finish)
 	{
-		TIM_Cmd(TIM6,DISABLE);		
+		TIM_Cmd(TIM6, DISABLE);
 		GE.sta = Ready;
 		GE.task = GE_Box_In;
-		TIM_Cmd(TIM6,ENABLE);
+		TIM_Cmd(TIM6, ENABLE);
 		return 1;
 	}
 	return 0;
@@ -588,10 +613,12 @@ u8 TaskThread_GEOut(void)
 	{
 		return 0;
 	}
-	if(TaskThread_CheckIdle())
+	if (TaskThread_CheckIdle())
 	{
-		GE.sta=Ready;
-		GE.task=GE_BOx_Out;
+		TIM_Cmd(TIM6, DISABLE);
+		GE.sta = Ready;
+		GE.task = GE_BOx_Out;
+		TIM_Cmd(TIM6, ENABLE);
 		return 1;
 	}
 
@@ -604,13 +631,13 @@ u8 TaskThread_GOIn(void)
 	if (TaskThread_State == taskthread_running)
 	{
 		return 0;
-	}	
-	if(GO.task==GO_Box_Out&&GO.sta==Finish)
+	}
+	if (GO.task == GO_Box_Out && GO.sta == Finish)
 	{
-		TIM_Cmd(TIM6,DISABLE);
-		GO.sta=Ready;
-		GO.task=GO_Box_In;
-		TIM_Cmd(TIM6,ENABLE);
+		TIM_Cmd(TIM6, DISABLE);
+		GO.sta = Ready;
+		GO.task = GO_Box_In;
+		TIM_Cmd(TIM6, ENABLE);
 		return 1;
 	}
 	return 0;
@@ -622,18 +649,47 @@ u8 TaskThread_GOOut(void)
 	{
 		return 0;
 	}
-	if(TaskThread_CheckIdle())
+	if (TaskThread_CheckStop())
 	{
-		GO.sta=Ready;
-		GO.task=GO_Box_Out;
+		TIM_Cmd(TIM6, DISABLE);
+		GO.sta = Ready;
+		GO.task = GO_Box_Out;
+		TIM_Cmd(TIM6, ENABLE);
 		return 1;
-	}else(GO.task==GO_error&&GO.sta==Finish)
-	{
-		TIM_Cmd(TIM6,DISABLE);
-		GO.sta=Ready;
-		GO.task=GO_Box_Out;
-		TIM_Cmd(TIM6,ENABLE);	
-		return 1;	
 	}
-	retunr 0;
+
+	return 0;
+}
+
+u8 TaskThread_Check_ErrorDone(void)
+{
+	if (TaskThread_State == taskthread_error)
+	{
+		if (GE.sta == Finish && GC.sta == Finish &&
+			GP.sta == Finish && GO.sta == Finish)
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+u8 TaskThread_CheckStop(void)
+{
+	if (TaskThread_CheckIdle())
+	{
+		return TRUE;
+	}
+	else 
+	{
+		if (TaskThread_Check_ErrorDone())
+		{
+			return TRUE;
+		}
+
+		
+	}
+
+	return FALSE;
 }

@@ -79,19 +79,22 @@ enum Data
 //µ÷ÊÔ
 enum Debug
 {
-	Extra_debug_GE=1,
-	Extra_debug_GC=2,
-	Extra_debug_GP=3,
-	Extra_debug_GO=4,
+	Extra_debug_motor=1,
+	Extra_debug_GE,
+	Extra_debug_GC,
+	Extra_debug_GP,
+	Extra_debug_GO,
+	Extra_debug_IO,
 };
 //ÔËÐÐ
 enum Run
 {
 	Extra_run_Reset = 1,
+	Extra_run_Emergency,
 	Extra_run_GEInOut,
 	Extra_run_GOInOut,
+	Extra_run_Spray,
 	Extra_run_Start,
-	Extra_run_Pause,
 	Extar_run_Finish,
 	Extra_run_Close,
 };

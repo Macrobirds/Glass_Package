@@ -202,6 +202,7 @@ struct glass_out_struct
 	u8 Index;
 	u8 WaitAck;
 	u8 Storage_full;
+	u32 GOH_waste_pos; //废片位置
 };
 
 extern volatile enum task_error error_type;
@@ -233,31 +234,37 @@ void Error_Set(enum task_error error, u32 error_sen);
 void Error_OverTime_Set(enum task_index task,u8 task_index);
 
 //从错误暂停中恢复运行
-void Resume_Error_TaskThread(void);
+void TaskThread_Resume_Error(void);
 
 // 任务是否处于空闲状态
 u8 TaskThread_CheckIdle(void);
+
+//错误处理是否结束
+u8 TaskThread_Check_ErrorDone(void);
+
+//任务是否停止 任务不在运行中
+u8 TaskThread_CheckStop(void);
 
 // 检测机器是否可以准备运行
 enum taskthread_state TaskThread_IsReady(void);
 
 // 开机复位任务
-void Boot_ResetTaskThread(void);
+void TaskThread_BootReset(void);
 
 // 开始运行任务
-void Start_TaskThread(void);
+u8 TaskThread_Start(void);
 
 // 关闭运行任务
-void Close_TaskThread(void);
+void TaskThread_Close(void);
 
 // 紧急暂停任务
-void Emergency_TaskThread(void);
+void TaskThread_Emergency(void);
 
 //暂停任务
-void Pause_TaskThread(void);
+void TaskThread_Pause(void);
 
 // 恢复任务
-void Resume_TaskThread(void);
+void TaskThread_Resume(void);
 
 // 任务参数初始化
 void TaskThread_Parm_Init(void);

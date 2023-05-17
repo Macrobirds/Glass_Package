@@ -176,6 +176,7 @@ typedef struct{
 	u8 GOH_min_speed;
 	u8 GOV_max_speed;
 	u8 GOV_min_speed;
+	u8 motor_dir_level;
 }Motor_Data; 
 
 
@@ -211,10 +212,10 @@ typedef struct{
 
 /////////////////Golbal Parameter///////////////////
 struct Global_Parameter_struct{
-	Motor_Data MOT;
-	Glass_ClawSupport__data GCS;
-	Glass_Package_Data GP;
-	Glass_In_Out_Date GIO;
+	Motor_Data * MOT;
+	Glass_ClawSupport__data * GCS;
+	Glass_Package_Data * GP;
+	Glass_In_Out_Date * GIO;
 };
 
 extern struct Global_Parameter_struct Global_Parm; 

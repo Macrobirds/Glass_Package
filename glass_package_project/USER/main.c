@@ -127,7 +127,7 @@ void main_task(void *pdata)
 	}
 
 	//开机自动复位任务 各电机轴复位 校准初始位置
-	Boot_ResetTaskThread();
+	TaskThread_BootReset();
 	//等待复位任务完成
 	while (!TaskThread_CheckIdle())
 	{

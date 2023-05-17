@@ -1,7 +1,16 @@
 #include "Globalconfig.h"
 
 OS_CPU_SR cpu_sr = 0;
-struct Global_Parameter_struct Global_Parm={0};
+struct Global_Parameter_struct Global_Parm={
+	.MOT=&MOT_Parm,
+	.GCS=&GCS_Parm,
+	.GP=&GP_Parm,
+	.GIO=&GIO_Parm,
+};
+Motor_Data MOT_Parm={0};
+Glass_ClawSupport__data GCS_Parm={0};\
+Glass_Package_Data GP_Parm={0};
+Glass_In_Out_Date GIO_Parm={0};
 enum sensor_index sensor_error_idx=0;
 volatile u32 nowRtcTime = 0;
 u32 deviceSnNumber = 0;

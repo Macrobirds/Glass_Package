@@ -339,11 +339,39 @@ void GP_ReadyTask(void)
 			GP.sta=Finish;
 		}else if(error_type&Error_Sucker)
 		{
-			GP_sucker_Pump = GAS_DISABLE;
-			GP_sucker1_Cyl = GAS_DISABLE;
-			GP_sucker2_Cyl = GAS_DISABLE;
-			Gas_Spray_Disable();
-			GP.sta = Finish;
+			if(GP.subtask==0)
+			{
+				if(GO.motor_h->postion==GO.GOH_waste_pos)
+				{
+					motorGo(GP.motor,0,0);
+					GP.sta=Running;
+				}
+			}else if(GP.subtask==1) //大气缸下降
+			{
+				#ifdef BIG_CYLINDER
+				GP_big_Cyl=GAS_ENABLE;
+				#endif
+				#ifdef BIG_CYLINDER_MOTOR
+				motorGo(GP.motor_cyl,GP.sucker_finish_pos,0);
+				#endif
+				GP.sta=Running;
+			}else if(GP.subtask==2) //吸盘释放
+			{
+				GP_sucker_Pump = GAS_DISABLE;
+				GP_sucker1_Cyl = GAS_DISABLE;
+				GP_sucker2_Cyl = GAS_DISABLE;
+				Gas_Spray_Disable();
+				GP.sta=Running;
+			}else if(GP.subtask==3) //大气缸复位
+			{
+				#ifdef BIG_CYLINDER
+				GP_big_Cyl=GAS_DISABLE;
+				#endif
+				#ifdef BIG_CYLINDER_MOTOR
+				motorGo(GP.motor_cyl,0,0);
+				#endif
+				GP.sta=Running;
+			}
 		}
 		break;
 	}
@@ -669,32 +697,109 @@ void GP_RunningTask(void)
 	case GP_finish:
 		break;
 	case GP_error:
-		#ifdef BIG_CYLINDER
-		if(GP.running_tim>DELAY_BIG_CYLIDER)
+		//缺少盖玻片
+		if(error_type&Error_Cover_Glass)
 		{
-			if(GP_big_cyl_Sen==Sen_Block)
+			#ifdef BIG_CYLINDER
+			if(GP.running_tim>DELAY_BIG_CYLIDER)
 			{
-				GP.sta=Finish;
-			}else
-			{
-				Error_Set(Error_Sensor,GP_big_cyl_sensor);
-			}
-		}
-		#endif
-		#ifdef BIG_CYLINDER_MOTOR
-			if(GP_big_cyl_Sen==Sen_Block)
-			{
-				GP.sta=Finish;
-			}else
-			{
-				if(GP.motor_cyl->motion==Stop)
+				if(GP_big_cyl_Sen==Sen_Block)
+				{
+					GP.sta=Finish;
+				}else
 				{
 					Error_Set(Error_Sensor,GP_big_cyl_sensor);
 				}
-
 			}
-		#endif
-	
+			#endif
+			#ifdef BIG_CYLINDER_MOTOR
+				if(GP_big_cyl_Sen==Sen_Block)
+				{
+					GP.sta=Finish;
+				}else
+				{
+					if(GP.motor_cyl->motion==Stop)
+					{
+						Error_Set(Error_Sensor,GP_big_cyl_sensor);
+					}
+
+				}
+			#endif
+		}else if(error_type&Error_Spray)
+		{
+			
+		}else if(error_type&Error_Sucker)
+		{
+			if(GP.subtask==0)
+			{
+				if (GP_start_Sen == Sen_Block)
+				{
+					GP.subtask = 1;
+					GP.sta = Ready;
+				}
+				else
+				{
+					if (GP.motor->motion == Stop)
+					{
+						Error_Set(Error_Sensor, GP_start_sensor);
+					}
+				}
+			}else if(GP.subtask==1) //大气缸下降
+			{
+				#ifdef BIG_CYLINDER
+				if(GP.running_tim>DELAY_BIG_CYLIDER)
+				{
+					GP.subtask=2;
+					GP.sta=Ready;
+				}
+				#endif
+				#ifdef BIG_CYLINDER_MOTOR
+				if(GP.motor_cyl->motion==Stop)
+				{
+					GP.subtask=2;
+					GP.sta=Ready;
+				}
+				#endif
+				
+			}else if(GP.subtask==2) //吸盘释放
+			{
+				if(GP.running_tim>DELAY_SUCKER)
+				{
+					GP.subtask=3;
+					GP.sta=Ready;
+				}
+			}else if(GP.subtask==3) //大气缸复位
+			{
+				#ifdef BIG_CYLINDER
+				if(GP.running_tim>DELAY_BIG_CYLIDER)
+				{
+					if(GP_big_cyl_Sen==Sen_Block)
+					{
+						GP.sta=Finish;
+						GP.subtask=0;
+					}else
+					{
+						Error_Set(Error_Sensor,GP_big_cyl_sensor);
+					}
+				}
+				#endif
+				#ifdef BIG_CYLINDER_MOTOR
+					if(GP_big_cyl_Sen==Sen_Block)
+					{
+						GP.sta=Finish;
+						GP.subtask=0;
+					}else
+					{
+						if(GP.motor_cyl->motion==Stop)
+						{
+							Error_Set(Error_Sensor,GP_big_cyl_sensor);
+						}
+						
+					}
+				#endif
+			}
+		}
+
 		break;
 	}
 }

@@ -53,12 +53,12 @@ void gpio_test(u8 state, u8 pin)
 
 void close_device(void)
 {
-	Close_TaskThread();
+	TaskThread_Close();
 }
 
 void boost_device_test(u8 task)
 {
-	Boot_ResetTaskThread();
+	TaskThread_BootReset();
 }
 
 void motor_test(u8 dir, u8 motor, u32 pulse, u32 freq)
@@ -175,7 +175,6 @@ void boost_test(u8 task, u8 task_index)
 	case 3:
 		if (task_index <= GP_reset_off)
 		{
-			debug_flag=FALSE;
 			GP.sta = Ready;
 			GP.subtask = 0;
 			GP.task = task_index;
@@ -210,7 +209,6 @@ void debug_test(u8 task, u8 task_index)
 	case 3: //GP task
 		if(task_index>GP_reset_off)
 		{
-			debug_flag=TRUE;
 			GP.sta=Ready;
 			GP.subtask=0;
 			GP.task=task_index;
@@ -219,7 +217,6 @@ void debug_test(u8 task, u8 task_index)
 	case 4://GO task
 		if(task_index>GO_Box_Out)
 		{
-			debug_flag=TRUE;
 			GO.sta=Ready;
 			GO.subtask=0;
 			GO.task=task_index;
@@ -260,31 +257,31 @@ void thread_test(u8 task)
 
 void pause_test(void)
 {
-	Pause_TaskThread();
+	TaskThread_Pause();
 }
 
 void resume_test(void)
 {
 	if(TaskThread_State==taskthread_error)
 	{
-		Resume_Error_TaskThread();
+		TaskThread_Resume_Error();
 		return;
 	}
 	
 	if(TaskThread_State==taskthread_pause)
 	{
-		Resume_TaskThread();
+		TaskThread_Resume();
 	}
 }
 
 void emergency_test(void)
 {
-	Emergency_TaskThread();
+	TaskThread_Emergency();
 }
 
 void start_test(void)
 {
-	Start_TaskThread();
+	TaskThread_Start();
 }
 // 函数名列表初始化(用户自己添加)
 // 用户直接在这里输入要执行的函数名及其查找串

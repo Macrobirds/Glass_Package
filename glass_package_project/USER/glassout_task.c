@@ -3,6 +3,7 @@
 #define ADJUST_DIS_full 200
 
 #define SLOT_NUM 30
+#define WASTE_POS 268 * 36
 
 static u8 slot_num = 0;
 
@@ -74,10 +75,10 @@ void GO_ReadyTask(void)
 	{
 		GO.Storage_full = TRUE;
 	}
-//		if(GO.task!=GO_none)
-//		{
-//			printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
-//		}
+	//		if(GO.task!=GO_none)
+	//		{
+	//			printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
+	//		}
 	switch (GO.task)
 	{
 	case GO_none:
@@ -127,13 +128,13 @@ void GO_ReadyTask(void)
 		else
 		{
 			printf("singal box\r\n");
-			motorGO_Debug(GO.motor_v,GO.GOV_adjust, 0);
+			motorGO_Debug(GO.motor_v, GO.GOV_adjust, 0);
 		}
 		break;
 	////////////////////开机复位///////////////
 	case GO_reset_on:
 		GO.Storage_full = TRUE;
-		slot_num=0;		
+		slot_num = 0;
 		if (GO.subtask == 0) // 检测水平原点传感器 若感应 离开原点 重新校准水平位置
 		{
 			if (GOH_start_Sen == Sen_Block)
@@ -182,27 +183,26 @@ void GO_ReadyTask(void)
 	case GO_reset_off:
 		if (GO.subtask == 0) // 回到水平原点
 		{
-				if (Check_GC())
-				{		
-						if(GOH_start_Sen==Sen_Block)
-						{
-							GO.subtask++;
-						}else
-						{
-							if(GC.motor_r->postion==GC.GCR_ver_pos&&GC.motor_r->motion==Stop)
-							{
-								Next_Task(GO_none, GOH_start);
-							}
-
-						}
-
+			if (Check_GC())
+			{
+				if (GOH_start_Sen == Sen_Block)
+				{
+					GO.subtask++;
 				}
+				else
+				{
+					if (GC.motor_r->postion == GC.GCR_ver_pos && GC.motor_r->motion == Stop)
+					{
+						Next_Task(GO_none, GOH_start);
+					}
+				}
+			}
 		}
 		else if (GO.subtask == 1)
 		{
 			if (GC_claw_Sen == Sen_Block) // 夹手处于夹紧状态  到水平工作点
 			{
-				if (GC_rot_Sen!=Sen_Block&& GC.motor_r->motion == Stop) // 等待夹手复位到原点
+				if (GC_rot_Sen != Sen_Block && GC.motor_r->motion == Stop) // 等待夹手复位到原点
 				{
 					motorGo_acc(GO.motor_h, GO.GOH_mid_pos);
 					GO.sta = Running;
@@ -217,18 +217,17 @@ void GO_ReadyTask(void)
 		{
 			if (Check_GC())
 			{
-				if(GC.motor_r->postion==GC.GCR_ver_pos&&GC.motor_r->motion==Stop)
+				if (GC.motor_r->postion == GC.GCR_ver_pos && GC.motor_r->motion == Stop)
 				{
-						Next_Task(GO_none, GOH_start);
+					Next_Task(GO_none, GOH_start);
 				}
-
 			}
 		}
 		break;
 	//////////////////存储器推出////////////////
 	case GO_Box_Out:
 		GO.Storage_full = TRUE;
-		slot_num=0;	
+		slot_num = 0;
 		motorGo_acc(GO.motor_v, GO.GOV_box_len);
 		GO.sta = Running;
 		break;
@@ -259,9 +258,9 @@ void GO_ReadyTask(void)
 		}
 		else if (GO.subtask == 2) // 调整存储器位置
 		{
-			if(GOV_box_Sen==Sen_Block)
+			if (GOV_box_Sen == Sen_Block)
 			{
-				//存储槽个数+1
+				// 存储槽个数+1
 				OS_ENTER_CRITICAL();
 				GO.box_num++;
 				OS_EXIT_CRITICAL();
@@ -276,11 +275,12 @@ void GO_ReadyTask(void)
 				}
 				GO.Storage_full = FALSE;
 				Next_Task(GO_none, GO_adjust);
-			}else
+			}
+			else
 			{
-				GO.task=GO_none;
-				GO.sta=Ready;
-				Error_Set(Error_Out_Box,0);
+				GO.task = GO_none;
+				GO.sta = Ready;
+				Error_Set(Error_Out_Box, 0);
 			}
 		}
 		break;
@@ -344,7 +344,7 @@ void GO_ReadyTask(void)
 				}
 				else
 				{
-					Error_Set(Error_Out_Box|Error_Sensor, GOV_glass_sensor);
+					Error_Set(Error_Out_Box | Error_Sensor, GOV_glass_sensor);
 				}
 			}
 		}
@@ -374,12 +374,47 @@ void GO_ReadyTask(void)
 	case GO_finish:
 		break;
 	case GO_error:
-		if(error_type&Error_Out_Box)
+		if (error_type & Error_Out_Box)
 		{
-			GO.sta=Finish;
-		}else if(error_type&Error_StorageFull)
+			GO.sta = Finish;
+		}
+		else if (error_type & Error_StorageFull)
 		{
-			GO.sta=Finish;
+			GO.sta = Finish;
+		}
+		else if (error_type & Error_Sucker)
+		{
+			if (GO.subtask == 0) // 托盘复位至原点
+			{
+				if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop)
+				{
+					GO.subtask == 1;
+				}
+				else
+				{
+					if (GC_rot_Sen != Sen_Block && GC.motor_r->motion == Stop)
+					{
+						motorGo(GO.motor_h, 0, 0);
+						GO.sta = Running;
+					}
+				}
+			}
+			else if (GO.subtask == 1) // 托盘移动到废料点
+			{
+				if (GC.motor_r->postion == GC.GCR_ver_pos && GC.motor_r->motion == Stop)
+				{
+					motorGo(GO.motor_h, GO.GOH_waste_pos, 0);
+					GO.sta = Running;
+				}
+			}
+			else if (GO.subtask == 2) // 回到原点
+			{
+				if (GP.sta == Finish && GP.task == GP_error)
+				{
+					motorGo(GO.motor_h, 0, 0);
+					GO.sta = Running;
+				}
+			}
 		}
 		break;
 	}
@@ -419,7 +454,7 @@ void GO_RunningTask(void)
 			}
 		}
 		break;
-	///////////微调存储器位置让玻片对准槽下端/////////////// basic	
+	///////////微调存储器位置让玻片对准槽下端/////////////// basic
 	case GO_adjust:
 		if (GO.motor_v->motion == Stop)
 		{
@@ -572,6 +607,55 @@ void GO_RunningTask(void)
 	case GO_finish:
 		break;
 	case GO_error:
+		if (error_type & Error_Out_Box)
+		{
+			GO.sta = Finish;
+		}
+		else if (error_type & Error_StorageFull)
+		{
+			GO.sta = Finish;
+		}
+		else if (error_type & Error_Sucker)
+		{
+			if (GO.subtask == 0) // 托盘复位至原点
+			{
+				if (GOH_start_Sen == Sen_Block)
+				{
+					GO.sta = Ready;
+					GO.subtask=1;
+				}
+				else
+				{
+					if (GO.motor_h->motion == Stop)
+					{
+						Error_Set(Error_Sensor, GOH_start_sensor);
+					}
+				}
+			}
+			else if (GO.subtask == 1) // 托盘移动到废料点
+			{
+					if (GO.motor_h->motion == Stop)
+					{
+						GO.sta=Ready;
+						GO.subtask=2;
+					}
+			}
+			else if (GO.subtask == 2) // 回到原点
+			{
+				if (GOH_start_Sen == Sen_Block)
+				{
+					GO.sta = Finish;
+					GO.subtask=0;
+				}
+				else
+				{
+					if (GO.motor_h->motion == Stop)
+					{
+						Error_Set(Error_Sensor, GOH_start_sensor);
+					}
+				}
+			}
+		}
 		break;
 	}
 }
@@ -606,22 +690,31 @@ void GO_FinishTask(void)
 		GO.task = GO_none;
 		GO.subtask = 0;
 		break;
-	case GO_Box_Out: 
+	case GO_Box_Out:
 		GO.subtask = 0;
 		GO.main_subtask = 0;
 		GO.main_task = GO_none;
-		#ifdef DEBUG_MDOE
+		if (GO.WaitAck)
+		{
+			GO.WaitAck = 0;
+			ack_task(GO.Index, Type_controlAck, Fc_run, Extra_run_GOInOut, AckResult_executeSucceed);
+		}
+#ifdef DEBUG_MDOE
 		GO.sta = Ready;
 		GO.task = GO_none;
-		#endif
+#endif
 		break;
 	case GO_Box_In:
 		GO.main_subtask = 0;
 		GO.main_task = GO_none;
 		GO.subtask = 0;
-
 		GO.sta = Ready;
 		GO.task = GO_none;
+		if (GO.WaitAck)
+		{
+			GO.WaitAck = 0;
+			ack_task(GO.Index, Type_controlAck, Fc_run, Extra_run_GOInOut, AckResult_executeSucceed);
+		}
 
 		break;
 	case GO_start:
@@ -629,36 +722,36 @@ void GO_FinishTask(void)
 		{
 			GO.sta = Ready;
 			GO.task = GOH_package;
-		}else
+		}
+		else
 		{
-			if(GC.task==GC_finish)
+			if (GC.task == GC_finish)
 			{
-				GO.task=GO_finish;
-				GO.sta=Ready;
-				//当不是由于暂停结束任务时，发送任务完成信息
-				if(TaskThread_State!=taskthread_pause)
+				GO.task = GO_finish;
+				GO.sta = Ready;
+				// 当不是由于暂停结束任务时，发送任务完成信息
+				if (TaskThread_State != taskthread_pause)
 				{
-					//发送任务完成信息
+					// 发送任务完成信息
 				}
 			}
-
 		}
 		break;
 	case GOH_package:
-		#ifdef BIG_CYLINDER
+#ifdef BIG_CYLINDER
 		if (GC.motor_r->postion == GC.GCR_ver_pos && GP_big_cyl_Sen == Sen_Block) // 当夹手垂直 且大气缸复位
 		{
 			GO.sta = Ready;
 			GO.task = GOH_end;
 		}
-		#endif
-		#ifdef BIG_CYLINDER_MOTOR
+#endif
+#ifdef BIG_CYLINDER_MOTOR
 		if (GC.motor_r->postion == GC.GCR_ver_pos && GP_big_cyl_Sen == Sen_Block) // 当夹手垂直 且大气缸复位
 		{
 			GO.sta = Ready;
 			GO.task = GOH_end;
 		}
-		#endif
+#endif
 		break;
 	case GOH_end:
 		OS_ENTER_CRITICAL();
@@ -698,8 +791,8 @@ void GO_TaskThread(void)
 		GO.running_tim++;
 		if (GO.running_tim > OVERTIME)
 		{
-			Error_OverTime_Set(GO_idx,GO.task);
-			//Error_Set(Error_OverTime, 0);
+			Error_OverTime_Set(GO_idx, GO.task);
+			// Error_Set(Error_OverTime, 0);
 		}
 	}
 	if (GO.sta == Finish)
@@ -710,4 +803,3 @@ void GO_TaskThread(void)
 		}
 	}
 }
-

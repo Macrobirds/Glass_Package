@@ -130,12 +130,13 @@ void GC_ReadyTask(void)
 		}
 		else if (GC.subtask == 1) // 复位至旋转原点
 		{
-			if (GOH_start_Sen==Sen_Block)
+			if (GOH_start_Sen == Sen_Block)
 			{
-						Next_Task(GC.task, GC_rot_start);
-			}else if(GO.motor_h->postion==GO.GOH_mid_pos&&GO.motor_h->motion==Stop)
+				Next_Task(GC.task, GC_rot_start);
+			}
+			else if (GO.motor_h->postion == GO.GOH_mid_pos && GO.motor_h->motion == Stop)
 			{
-				GC.subtask=3;
+				GC.subtask = 3;
 			}
 		}
 		else if (GC.subtask == 2)
@@ -152,7 +153,7 @@ void GC_ReadyTask(void)
 			}
 			else
 			{
-					GC.subtask=3;
+				GC.subtask = 3;
 			}
 		}
 		else if (GC.subtask == 3) // 夹手释放
@@ -161,15 +162,15 @@ void GC_ReadyTask(void)
 		}
 		else if (GC.subtask == 4) // 夹手旋转到垂直位置
 		{
-			motorGo(GC.motor_r,GC.GCR_ver_pos,0);
-			GC.sta=Running;
-		}else if(GC.subtask==5) //夹手旋转回原点
+			motorGo(GC.motor_r, GC.GCR_ver_pos, 0);
+			GC.sta = Running;
+		}
+		else if (GC.subtask == 5) // 夹手旋转回原点
 		{
-			if(GOH_start_Sen==Sen_Block)
+			if (GOH_start_Sen == Sen_Block)
 			{
-				Next_Task(GC_none,GC_rot_start);
+				Next_Task(GC_none, GC_rot_start);
 			}
-
 		}
 		break;
 	///////////////////开始运行任务//////////////////////////
@@ -207,7 +208,7 @@ void GC_ReadyTask(void)
 		GC.sta = Running;
 		break;
 	case GC_move_up:
-		motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq*2);
+		motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq * 2);
 		GC.sta = Running;
 		break;
 	case GC_rot_up:
@@ -219,7 +220,7 @@ void GC_ReadyTask(void)
 		{
 			if (Check_GP())
 			{
-				motorGo(GC.motor_r, 0, GC.motor_r->defaultfeq*2);
+				motorGo(GC.motor_r, 0, GC.motor_r->defaultfeq * 2);
 				GC.sta = Running;
 			}
 		}
@@ -227,19 +228,45 @@ void GC_ReadyTask(void)
 	case GC_rot_hor:
 		if (GO.motor_h->postion == GO.GOH_mid_pos && GO.motor_h->motion == Stop)
 		{
-			//motorGo(GC.motor_r, GC.GCR_hor_pos, 0);
-			motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
+			// motorGo(GC.motor_r, GC.GCR_hor_pos, 0);
+			motorGo_acc(GC.motor_r, GC.GCR_hor_pos);
 			GC.sta = Running;
 		}
 		break;
 	case GC_finish:
 		break;
 	case GC_error:
-		//发生夹取错误
-		if(error_type&Error_Grap)
+		// 发生夹取错误
+		if (error_type & Error_Grap)
 		{
-			motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq*2);
+			motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq * 2);
 			GC.sta = Running;
+		}
+		else if (error_type & Error_Sucker)
+		{
+			if (GC.subtask == 0)
+			{
+				if (GC.motor_r->postion == GC.GCR_ver_pos && GC.motor_r->motion == Stop)
+				{
+					GC.sta = Finish;
+				}
+				else
+				{
+					if (GO.motor_h->motion == Stop)
+					{
+						motorGo(GC.motor_r, 0, 0);
+						GC.sta = Running;
+					}
+				}
+			}
+			else if (GC.subtask == 1)
+			{
+				if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop)
+				{
+					motorGo(GC.motor_r, GC.GCR_ver_pos, 0);
+					GC.sta = Running;
+				}
+			}
 		}
 		break;
 	}
@@ -326,9 +353,9 @@ void GC_RunningTask(void)
 				GC.sta = Ready;
 				GC.subtask++;
 			}
-		}else if(GC.subtask==5)
+		}
+		else if (GC.subtask == 5)
 		{
-		
 		}
 		break;
 	/////////////////开始运行////////////////////
@@ -420,6 +447,20 @@ void GC_RunningTask(void)
 	case GC_finish:
 		break;
 	case GC_error:
+		if (GC_ver_Sen == Sen_Block)
+		{
+			GC.sta = Finish;
+		}
+		else
+		{
+			if (GC.motor_v->motion == Stop) // 垂直传感器错误 或电机错误
+			{
+				Error_Set(Error_Sensor, GC_ver_sensor);
+			}
+		}
+
+		if (error_type & Error_Grap)
+		{
 			if (GC_ver_Sen == Sen_Block)
 			{
 				GC.sta = Finish;
@@ -431,6 +472,35 @@ void GC_RunningTask(void)
 					Error_Set(Error_Sensor, GC_ver_sensor);
 				}
 			}
+		}
+		else if (error_type & Error_Sucker)
+		{
+			if (GC.subtask == 0)
+			{
+				if (GC_rot_Sen != Sen_Block)
+				{
+					GC.sta = Ready;
+					GC.subtask=1;
+				}
+				else
+				{
+					if (GC.motor_r->motion == Stop)
+					{
+
+						//	Error_Set(Error_Sensor, GC_rot_sensor);
+					}
+				}
+			}
+			else if (GC.subtask == 1)
+			{
+				if(GC.motor_r->motion==Stop)
+				{
+					GC.sta=Finish;
+					GC.subtask=0;
+				}
+			}
+		}
+
 		break;
 	}
 }
@@ -452,7 +522,7 @@ void GC_FinishTask(void)
 		break;
 	case GC_release:
 		Resume_Task();
-		break;	
+		break;
 	case GC_reset_on:
 		GC.main_task = GC_none;
 		GC.main_subtask = 0;
@@ -480,13 +550,14 @@ void GC_FinishTask(void)
 			GC.sta = Ready;
 			GC.subtask = 0;
 			GC.task = GC_move_down;
-		}else
+		}
+		else
 		{
-			if(GE.task==GE_finish)
+			if (GE.task == GE_finish)
 			{
 				GC.subtask = 0;
-				GC.task=GC_finish;
-				GC.sta=Ready;
+				GC.task = GC_finish;
+				GC.sta = Ready;
 			}
 		}
 		break;
@@ -557,26 +628,22 @@ void GC_TaskThread(void)
 		GC.running_tim++;
 		if (GC.running_tim > OVERTIME)
 		{
-			Error_OverTime_Set(GC_idx,GC.task);
-			//Error_Set(Error_OverTime, 0);
+			Error_OverTime_Set(GC_idx, GC.task);
+			// Error_Set(Error_OverTime, 0);
 		}
 	}
 	if (GC.sta == Finish)
 	{
-		if(GC.task<=GC_reset_off)
+		if (GC.task <= GC_reset_off)
 		{
 			GC_FinishTask();
-		}else
+		}
+		else
 		{
 			if (TaskThread_State != taskthread_debug) // debug 模式下不进行任务自动跳转
 			{
 				GC_FinishTask();
-			}			
+			}
 		}
-		
-		
-
 	}
 }
-
-
