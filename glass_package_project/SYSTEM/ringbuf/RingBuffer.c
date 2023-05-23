@@ -27,7 +27,7 @@
   */
 
 /* Header includes -----------------------------------------------------------*/
-#include "RingBuffer.h"
+#include "Globalconfig.h"
 #include <string.h>
 
 /* Macro definitions ---------------------------------------------------------*/
@@ -37,8 +37,8 @@
 /* Variable declarations -----------------------------------------------------*/
 /* Variable definitions ------------------------------------------------------*/
 /* Function declarations -----------------------------------------------------*/
-static bool is_power_of_2(uint32_t x);
-static uint32_t roundup_pow_of_two(uint32_t x);
+static bool is_power_of_2(uint8_t x);
+static uint8_t roundup_pow_of_two(uint8_t x);
 
 /* Function definitions ------------------------------------------------------*/
 
@@ -48,7 +48,7 @@ static uint32_t roundup_pow_of_two(uint32_t x);
   * @note   The size will be rounded-up to a power of 2.
   * @return RingBuffer pointer.
   */
-RingBuffer *RingBuffer_Malloc(uint32_t size)
+RingBuffer *RingBuffer_Malloc(uint8_t size)
 {
   RingBuffer *fifo = RING_BUFFER_MALLOC(sizeof(RingBuffer));
 
@@ -56,12 +56,6 @@ RingBuffer *RingBuffer_Malloc(uint32_t size)
   {
     if(is_power_of_2(size) != true)
     {
-      if(size > 0x80000000UL)
-      {
-        RING_BUFFER_FREE(fifo);
-        return NULL;
-      }
-
       size = roundup_pow_of_two(size);
     }
 
@@ -69,13 +63,18 @@ RingBuffer *RingBuffer_Malloc(uint32_t size)
 
     if(fifo->buffer == NULL)
     {
+			printf("fifo buf malloc false\r\n");
       RING_BUFFER_FREE(fifo);
       return NULL;
     }
 
     fifo->size = size;
     fifo->in = fifo->out = 0;
-  }
+		printf("fifo malloc success ,size is %d fifo in:%d fifo out: %d\r\n",fifo->size,fifo->in,fifo->out);
+  }else
+	{
+		printf("fifo malloc false\r\n");
+	}
 
   return fifo;
 }
@@ -101,21 +100,24 @@ void RingBuffer_Free(RingBuffer *fifo)
   *         the FIFO depending on the free space, and returns the number
   *         of bytes copied.
   */
-uint32_t RingBuffer_In(RingBuffer *fifo, const void *in, uint32_t len)
+uint8_t RingBuffer_In(RingBuffer *fifo, const void *in, uint8_t len)
 {
-	OS_CPU_SR cpu_sr=0;
 	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  
   len = min(len, RingBuffer_Avail(fifo));
-
   /* First put the data starting from fifo->in to buffer end. */
-  uint32_t l = min(len, fifo->size - (fifo->in & (fifo->size - 1)));
+  uint8_t l = min(len, fifo->size - fifo->in);
 	OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
-  memcpy(fifo->buffer + (fifo->in & (fifo->size - 1)), in, l);
-
-  /* Then put the rest (if any) at the beginning of the buffer. */
-  memcpy(fifo->buffer, (uint8_t *)in + l, len - l);
+	
+	 memcpy(fifo->buffer + fifo->in , in, l);
+	if(len>l)
+	{
+			/* Then put the rest (if any) at the beginning of the buffer. */
+		memcpy(fifo->buffer, (uint8_t *)in + l, len - l);
+	}
 
   fifo->in += len;
+	fifo->in %= fifo->size;
+
 
   return len;
 }
@@ -129,21 +131,25 @@ uint32_t RingBuffer_In(RingBuffer *fifo, const void *in, uint32_t len)
   * @note   This function copies at most @len bytes from the FIFO into
   *         the @out and returns the number of copied bytes.
   */
-uint32_t RingBuffer_Out(RingBuffer *fifo, void *out, uint32_t len)
+uint8_t RingBuffer_Out(RingBuffer *fifo, void *out, uint8_t len)
 {
 
 	OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  	
   len = min(len, RingBuffer_Len(fifo));
-
   /* First get the data from fifo->out until the end of the buffer. */
-  uint32_t l = min(len, fifo->size - (fifo->out & (fifo->size - 1)));
+  uint8_t l = min(len, fifo->size - fifo->out);
 	OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
-  memcpy(out, fifo->buffer + (fifo->out & (fifo->size - 1)), l);
-
+	
+  memcpy(out, fifo->buffer + fifo->out, l);
   /* Then get the rest (if any) from the beginning of the buffer. */
-  memcpy((uint8_t *)out + l, fifo->buffer, len - l);
+	if(len>l)
+	{
+		memcpy((uint8_t *)out + l, fifo->buffer, len - l);
+	}
+  
 
   fifo->out += len;
+	fifo->out%=fifo->size;
 
   return len;
 }
@@ -155,7 +161,7 @@ uint32_t RingBuffer_Out(RingBuffer *fifo, void *out, uint32_t len)
   * @retval false:  No.
   * @note   Where zero is not considered a power of two.
   */
-static bool is_power_of_2(uint32_t x)
+static bool is_power_of_2(uint8_t x)
 {
   return (x != 0) && ((x & (x - 1)) == 0);
 }
@@ -165,9 +171,9 @@ static bool is_power_of_2(uint32_t x)
   * @param  [in] x: The number to be converted.
   * @return The power of two.
   */
-static uint32_t roundup_pow_of_two(uint32_t x)
+static uint8_t roundup_pow_of_two(uint8_t x)
 {
-  uint32_t b = 0;
+  uint8_t b = 0;
 
   for(int i = 0; i < 32; i++)
   {

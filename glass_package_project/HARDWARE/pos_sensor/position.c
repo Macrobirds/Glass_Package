@@ -353,8 +353,8 @@ void EXTI4_IRQHandler(void);
 
 void EXTI9_5_IRQHandler(void)
 {
-	static volatile u8 flag=FALSE;
-	static volatile u32 old_sensor_filter=0;
+//	static volatile u8 flag=FALSE;
+
 	
 	//GOH_end_Sen
 	if(EXTI_GetITStatus(EXTI_Line5)!=RESET) //水平出料到达终点
@@ -399,12 +399,11 @@ void EXTI9_5_IRQHandler(void)
 	#endif
 	
 	
-	
+#ifdef GE_UP_SENSOR_BEFORE
 	//GE_down_Sen
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
 	{
 		delay_us(DELAY_US);
-		#ifdef GE_UP_SENSOR_BEFORE
 		if(GE.task==GE_move_glass)
 		{
 					if(!flag)
@@ -420,21 +419,6 @@ void EXTI9_5_IRQHandler(void)
 						flag=FALSE;
 					}				
 		}
-		#endif
-		
-		#ifdef GE_DOWN_SENSOR_BEFORE
-				if(GE.task==GE_move_glass)
-		{
-				if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //下端照射
-				{
-						TIM_Cmd(TIM1,DISABLE);
-						GE_motor_struct.motion=Stop;
-						printf("GE_down_Sen \r\n");
-				}
-				
-		}
-		
-		#endif
 		EXTI_ClearITPendingBit(EXTI_Line8);
 	}
 	//GE_up_Sen
@@ -454,6 +438,33 @@ void EXTI9_5_IRQHandler(void)
 		}
 		EXTI_ClearITPendingBit(EXTI_Line9);
 	}
+	#endif
+	
+	#ifdef GE_UP_DOWN_SENSOR
+		//GE_down_Sen
+	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
+	{
+		delay_us(DELAY_US);
+
+		if(GE.task==GE_move_glass)
+		{
+				if(GE_down_Sen==Sen_Block&&GE_up_Sen!=Sen_Block) //只有下端照射
+				{
+						TIM_Cmd(TIM1,DISABLE);
+						GE_motor_struct.motion=Stop;
+						printf("GE_down_Sen \r\n");
+				}		
+		}
+		EXTI_ClearITPendingBit(EXTI_Line8);
+	}
+	
+	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
+	{
+		delay_us(DELAY_US);
+		EXTI_ClearITPendingBit(EXTI_Line9);
+	}
+	
+	#endif
 
 }
 void EXTI15_10_IRQHandler(void)

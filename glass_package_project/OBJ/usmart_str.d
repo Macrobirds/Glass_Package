@@ -51,6 +51,7 @@
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\usmart_str.o: ..\TASK\taskthread.h
+..\obj\usmart_str.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\usmart_str.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -64,4 +65,3 @@
 ..\obj\usmart_str.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\usmart_str.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\usmart_str.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\usmart_str.o: ..\SCREENUART\uart3_dataHandle.h

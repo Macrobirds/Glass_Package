@@ -1,11 +1,10 @@
 ..\obj\glassenter_task.o: glassenter_task.c
 ..\obj\glassenter_task.o: Globalconfig.h
-..\obj\glassenter_task.o: ..\SYSTEM\sys\sys.h
-..\obj\glassenter_task.o: ..\USER\stm32f10x.h
+..\obj\glassenter_task.o: stm32f10x.h
 ..\obj\glassenter_task.o: ..\CORE\core_cm3.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\glassenter_task.o: ..\USER\system_stm32f10x.h
-..\obj\glassenter_task.o: ..\USER\stm32f10x_conf.h
+..\obj\glassenter_task.o: system_stm32f10x.h
+..\obj\glassenter_task.o: stm32f10x_conf.h
 ..\obj\glassenter_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
 ..\obj\glassenter_task.o: ..\USER\stm32f10x.h
 ..\obj\glassenter_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h
@@ -30,6 +29,7 @@
 ..\obj\glassenter_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\glassenter_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\glassenter_task.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\glassenter_task.o: ..\SYSTEM\sys\sys.h
 ..\obj\glassenter_task.o: ..\SYSTEM\delay\delay.h
 ..\obj\glassenter_task.o: ..\SYSTEM\usart\usart.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\glassenter_task.o: ..\TASK\taskthread.h
+..\obj\glassenter_task.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\glassenter_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\glassenter_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\glassenter_task.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\glassenter_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\glassenter_task.o: ..\SCREENUART\uart3_dataHandle.h

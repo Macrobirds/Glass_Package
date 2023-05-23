@@ -3,7 +3,12 @@
 // 夹手位于垂直原点，垂直静止
 static u8 check_GC(void)
 {
+	#ifdef GC_ROT_PACKAGE
 	return (GC_ver_Sen == Sen_Block) && (GC.motor_v->motion == Stop);
+	#endif
+	#ifdef GC_VER_PACKAGE
+	return (GC.motor_v->postion<=GC.GCV_pacakge_pos)&&(GC.motor_v->motion == Stop);
+	#endif
 }
 
 void GE_ReadyTask(void)
@@ -67,7 +72,9 @@ void GE_ReadyTask(void)
 	case GE_BOx_Out:
 		if (check_GC())
 		{
-			motorGo_acc(GE.motor, GE.motor->max_pos - 100);
+			
+			//motorGo_acc(GE.motor, GE.motor->max_pos - 100);
+			motorGo(GE.motor,GE.motor->max_pos-100,0);
 			GE.sta = Running;
 		}
 
@@ -92,6 +99,7 @@ void GE_ReadyTask(void)
 		}
 		break;
 	////////////////////装载槽前端移动到夹手正下方////////////////////////
+#ifdef GE_UP_SENSOR_BEFORE
 	case GE_move_front:
 		if (GE_up_Sen == Sen_Block)
 		{
@@ -127,6 +135,17 @@ void GE_ReadyTask(void)
 			GE.glass_Exist = FALSE;
 		}
 		break;
+#endif
+#ifdef GE_UP_DOWN_SENSOR
+	case GE_move_glass:
+		if(check_GC())
+		{
+				motorGo(GE.motor,GE.GE_box_len,0);
+				GE.sta=Running;
+		}
+		break;
+#endif
+
 		///////////////////////////////进料任务完成//////////////////////////////
 	case GE_finish:
 
@@ -228,6 +247,7 @@ void GE_RunningTask(void)
 		}
 		break;
 	/////////////////////等待装载槽前端移动到夹手正下方///////////////////////////////
+#ifdef GE_UP_SENSOR_BEFORE
 	case GE_move_front:
 		if (GE.motor->motion == Stop) // GE 上下端传感器一直未感应
 		{
@@ -260,7 +280,7 @@ void GE_RunningTask(void)
 			}
 			else
 			{
-				Error_Set(Error_Sensor, GE_up_sensor | GE_down_sensor);
+				Error_Set(Error_Sensor, GE_up_sensor );
 			}
 		}
 		break;
@@ -271,7 +291,28 @@ void GE_RunningTask(void)
 			GE.sta = Finish;
 		}
 		break;
+#endif
+#ifdef GE_UP_DOWN_SENSOR
+	case GE_move_glass:
+			if(GE.motor->motion==Stop)
+			{
+					if(GE.motor->postion==GE.GE_box_len) //到达进料槽最大长度 结束任务
+					{
+						GE.task=GE_finish;
+						GE.sta=Ready;
+						break;
+					}
+					if(GE_down_Sen==Sen_Block)
+					{
+						GE.sta=Finish;
+					}else
+					{
+						Error_Set(Error_Sensor,GE_down_sensor);
+					}
 
+			}
+		break;
+#endif
 	case GE_finish:
 
 		break;
@@ -296,7 +337,7 @@ void GE_FinishTask(void)
 	case GE_none:
 		break;
 	case GE_reset_on:
-		if (TaskThread_CheckIdle())
+		if (GC.task==GC_none&&GP.task==GP_none&&GO.task==GO_none)
 		{
 			/*发送复位完成的信息*/
 			if (GE.WaitAck)
@@ -310,7 +351,7 @@ void GE_FinishTask(void)
 		}
 		break;
 	case GE_reset_off:
-		if (TaskThread_CheckIdle())
+		if (GC.task==GC_none&&GP.task==GP_none&&GO.task==GO_none)
 		{
 			/*发送关机复位完成信息*/
 			if (GE.WaitAck)
@@ -346,6 +387,7 @@ void GE_FinishTask(void)
 		GE.sta = Ready;
 #endif
 		break;
+#ifdef GE_UP_SENSOR_BEFORE
 	case GE_start: // 跳转至装载槽前端移动到夹手正下方
 		GE.sta = Ready;
 		GE.task = GE_move_front;
@@ -379,6 +421,23 @@ void GE_FinishTask(void)
 		GE.sta = Ready;
 		GE.task = GE_move_front;
 		break;
+#endif
+#ifdef GE_UP_DOWN_SENSOR
+	case GE_start:
+		GE.sta=Ready;
+		GE.task=GE_move_glass;
+		break;
+	case GE_move_glass:
+		if(check_GC())
+		{
+				if (GE_down_Sen != Sen_Block && GE_up_Sen != Sen_Block) // 玻片被夹取 上下端无感应
+				{
+					GE.sta = Ready;
+				}
+		}
+		break;
+#endif
+
 	case GE_finish:
 		break;
 	case GE_error:
@@ -402,7 +461,7 @@ void GE_TaskThread(void)
 		GE.running_tim++;
 		if (GE.running_tim > OVERTIME)
 		{
-			Error_OverTime_Set(GE_idx, GE.task);
+			Error_OverTime_Set(Extra_error_overtime_GE, GE.task);
 			// Error_Set(Error_OverTime, 0);
 		}
 	}

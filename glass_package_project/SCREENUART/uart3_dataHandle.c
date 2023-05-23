@@ -1,5 +1,25 @@
 #include "Globalconfig.h"
 
+static u8 ringbuf_send_buf[128]={0};
+static u8 ringbuf_task_buf[128]={0};
+
+RingBuffer  RingBuf_Send={
+	.size=128,
+	.in=0,
+	.out=0,
+	.buffer=ringbuf_send_buf,
+};
+
+RingBuffer  RingBuf_Task={
+	.size=128,
+	.in=0,
+	.out=0,
+	.buffer=ringbuf_task_buf,
+};
+
+
+u8 screenUart_RecvCompleteBuf[MaxProtocolLength] = {0};
+u8 screenUart_RecvCompleteBufLength = 0;
 /* *************************************** 常量 *********************************** */
 
 /* *************************************** 函数实现 *********************************** */
@@ -27,7 +47,6 @@ static u8 *mymemcpy1(void *dst, void *src, size_t size)
 	return (uint8_t *)dst + size;
 }
 
-
 // 大端数据转换未小端数据 返回下一源指针
 static u8 *mymemcpy2(void *src, void *dst, size_t size)
 {
@@ -49,7 +68,6 @@ static u8 *mymemcpy2(void *src, void *dst, size_t size)
 	}
 	return (uint8_t *)src + size;
 }
-
 
 // 返回传感器数据
 static void query_state_sensor(u8 Index)
@@ -182,19 +200,15 @@ static void query_state_gas(u8 Index)
 	myfree(SRAMIN, tmpBuf);
 	tmpBuf = 0;
 }
-//查询参数
+// 查询参数
 static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 {
+	u8 i=0;
 	u8 *tmpBuf = 0;
 	u8 buflen = datalen;
-	tmpBuf = mymalloc(SRAMIN, buflen);
-	memset(tmpBuf, 0, buflen);
-	tmpBuf[0] = 0x3a;
-	tmpBuf[1] = buflen;
-	tmpBuf[2] = Index;
-	tmpBuf[3] = Type_queryAck;
-	tmpBuf[4] = Fc_param;
-	tmpBuf[5] = extra;
+	tmpBuf = mymalloc(SRAMIN, buflen+1);
+	memset(tmpBuf, 0, buflen+1);
+
 	// 重新读取参数配置
 	switch (extra)
 	{
@@ -218,12 +232,22 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 		break;
 	}
 	delay_ms(50);
+	tmpBuf[0] = 0x3a;
+	tmpBuf[1] = buflen;
+	tmpBuf[2] = Index;
+	tmpBuf[3] = Type_queryAck;
+	tmpBuf[4] = Fc_param;
+	tmpBuf[5] = extra;
 	// 拷贝参数
 	cpy_fun(&tmpBuf[6]);
-
 	setBCC(tmpBuf, buflen);
 	tmpBuf[buflen - 1] = 0x23;
-	screenUart_sendStr(tmpBuf, buflen);
+	printf("\r\nmotor ans");
+	for(i=0;i<buflen;i++)
+	{
+		printf("%x ",tmpBuf[i]);
+	}
+	screenUart_sendStr((const char *)tmpBuf, buflen);
 	myfree(SRAMIN, tmpBuf);
 	tmpBuf = 0;
 }
@@ -244,7 +268,12 @@ static void query_param_motor(u8 *bufptr)
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOH_min_speed, sizeof(Global_Parm.MOT->GOH_min_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_max_speed, sizeof(Global_Parm.MOT->GOV_max_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_min_speed, sizeof(Global_Parm.MOT->GOV_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->motor_dir_level, sizeof(Global_Parm.MOT->motor_dir_level));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_dir, sizeof(Global_Parm.MOT->GOV_dir));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOH_dir, sizeof(Global_Parm.MOT->GOH_dir));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GP_dir, sizeof(Global_Parm.MOT->GP_dir));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GC_rot_dir, sizeof(Global_Parm.MOT->GC_rot_dir));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GC_ver_dir, sizeof(Global_Parm.MOT->GC_ver_dir));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GE_dir, sizeof(Global_Parm.MOT->GE_dir));
 	tmpptr = 0;
 }
 // 查询-参数-夹手参数
@@ -258,6 +287,7 @@ static void query_param_calw(u8 *bufptr)
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS->GCV_glass_len, sizeof(Global_Parm.GCS->GCV_glass_len));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS->GOH_mid_pos, sizeof(Global_Parm.GCS->GOH_mid_pos));
 	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS->GOH_end_pos, sizeof(Global_Parm.GCS->GOH_end_pos));
+	tempptr = mymemcpy1(tempptr, &Global_Parm.GCS->GCV_package_pos, sizeof(Global_Parm.GCS->GCV_package_pos));
 	tempptr = 0;
 }
 // 查询-参数-封片参数
@@ -314,7 +344,12 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOH_min_speed, sizeof(Global_Parm.MOT->GOH_min_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_max_speed, sizeof(Global_Parm.MOT->GOV_max_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_min_speed, sizeof(Global_Parm.MOT->GOV_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->motor_dir_level, sizeof(Global_Parm.MOT->motor_dir_level));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_dir, sizeof(Global_Parm.MOT->GOV_dir));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOH_dir, sizeof(Global_Parm.MOT->GOH_dir));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GP_dir, sizeof(Global_Parm.MOT->GP_dir));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GC_rot_dir, sizeof(Global_Parm.MOT->GC_rot_dir));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GC_ver_dir, sizeof(Global_Parm.MOT->GC_ver_dir));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GE_dir, sizeof(Global_Parm.MOT->GE_dir));
 	tmpptr = 0;
 	// 配置电机参数
 	motor_parameter_Init();
@@ -326,7 +361,7 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 static u8 set_param_claw(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 20)
+	if (datalen != 24)
 	{
 		tempptr = 0;
 		return 0;
@@ -343,6 +378,7 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCV_glass_len, sizeof(Global_Parm.GCS->GCV_glass_len));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GOH_mid_pos, sizeof(Global_Parm.GCS->GOH_mid_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GOH_end_pos, sizeof(Global_Parm.GCS->GOH_end_pos));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCV_package_pos, sizeof(Global_Parm.GCS->GCV_package_pos));
 	tempptr = 0;
 	// 更新任务参数
 	TaskThread_Parm_Init();
@@ -407,7 +443,7 @@ static u8 set_param_outin(u8 *data, u8 datalen)
 	delay_ms(50);
 	return 1;
 }
-//debug 模式下配置IO口
+// debug 模式下配置IO口
 static u8 set_state_IO(u8 *data)
 {
 	if (TaskThread_CheckIdle())
@@ -520,8 +556,7 @@ void screenUart_protocolParse(void)
 	u8 *tempptr = NULL;
 	motor_struct *motor_ptr = NULL;
 	screenUart_lastRecvIndex = Index;
-
-	//	uart1_SendString((char *)screenUart_RecvCompleteBuf, protocolLength);
+	printf("type:%d,fc:%d,extra:%d,datalength:%d",TYPE,FC,Extra,dataLength);
 
 	if (dataLength > 0)
 	{
@@ -529,6 +564,7 @@ void screenUart_protocolParse(void)
 		memset(data, 0, dataLength);
 		memcpy(data, screenUart_RecvCompleteBuf + 6, dataLength);
 	}
+
 	// 判断协议类型
 	switch (TYPE)
 	{
@@ -569,8 +605,8 @@ void screenUart_protocolParse(void)
 			// 设备位置
 			case Extra_state_position:
 			{
-				tmpBuf = mymalloc(SRAMIN, 24);
-				memset(tmpBuf, 0, 24);
+				tmpBuf = mymalloc(SRAMIN, 25);
+				memset(tmpBuf, 0, 25);
 				tempptr = tmpBuf;
 				tempptr = mymemcpy1(tempptr, &(GE.motor->postion), sizeof(GE.motor->postion));
 				tempptr = mymemcpy1(tempptr, &(GC.motor_v->postion), sizeof(GC.motor_v->postion));
@@ -606,7 +642,8 @@ void screenUart_protocolParse(void)
 			// 电机参数
 			case Extra_param_motor:
 			{
-				query_param(Index, 23, Extra, query_param_motor);
+				printf("query motor\r\n");
+				query_param(Index, 28, Extra, query_param_motor);
 				break;
 			}
 			// 设备信息
@@ -634,7 +671,7 @@ void screenUart_protocolParse(void)
 			// 夹手托盘参数
 			case Extra_param_claw:
 			{
-				query_param(Index, 28, Extra_param_claw, query_param_calw);
+				query_param(Index, 32, Extra_param_claw, query_param_calw);
 				break;
 			}
 			// 封片参数
@@ -872,11 +909,9 @@ void screenUart_protocolParse(void)
 				{
 					break;
 				}
-				// 需要系统处于空闲状态 
-				if (TaskThread_CheckIdle())
+				// 进行开机复位
+				if (TaskThread_BootReset())
 				{
-					// 进行开机复位
-					TaskThread_BootReset();
 					if (data[0] == OnOffState_on)
 					{
 						ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
@@ -907,41 +942,34 @@ void screenUart_protocolParse(void)
 			{
 				if (dataLength != 1)
 				{
-					if (data[0])
-					{
-						ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
-					}
-
 					break;
 				}
-				if (TaskThread_State != taskthread_running)
-				{
 
-					if (TaskThread_CheckStop())
+				if (TaskThread_CheckStop())
+				{
+					// 进行进缸操作
+					if (GE.task == GE_BOx_Out && GE.sta == Finish)
 					{
-						// 进行进缸操作
-						if (GE.task == GE_BOx_Out && GE.sta == Finish)
-						{
-							TaskThread_GEIn();
-						}
-						else // 进行出缸操作
-						{
-							TaskThread_GEOut();
-						}
-						if (data[0] == OnOffState_on)
-						{
-							ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
-							// 是否需要应答标志位
-							GE.WaitAck = 1;
-							GE.Index = Index;
-						}
+						TaskThread_GEIn();
 					}
-					else
+					else // 进行出缸操作
 					{
-						if (data[0] == OnOffState_on)
-							ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
+						TaskThread_GEOut();
+					}
+					if (data[0] == OnOffState_on)
+					{
+						ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
+						// 是否需要应答标志位
+						GE.WaitAck = 1;
+						GE.Index = Index;
 					}
 				}
+				else
+				{
+					if (data[0] == OnOffState_on)
+						ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
+				}
+
 				break;
 			}
 			// 进出槽动作
@@ -949,40 +977,31 @@ void screenUart_protocolParse(void)
 			{
 				if (dataLength != 1)
 				{
-					if (data[0])
-					{
-						ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
-					}
-
 					break;
 				}
-				if (TaskThread_State != taskthread_running)
+				if (TaskThread_CheckStop())
 				{
-
-					if (TaskThread_CheckStop())
+					// 进行进缸操作
+					if (GO.task == GO_Box_Out && GO.sta == Finish)
 					{
-						// 进行进缸操作
-						if (GO.task == GO_Box_Out && GO.sta == Finish)
-						{
-							TaskThread_GOIn();
-						}
-						else // 进行出缸操作
-						{
-							TaskThread_GOOut();
-						}
-						if (data[0] == OnOffState_on)
-						{
-							ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
-							// 是否需要应答标志位
-							GO.WaitAck = 1;
-							GO.Index = Index;
-						}
+						TaskThread_GOIn();
 					}
-					else
+					else // 进行出缸操作
 					{
-						if (data[0] == OnOffState_on)
-							ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
+						TaskThread_GOOut();
 					}
+					if (data[0] == OnOffState_on)
+					{
+						ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
+						// 是否需要应答标志位
+						GO.WaitAck = 1;
+						GO.Index = Index;
+					}
+				}
+				else
+				{
+					if (data[0] == OnOffState_on)
+						ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
 				}
 				break;
 			}
@@ -1034,9 +1053,8 @@ void screenUart_protocolParse(void)
 				}
 				else if (TaskThread_State == taskthread_error)
 				{
-					if (TaskThread_Check_ErrorDone())
+					if (TaskThread_Resume_Error())
 					{
-						TaskThread_Resume_Error();
 						if (data[0] == OnOffState_on)
 						{
 							ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
@@ -1056,9 +1074,8 @@ void screenUart_protocolParse(void)
 			// 关机运行
 			case Extra_run_Close:
 			{
-				if (TaskThread_CheckStop()||(TaskThread_Start==taskthread_emergency))
+				if (TaskThread_Close())
 				{
-					TaskThread_Close();
 					if (data[0] == OnOffState_on)
 					{
 						ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
@@ -1082,6 +1099,7 @@ void screenUart_protocolParse(void)
 	// 清除data临时数组数据
 	myfree(SRAMIN, data);
 	data = 0;
+
 }
 // 通用应答-应答1位数据
 void ack(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte)
@@ -1119,6 +1137,17 @@ void ack_0data(u8 Index, u8 TYPE, u8 FC, u8 Extra)
 	tmpBuf[5] = Extra;
 	setBCC(tmpBuf, sizeof(tmpBuf));
 	screenUart_sendStr((const char *)tmpBuf, sizeof(tmpBuf));
+}
+
+void ack_0data_task(u8 Index, u8 TYPE, u8 FC, u8 Extra)
+{
+	u8 tmpBuf[8] = {0x3A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x23};
+	tmpBuf[2] = Index;
+	tmpBuf[3] = TYPE;
+	tmpBuf[4] = FC;
+	tmpBuf[5] = Extra;
+	setBCC(tmpBuf, sizeof(tmpBuf));
+	screenUart_sendStr_task((const char *)tmpBuf, sizeof(tmpBuf));
 }
 
 // 通用应答-应答2位数据
@@ -1289,7 +1318,6 @@ void sendProtocol_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 data1, u8 data2)
 // }
 // dst_ptr++;
 // return dst_ptr;
-
 
 // uint8_t size_cnt = size;
 // uint8_t *src_ptr = (uint8_t *)src;

@@ -1,6 +1,5 @@
 ..\obj\usart.o: ..\SYSTEM\usart\usart.c
 ..\obj\usart.o: ..\USER\Globalconfig.h
-..\obj\usart.o: ..\SYSTEM\sys\sys.h
 ..\obj\usart.o: ..\USER\stm32f10x.h
 ..\obj\usart.o: ..\CORE\core_cm3.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -30,6 +29,7 @@
 ..\obj\usart.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\usart.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\usart.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\usart.o: ..\SYSTEM\sys\sys.h
 ..\obj\usart.o: ..\SYSTEM\delay\delay.h
 ..\obj\usart.o: ..\SYSTEM\usart\usart.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\usart.o: ..\TASK\taskthread.h
+..\obj\usart.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\usart.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\usart.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\usart.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\usart.o: ..\SCREENUART\uart3_dataHandle.h

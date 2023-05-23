@@ -1,11 +1,10 @@
 ..\obj\codeguard.o: codeGuard.c
 ..\obj\codeguard.o: Globalconfig.h
-..\obj\codeguard.o: ..\SYSTEM\sys\sys.h
-..\obj\codeguard.o: ..\USER\stm32f10x.h
+..\obj\codeguard.o: stm32f10x.h
 ..\obj\codeguard.o: ..\CORE\core_cm3.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\codeguard.o: ..\USER\system_stm32f10x.h
-..\obj\codeguard.o: ..\USER\stm32f10x_conf.h
+..\obj\codeguard.o: system_stm32f10x.h
+..\obj\codeguard.o: stm32f10x_conf.h
 ..\obj\codeguard.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
 ..\obj\codeguard.o: ..\USER\stm32f10x.h
 ..\obj\codeguard.o: ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h
@@ -30,6 +29,7 @@
 ..\obj\codeguard.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\codeguard.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\codeguard.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\codeguard.o: ..\SYSTEM\sys\sys.h
 ..\obj\codeguard.o: ..\SYSTEM\delay\delay.h
 ..\obj\codeguard.o: ..\SYSTEM\usart\usart.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\codeguard.o: ..\TASK\taskthread.h
+..\obj\codeguard.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\codeguard.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\codeguard.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\codeguard.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\codeguard.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\codeguard.o: ..\SCREENUART\uart3_dataHandle.h

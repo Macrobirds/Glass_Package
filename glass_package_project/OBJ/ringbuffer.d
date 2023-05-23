@@ -1,11 +1,8 @@
 ..\obj\ringbuffer.o: ..\SYSTEM\ringbuf\RingBuffer.c
-..\obj\ringbuffer.o: ..\SYSTEM\ringbuf\RingBuffer.h
-..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
-..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
-..\obj\ringbuffer.o: ..\SYSTEM\Malloc\malloc.h
+..\obj\ringbuffer.o: ..\USER\Globalconfig.h
 ..\obj\ringbuffer.o: ..\USER\stm32f10x.h
 ..\obj\ringbuffer.o: ..\CORE\core_cm3.h
+..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\ringbuffer.o: ..\USER\system_stm32f10x.h
 ..\obj\ringbuffer.o: ..\USER\stm32f10x_conf.h
 ..\obj\ringbuffer.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
@@ -32,7 +29,6 @@
 ..\obj\ringbuffer.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\ringbuffer.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\ringbuffer.o: ..\STM32F10x_FWLib\inc\misc.h
-..\obj\ringbuffer.o: ..\USER\Globalconfig.h
 ..\obj\ringbuffer.o: ..\SYSTEM\sys\sys.h
 ..\obj\ringbuffer.o: ..\SYSTEM\delay\delay.h
 ..\obj\ringbuffer.o: ..\SYSTEM\usart\usart.h
@@ -48,8 +44,12 @@
 ..\obj\ringbuffer.o: ..\HARDWARE\ITV0011\ITV0011.h
 ..\obj\ringbuffer.o: ..\SYSTEM\adc\adc.h
 ..\obj\ringbuffer.o: ..\HARDWARE\motor\motor.h
+..\obj\ringbuffer.o: ..\SYSTEM\Malloc\malloc.h
 ..\obj\ringbuffer.o: ..\SYSTEM\ringbuf\RingBuffer.h
+..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\ringbuffer.o: ..\TASK\taskthread.h
+..\obj\ringbuffer.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\ringbuffer.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -63,4 +63,3 @@
 ..\obj\ringbuffer.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\ringbuffer.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\ringbuffer.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\ringbuffer.o: ..\SCREENUART\uart3_dataHandle.h

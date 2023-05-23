@@ -50,6 +50,7 @@
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\gas.o: ..\TASK\taskthread.h
+..\obj\gas.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\gas.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -63,4 +64,3 @@
 ..\obj\gas.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\gas.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\gas.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\gas.o: ..\SCREENUART\uart3_dataHandle.h

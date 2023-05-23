@@ -1,6 +1,5 @@
 ..\obj\position.o: ..\HARDWARE\pos_sensor\position.c
 ..\obj\position.o: ..\USER\Globalconfig.h
-..\obj\position.o: ..\SYSTEM\sys\sys.h
 ..\obj\position.o: ..\USER\stm32f10x.h
 ..\obj\position.o: ..\CORE\core_cm3.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -30,6 +29,7 @@
 ..\obj\position.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\position.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\position.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\position.o: ..\SYSTEM\sys\sys.h
 ..\obj\position.o: ..\SYSTEM\delay\delay.h
 ..\obj\position.o: ..\SYSTEM\usart\usart.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\position.o: ..\TASK\taskthread.h
+..\obj\position.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\position.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\position.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\position.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\position.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\position.o: ..\SCREENUART\uart3_dataHandle.h

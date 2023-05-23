@@ -2,6 +2,15 @@
 #define __UART3_DATAHANDLE_H
 #include "sys.h" 
 #include <stdbool.h>
+#include "RingBuffer.h"
+
+#define MaxProtocolLength  		64		// 串口2、3 接收缓冲大小 
+extern  u8 screenUart_RecvCompleteBuf[MaxProtocolLength];
+extern u8 screenUart_RecvCompleteBufLength;
+
+extern RingBuffer  RingBuf_Send;
+extern RingBuffer  RingBuf_Task;
+
 /* *************************************** 函数声明 *********************************** */
 //屏幕串口协议解析
 void screenUart_protocolParse(void);
@@ -12,6 +21,7 @@ void screenUart_protocolSend(void);
 void ack(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte);
 void ack_task(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte);
 void ack_0data(u8 Index, u8 TYPE, u8 FC, u8 Extra);
+void ack_0data_task(u8 Index, u8 TYPE, u8 FC, u8 Extra);
 void ack_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte, u8 ackByte_2);
 void ack_3data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte, u8 ackByte_2, u8 ackByte_3);
 void screenUart_ack_array(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 *data, u8 dataLength);
@@ -114,7 +124,7 @@ enum Error
 	Extra_error_spray,
 	Extra_error_full,
 	Extra_error_grap,
-	Extar_error_suck,
+	Extra_error_suck,
 
 };
 

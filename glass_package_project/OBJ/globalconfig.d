@@ -1,11 +1,10 @@
 ..\obj\globalconfig.o: Globalconfig.c
 ..\obj\globalconfig.o: Globalconfig.h
-..\obj\globalconfig.o: ..\SYSTEM\sys\sys.h
-..\obj\globalconfig.o: ..\USER\stm32f10x.h
+..\obj\globalconfig.o: stm32f10x.h
 ..\obj\globalconfig.o: ..\CORE\core_cm3.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\globalconfig.o: ..\USER\system_stm32f10x.h
-..\obj\globalconfig.o: ..\USER\stm32f10x_conf.h
+..\obj\globalconfig.o: system_stm32f10x.h
+..\obj\globalconfig.o: stm32f10x_conf.h
 ..\obj\globalconfig.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
 ..\obj\globalconfig.o: ..\USER\stm32f10x.h
 ..\obj\globalconfig.o: ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h
@@ -30,6 +29,7 @@
 ..\obj\globalconfig.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\globalconfig.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\globalconfig.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\globalconfig.o: ..\SYSTEM\sys\sys.h
 ..\obj\globalconfig.o: ..\SYSTEM\delay\delay.h
 ..\obj\globalconfig.o: ..\SYSTEM\usart\usart.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\globalconfig.o: ..\TASK\taskthread.h
+..\obj\globalconfig.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\globalconfig.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\globalconfig.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\globalconfig.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\globalconfig.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\globalconfig.o: ..\SCREENUART\uart3_dataHandle.h

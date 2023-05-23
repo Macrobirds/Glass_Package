@@ -6,6 +6,7 @@
         "usart.h": "c",
         "position.h": "c",
         "uart3_datahandle.h": "c",
-        "itv0011.h": "c"
+        "itv0011.h": "c",
+        "ringbuffer.h": "c"
     }
 }

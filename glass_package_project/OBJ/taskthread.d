@@ -1,6 +1,5 @@
 ..\obj\taskthread.o: ..\TASK\taskthread.c
 ..\obj\taskthread.o: ..\USER\Globalconfig.h
-..\obj\taskthread.o: ..\SYSTEM\sys\sys.h
 ..\obj\taskthread.o: ..\USER\stm32f10x.h
 ..\obj\taskthread.o: ..\CORE\core_cm3.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -30,6 +29,7 @@
 ..\obj\taskthread.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\taskthread.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\taskthread.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\taskthread.o: ..\SYSTEM\sys\sys.h
 ..\obj\taskthread.o: ..\SYSTEM\delay\delay.h
 ..\obj\taskthread.o: ..\SYSTEM\usart\usart.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\taskthread.o: ..\TASK\taskthread.h
+..\obj\taskthread.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\taskthread.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\taskthread.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\taskthread.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\taskthread.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\taskthread.o: ..\SCREENUART\uart3_dataHandle.h

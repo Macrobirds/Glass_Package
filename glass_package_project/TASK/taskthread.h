@@ -1,8 +1,12 @@
 #ifndef __TASKTHREAD_H
 #define __TASKTHREAD_H
 #include "motor.h"
+#include "uart3_dataHandle.h"
 
-
+#define GC_ROT_PACKAGE
+//#define GC_VER_PACKAGE
+#define GE_UP_DOWN_SENSOR
+//#define GE_UP_SENSOR_BEFORE 
 
 #define OVERTIME 20000 // 20 Second
 
@@ -44,13 +48,7 @@ enum task_error
 	Error_Sucker=1<<9, //吸取失败 玻片损坏或者吸盘损坏 
 };
 
-enum task_index{
-	GE_idx=1,
-	GC_idx=2,
-	GP_idx=3,
-	GO_idx=4,
 
-};
 
 // 玻片进入槽任务流程序号
 enum glass_enter_task_index
@@ -63,9 +61,15 @@ enum glass_enter_task_index
 	GE_BOx_Out,	  // 出缸
 	/****************************/
 	GE_start,	   // 移动到原点位置
+	#ifdef GE_UP_SENSOR_BEFORE
 	GE_move_front, // 移动到装载槽前端
 	GE_move_glass, // 移动到载玻片
 	GE_move_back,  // 移动到装载槽后端
+	#endif
+	
+	#ifdef GE_UP_DOWN_SENSOR
+	GE_move_glass,
+	#endif
 	GE_finish,	   // 结束任务
 	GE_error,	   // 异常处理任务
 
@@ -88,8 +92,15 @@ enum glass_claw_task_index
 	GC_move_down,	// 夹手下降到夹载玻片处
 	GC_check_glass, // 检测是否夹取到玻片
 	GC_move_up,		// 夹手上升回垂直原点
+	#ifdef GC_ROT_PACKAGE
 	GC_rot_up,		// 夹手回到旋转原点
 	GC_rot_hor,		// 夹手旋转到水平位置
+	#endif
+	#ifdef GC_VER_PACKAGE
+	GC_rot_hor,
+	GC_move_package,
+	#endif
+	
 	GC_finish,
 	GC_error, // 异常处理任务
 };
@@ -170,6 +181,7 @@ struct glass_claw_struct
 	u16 GCR_ver_pos;				// 旋转垂直位置
 	u32 GCV_down_pos;				// 垂直下降位置
 	u32 GCV_glass_len;		//检测是否夹取玻片成功上升高度
+	u32 GCV_pacakge_pos;
 	u8 subtask;						// 子任务
 	u8 main_subtask;
 	volatile u8 Glass_Ready;
@@ -197,8 +209,6 @@ struct glass_out_struct
 	u16 GOV_adjust_start;
 	u8 subtask;		 // 子任务
 	u8 main_subtask; //
-	volatile u8 glass_num;
-	volatile u8 box_num;
 	u8 Index;
 	u8 WaitAck;
 	u8 Storage_full;
@@ -228,13 +238,13 @@ void GP_TaskThread(void);
 void GO_TaskThread(void);
 
 //错误处理
-void Error_Set(enum task_error error, u32 error_sen);
+void Error_Set(enum task_error error, u8 error_sen);
 
 //超时错误处理
-void Error_OverTime_Set(enum task_index task,u8 task_index);
+void Error_OverTime_Set(enum Error error_task,u8 task_index);
 
 //从错误暂停中恢复运行
-void TaskThread_Resume_Error(void);
+u8 TaskThread_Resume_Error(void);
 
 // 任务是否处于空闲状态
 u8 TaskThread_CheckIdle(void);
@@ -249,22 +259,22 @@ u8 TaskThread_CheckStop(void);
 enum taskthread_state TaskThread_IsReady(void);
 
 // 开机复位任务
-void TaskThread_BootReset(void);
+u8 TaskThread_BootReset(void);
 
 // 开始运行任务
 u8 TaskThread_Start(void);
 
 // 关闭运行任务
-void TaskThread_Close(void);
+u8 TaskThread_Close(void);
 
 // 紧急暂停任务
 void TaskThread_Emergency(void);
 
 //暂停任务
-void TaskThread_Pause(void);
+u8 TaskThread_Pause(void);
 
 // 恢复任务
-void TaskThread_Resume(void);
+u8 TaskThread_Resume(void);
 
 // 任务参数初始化
 void TaskThread_Parm_Init(void);
@@ -277,5 +287,8 @@ u8 TaskThread_GEOut(void);
 u8 TaskThread_GOIn(void);
 //存储盒推出
 u8 TaskThread_GOOut(void);
+
+//发送错误信息
+void Error_Mesg_Send(void);
 
 #endif

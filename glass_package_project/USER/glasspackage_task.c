@@ -957,7 +957,7 @@ void GP_TaskThread(void)
 		GP.running_tim++;
 		if (GP.running_tim > OVERTIME)
 		{
-			Error_OverTime_Set(GP_idx,GP.task);
+			Error_OverTime_Set(Extra_error_overtime_GP,GP.task);
 			//Error_Set(Error_OverTime, 0);
 		}
 	}

@@ -38,7 +38,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdlib.h>
 #include "malloc.h"
-#include "Globalconfig.h"
+
 
 /* Macro definitions ---------------------------------------------------------*/
 #define RING_BUFFER_MALLOC(size)  mymalloc(SRAMIN,size)
@@ -48,19 +48,19 @@ extern "C" {
 typedef struct
 {
   uint8_t *buffer;
-  uint32_t size;
-  uint32_t in;
-  uint32_t out;
+  uint8_t size;
+  uint8_t in;
+  uint8_t out;
 }RingBuffer;
 
 /* Variable declarations -----------------------------------------------------*/
 /* Variable definitions ------------------------------------------------------*/
 /* Function declarations -----------------------------------------------------*/
-RingBuffer *RingBuffer_Malloc(uint32_t size);
+RingBuffer *RingBuffer_Malloc(uint8_t size);
 void RingBuffer_Free(RingBuffer *fifo);
 
-uint32_t RingBuffer_In(RingBuffer *fifo, const void *in, uint32_t len);
-uint32_t RingBuffer_Out(RingBuffer *fifo, void *out, uint32_t len);
+uint8_t RingBuffer_In(RingBuffer *fifo, const void *in, uint8_t len);
+uint8_t RingBuffer_Out(RingBuffer *fifo, void *out, uint8_t len);
 
 /* Function definitions ------------------------------------------------------*/
 
@@ -79,7 +79,7 @@ static inline void RingBuffer_Reset(RingBuffer *fifo)
   * @param  [in] fifo: The fifo to be used.
   * @return The size of the FIFO.
   */
-static inline uint32_t RingBuffer_Size(RingBuffer *fifo)
+static inline uint8_t RingBuffer_Size(RingBuffer *fifo)
 {
   return fifo->size;
 }
@@ -89,9 +89,12 @@ static inline uint32_t RingBuffer_Size(RingBuffer *fifo)
   * @param  [in] fifo: The fifo to be used.
   * @return The number of used bytes.
   */
-static inline uint32_t RingBuffer_Len(RingBuffer *fifo)
+static inline uint8_t RingBuffer_Len(RingBuffer *fifo)
 {
+	if(fifo->in>fifo->out)
   return fifo->in - fifo->out;
+	else
+	return fifo->out - fifo->in;
 }
 
 /**
@@ -99,7 +102,7 @@ static inline uint32_t RingBuffer_Len(RingBuffer *fifo)
   * @param  [in] fifo: The fifo to be used.
   * @return The number of bytes available.
   */
-static inline uint32_t RingBuffer_Avail(RingBuffer *fifo)
+static inline uint8_t RingBuffer_Avail(RingBuffer *fifo)
 {
   return RingBuffer_Size(fifo) - RingBuffer_Len(fifo);
 }

@@ -1,6 +1,7 @@
 #include "Globalconfig.h"
 #define DELAY_MS 100
 #define GLASS_DIS 16000
+#define GC_PACKAGE_POS 3 * 211
 
 // 夹手是否被阻挡
 static u8 Check_GP(void)
@@ -175,8 +176,25 @@ void GC_ReadyTask(void)
 		break;
 	///////////////////开始运行任务//////////////////////////
 	case GC_start:
+#ifdef GC_ROT_PACKAGE
 		// 释放夹手 并跳转到旋转垂直任务
 		GC.sta = Finish;
+#endif
+
+#ifdef GC_VER_PACKAGE
+		if (GC.Glass_Ready == FALSE)
+		{
+			if (GC.subtask == 0) // 释放夹手
+			{
+				Next_Task(GC.task, GC_release);
+			}
+			else if (GC.subtask == 1)
+			{
+				Next_Task(GC_rot_down, GC_rot_start);
+			}
+		}
+
+#endif
 		break;
 	//////////////////夹手旋转至垂直位置//////////////////
 	case GC_rot_down:
@@ -211,6 +229,8 @@ void GC_ReadyTask(void)
 		motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq * 2);
 		GC.sta = Running;
 		break;
+
+#ifdef GC_ROT_PACKAGE
 	case GC_rot_up:
 		if (GC_rot_Sen != Sen_Block)
 		{
@@ -233,6 +253,25 @@ void GC_ReadyTask(void)
 			GC.sta = Running;
 		}
 		break;
+
+#endif
+#ifdef GC_VER_PACKAGE
+	case GC_rot_hor:
+		if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop)
+		{
+			motorGo_acc(GC.motor_r, GC.GCR_hor_pos);
+			GC.sta = Running;
+		}
+		break;
+	case GC_move_package:
+		if (GO.motor_h->postion == GO.GOH_mid_pos && GO.motor_h->motion == Stop)
+		{
+			motorGo(GC.motor_v, GC.GCV_pacakge_pos, 0);
+			GC.sta = Running;
+		}
+		break;
+#endif
+
 	case GC_finish:
 		break;
 	case GC_error:
@@ -244,6 +283,7 @@ void GC_ReadyTask(void)
 		}
 		else if (error_type & Error_Sucker)
 		{
+#ifdef GC_ROT_PACKAGE
 			if (GC.subtask == 0)
 			{
 				if (GC.motor_r->postion == GC.GCR_ver_pos && GC.motor_r->motion == Stop)
@@ -267,6 +307,34 @@ void GC_ReadyTask(void)
 					GC.sta = Running;
 				}
 			}
+#endif
+
+#ifdef GC_VER_PACKAGE
+			if(GC.subtask==0)
+			{
+				if(GC.motor_r->postion<=GC.GCR_ver_pos&&GC.motor_r->motion==Stop)
+				{
+					GC.sta=Finish;
+				}else
+				{
+					if(GC.motor_r->motion==Stop&&GC.motor_v->motion==Stop)
+					{
+						motorGo(GC.motor_v,0,0);
+						GC.sta=Running;
+					}
+				}
+			}else if(GC.subtask==1)
+			{
+				if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop)
+				{
+					motorGo(GC.motor_r, GC.GCR_ver_pos, 0);
+					GC.sta = Running;
+				}
+			}
+			
+#endif			
+			
+			
 		}
 		break;
 	}
@@ -410,6 +478,7 @@ void GC_RunningTask(void)
 			}
 		}
 		break;
+#ifdef GC_ROT_PACKAGE
 	case GC_rot_up:
 		if (GC_rot_Sen != Sen_Block)
 		{
@@ -429,6 +498,22 @@ void GC_RunningTask(void)
 			GC.sta = Finish;
 		}
 		break;
+#endif
+#ifdef GC_VER_PACKAGE
+	case GC_rot_hor:
+		if (GC.motor_r->motion == Stop)
+		{
+			GC.sta = Finish;
+		}
+		break;
+	case GC_move_package:
+		if (GC.motor_v->motion == Stop)
+		{
+			GC.Glass_Ready = TRUE;
+			GC.sta = Finish;
+		}
+		break;
+#endif
 	////////////////////夹手释放延时超时///////////////////////
 	case GC_release:
 		if (GC.running_tim > DELAY_MS)
@@ -447,18 +532,6 @@ void GC_RunningTask(void)
 	case GC_finish:
 		break;
 	case GC_error:
-		if (GC_ver_Sen == Sen_Block)
-		{
-			GC.sta = Finish;
-		}
-		else
-		{
-			if (GC.motor_v->motion == Stop) // 垂直传感器错误 或电机错误
-			{
-				Error_Set(Error_Sensor, GC_ver_sensor);
-			}
-		}
-
 		if (error_type & Error_Grap)
 		{
 			if (GC_ver_Sen == Sen_Block)
@@ -475,12 +548,13 @@ void GC_RunningTask(void)
 		}
 		else if (error_type & Error_Sucker)
 		{
+#ifdef GC_ROT_PACKAGE
 			if (GC.subtask == 0)
 			{
 				if (GC_rot_Sen != Sen_Block)
 				{
 					GC.sta = Ready;
-					GC.subtask=1;
+					GC.subtask = 1;
 				}
 				else
 				{
@@ -493,12 +567,40 @@ void GC_RunningTask(void)
 			}
 			else if (GC.subtask == 1)
 			{
-				if(GC.motor_r->motion==Stop)
+				if (GC.motor_r->motion == Stop)
 				{
-					GC.sta=Finish;
-					GC.subtask=0;
+					GC.sta = Finish;
+					GC.subtask = 0;
 				}
 			}
+#endif
+
+#ifdef GC_VER_PACKAGE
+			if(GC.subtask==0)
+			{
+				if (GC_ver_Sen == Sen_Block)
+				{
+					GC.sta = Ready;
+					GC.subtask = 1;
+				}
+				else
+				{
+					if (GC.motor_v->motion == Stop)
+					{
+
+							Error_Set(Error_Sensor, GC_ver_sensor);
+					}
+				}
+			}else if(GC.subtask==1)
+			{
+				if (GC.motor_r->motion == Stop)
+				{
+					GC.sta = Finish;
+					GC.subtask = 0;
+				}
+			}
+#endif
+
 		}
 
 		break;
@@ -538,10 +640,12 @@ void GC_FinishTask(void)
 		GC.task = GC_none;
 		break;
 	case GC_start:
+#ifdef GC_ROT_PACKAGE
 		if (GC.Glass_Ready == FALSE) // 未开始封片
 		{
 			Next_Task(GC_rot_down, GC_release);
 		}
+#endif
 		break;
 
 	case GC_rot_down:
@@ -581,6 +685,7 @@ void GC_FinishTask(void)
 		//			Next_Task(GC_none,GC_ver_start); //复位回垂直原点 重新夹取玻片
 		//		}
 		break;
+#ifdef GC_ROT_PACKAGE
 	case GC_move_up:
 		if (GO.task == GO_start && GO.sta == Finish && GP.motor->postion == GP.sucker_pos) // 托盘位于原点 且封片装置在吸片位置
 		{
@@ -606,6 +711,35 @@ void GC_FinishTask(void)
 			GC.task = GC_start;
 		}
 		break;
+#endif
+#ifdef GC_VER_PACKAGE
+	case GC_move_up:
+		if (GO.task == GO_start && GO.sta == Finish && GP.motor->postion == GP.sucker_pos) // 托盘位于原点 且封片装置在吸片位置
+		{
+			GC.subtask = 0;
+			GC.sta = Ready;
+			GC.task = GC_rot_hor;
+		}
+		break;
+	case GC_rot_hor:
+		if (GO.task == GOH_package && GO.sta == Finish)
+		{
+			GC.subtask = 0;
+			GC.sta = Ready;
+			GC.task = GC_move_package;
+			;
+		}
+
+		break;
+	case GC_move_package:
+		if (GC.Glass_Ready == FALSE) // 封片结束
+		{
+			GC.subtask = 0;
+			GC.sta = Ready;
+			GC.task = GC_start;
+		}
+		break;
+#endif
 	case GC_finish:
 		break;
 	case GC_error:
@@ -628,7 +762,7 @@ void GC_TaskThread(void)
 		GC.running_tim++;
 		if (GC.running_tim > OVERTIME)
 		{
-			Error_OverTime_Set(GC_idx, GC.task);
+			Error_OverTime_Set(Extra_error_overtime_GC, GC.task);
 			// Error_Set(Error_OverTime, 0);
 		}
 	}

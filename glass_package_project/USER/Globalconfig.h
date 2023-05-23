@@ -1,5 +1,6 @@
 #ifndef __GLOBALCONFIG_H
 #define __GLOBALCONFIG_H
+#include "stm32f10x.h"
 #include "sys.h"
 #include "delay.h"
 #include "usart.h"
@@ -23,8 +24,8 @@
 
 // 条件编译参数
 
-#define GE_UP_SENSOR_BEFORE 
 #define BIG_CYLINDER
+
 
 
 
@@ -40,20 +41,13 @@
 #define SpiFlashAddr_clawsupportData 			0x0600			// 储存夹手封片托盘参数
 #define SpiFlashAddr_packageData 			0x0700			// 储存封片参数
 #define SpiFlashAddr_inoutData				0x0800 			//存储出入槽参数
-#define FlashSIZE_printfParam  			40
-#define SpiFlashAddr_bakParam 			0x0800			// 备用参数
+#define SpiFlashAddr_bakParam 			0x0900			// 备用参数
 #define FlashSIZE_bakParam  			60
 
-#define TRUE 1
-#define FALSE 0
-
-#define GAS_ENABLE 0
-#define GAS_DISABLE 1
+#define SCALE 10
 
 
-#define LED1 						PCout(4)
-#define LED2 						PCout(5)
-#define LED_ON 					0
+
 //映射位置传感器输入端口
 
 #define GE_start_Sen PEin(10) // 玻片进盒轨道起点传感器
@@ -114,8 +108,7 @@
 
 #define GP_ITV1100 PEout(3) //ITV电源开关
 
-#define ITV1100_DISABLE 0
-#define ITV1100_ENABLE 1
+
 
 #define DeveiceType_package 3
 
@@ -132,34 +125,59 @@
 #define OvershootDistance									50					// 单位mm，复位、去终点时的过冲距离，用于确保到达光电位
 #define BoxChannel												6						// 料槽数量
 
-enum Carrier_Versions {BMH = 1, BP = 2};
+enum Carrier_Versions {BMH = 1, BP = 2, FPJ=3};
 // 打标机-紫外-包埋盒
 #define	DeviceType_dbj_zw_bmh 1
 #define	DeviceType_dbj_zw_bp 2
+#define DeviceType_fpj 3
 // 机型未设置
 #define	DeviceType_none 0
+
+//外设宏定义
+#define TRUE 1
+#define FALSE 0
+
+#define GAS_ENABLE 0
+#define GAS_DISABLE 1
+
+#define LED1 						PCout(4)
+#define LED2 						PCout(5)
+#define LED_ON 					0
+
+#define ITV1100_DISABLE 0
+#define ITV1100_ENABLE 1
+
+
+#define EN_ENABLE				0
+#define LED_ON 					0
+#define BUZZER_ON 			1
+#define POWER_ON 				0
+#define FAN_ON 					1
+#define LAMP_ON 				1
+#define UVLAMP_ON				1
+#define HEATER_ON 			0
 
 enum sensor_index //总共17个传感器
 {
 	sensor_none=0,
-	GE_start_sensor=(1<<0),
-	GE_up_sensor =(1<<1),
-	GE_down_sensor =(1<<2),
-	GC_rot_sensor =(1<<3),
-	GC_ver_sensor =(1<<4),
-	GP_start_sensor =(1<<5),
-	GOH_start_sensor =(1<<6),
-	GOH_mid_sensor =(1<<7),
-	GOH_end_sensor =(1<<8),
-	GOV_start_sensor =(1<<9),
-	GOV_glass_sensor=(1<<10),
+	GE_start_sensor,
+	GE_up_sensor ,
+	GE_down_sensor,
+	GC_rot_sensor ,
+	GC_ver_sensor ,
+	GP_start_sensor,
+	GOH_start_sensor ,
+	GOH_mid_sensor ,
+	GOH_end_sensor ,
+	GOV_start_sensor ,
+	GOV_glass_sensor,
 
-	GP_sucker_sensor =(1<<11),
-	GP_spray_sensor=(1<<12),
-	GP_big_cyl_sensor =(1<<13),
-	GP_small_cyl_sensor =(1<<14),
-	GC_claw_sensor=(1<<15),
-	GOV_box_sensor =(1<<16),
+	GP_sucker_sensor ,
+	GP_spray_sensor,
+	GP_big_cyl_sensor ,
+	GP_small_cyl_sensor ,
+	GC_claw_sensor,
+	GOV_box_sensor ,
 };
 
 
@@ -176,7 +194,12 @@ typedef struct{
 	u8 GOH_min_speed;
 	u8 GOV_max_speed;
 	u8 GOV_min_speed;
-	u8 motor_dir_level;
+	u8 GOV_dir;
+	u8 GOH_dir;
+	u8 GP_dir;
+	u8 GC_rot_dir;
+	u8 GC_ver_dir;
+	u8 GE_dir;
 }Motor_Data; 
 
 
@@ -187,6 +210,7 @@ typedef struct{
 	u32 GCV_glass_len;
 	u32 GOH_mid_pos;
 	u32 GOH_end_pos;
+	u32 GCV_package_pos;
 }Glass_ClawSupport__data;
 
 typedef struct{
@@ -219,7 +243,7 @@ struct Global_Parameter_struct{
 };
 
 extern struct Global_Parameter_struct Global_Parm; 
-extern enum sensor_index sensor_error_idx;
+extern  u32 sensor_error_idx;
 
 
 extern u32 deviceSnNumber;
@@ -227,6 +251,9 @@ extern u8 DeviceType ;
 extern volatile u32 nowRtcTime;
 void Set_Global_Parameter_Default(void);
 void setBCC(u8 *data, u8 dataLength);
+void getDeviceSnNumber(void);
+void checkPirate(void);
+void set_carrierVersions_Default(void);
 
 extern OS_CPU_SR cpu_sr;
 

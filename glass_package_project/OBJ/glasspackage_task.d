@@ -1,11 +1,10 @@
 ..\obj\glasspackage_task.o: glasspackage_task.c
 ..\obj\glasspackage_task.o: Globalconfig.h
-..\obj\glasspackage_task.o: ..\SYSTEM\sys\sys.h
-..\obj\glasspackage_task.o: ..\USER\stm32f10x.h
+..\obj\glasspackage_task.o: stm32f10x.h
 ..\obj\glasspackage_task.o: ..\CORE\core_cm3.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\glasspackage_task.o: ..\USER\system_stm32f10x.h
-..\obj\glasspackage_task.o: ..\USER\stm32f10x_conf.h
+..\obj\glasspackage_task.o: system_stm32f10x.h
+..\obj\glasspackage_task.o: stm32f10x_conf.h
 ..\obj\glasspackage_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_adc.h
 ..\obj\glasspackage_task.o: ..\USER\stm32f10x.h
 ..\obj\glasspackage_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_bkp.h
@@ -30,6 +29,7 @@
 ..\obj\glasspackage_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\glasspackage_task.o: ..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h
 ..\obj\glasspackage_task.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\glasspackage_task.o: ..\SYSTEM\sys\sys.h
 ..\obj\glasspackage_task.o: ..\SYSTEM\delay\delay.h
 ..\obj\glasspackage_task.o: ..\SYSTEM\usart\usart.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -49,6 +49,7 @@
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\glasspackage_task.o: ..\TASK\taskthread.h
+..\obj\glasspackage_task.o: ..\SCREENUART\uart3_dataHandle.h
 ..\obj\glasspackage_task.o: ..\UCOSII\CONFIG\includes.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\ctype.h
@@ -62,4 +63,3 @@
 ..\obj\glasspackage_task.o: ..\HARDWARE\SpiFlash\w25qxx.h
 ..\obj\glasspackage_task.o: ..\SYSTEM\delay\mydelay.h
 ..\obj\glasspackage_task.o: D:\keil5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\glasspackage_task.o: ..\SCREENUART\uart3_dataHandle.h
