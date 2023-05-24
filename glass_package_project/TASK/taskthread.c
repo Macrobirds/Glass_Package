@@ -54,7 +54,7 @@ struct glass_package_struct GP = {
 	.task = GP_none,
 	.sta = Ready,
 	.motor = &GP_motor_struct,
-	.sucker_pos = 20000 + 268 * 5,
+	.sucker_pos = 20000 + 268 * 10,
 	.spray_pos = 19000,
 	.spray_len = 268 * 15,
 	.spray_speed = 268 * 30,
@@ -85,10 +85,8 @@ struct glass_out_struct GO = {
 };
 
 enum taskthread_state TaskThread_State = taskthread_boost;	  // 任务线程运行状态
-enum taskthread_state OldTaskThread_State = taskthread_boost; //
 volatile enum task_error error_type = Error_none;
 
-volatile u32 sensor_filter = 0;
 
 u8 TaskThread_CheckIdle(void)
 {
@@ -96,7 +94,8 @@ u8 TaskThread_CheckIdle(void)
 	{
 		return FALSE;
 	}
-
+	
+	
 	if (GE.task == GE_none && GC.task == GC_none &&
 		GP.task == GP_none && GO.task == GO_none)
 	{
@@ -108,7 +107,7 @@ u8 TaskThread_CheckIdle(void)
 		return TRUE;
 	}
 	
-	if(TaskThread_State==taskthread_boost)
+	if(TaskThread_State==taskthread_boost||TaskThread_State==taskthread_pause||TaskThread_State==taskthread_finsih)
 	{
 		if(GE.motor->motion==Stop&&GC.motor_r->motion==Stop&&GC.motor_v->motion==Stop
 			&&GP.motor->motion==Stop&&GO.motor_h->motion==Stop&&GO.motor_v->motion==Stop)
@@ -317,6 +316,8 @@ void Error_Set(enum task_error error, u8 error_sen)
 
 void TaskThread_Parm_Init(void)
 {
+	if(TaskThread_State==taskthread_boost)
+	{
 	// set GE task parm
 	GE.GE_box_len = Global_Parm.GIO->GE_box_len* GE_motor_struct.pulse_1mm / SCALE;
 	GE.GE_box_speed = Global_Parm.GIO->GE_box_speed * GE_motor_struct.pulse_1mm;
@@ -341,7 +342,9 @@ void TaskThread_Parm_Init(void)
 	GO.GOV_slot_dis = Global_Parm.GIO->GOV_slot_dis*GO_ver_motor_struct.pulse_1mm/SCALE ;
 	GO.GOV_box_len = Global_Parm.GIO->GOV_box_len *GO_ver_motor_struct.pulse_1mm/SCALE;
 	GO.GOV_adjust=Global_Parm.GIO->GOV_adjust;
-	GO.GOV_adjust_start=Global_Parm.GIO->GOV_adjust_start;
+	GO.GOV_adjust_start=Global_Parm.GIO->GOV_adjust_start;	
+	}
+
 }
 
 void TaskThread_Init(void)
@@ -471,7 +474,7 @@ u8 TaskThread_Resume(void)
 	GP.sta = Finish;
 	GP.task = GP_start;
 	GO.sta = Finish;
-	GO.task = GOH_start;
+	GO.task = GO_start;
 	TIM_Cmd(TIM6, ENABLE);
 	TaskThread_State = taskthread_running;
 	return TRUE;
@@ -482,16 +485,19 @@ u8 TaskThread_Resume_Error(void)
 {
 	if (TaskThread_State == taskthread_emergency)
 	{
+		printf("emergency error\r\n");
 		return FALSE;
 	}
 
 	if (!TaskThread_Check_ErrorDone())
 	{
+		printf(" error not done\r\n");
 		return FALSE;
 	}
 
 	if (error_type & (Error_Sensor + Error_OverTime))
 	{
+		printf("serious error\r\n");
 		return FALSE;
 	}
 
@@ -595,15 +601,15 @@ enum taskthread_state TaskThread_IsReady(void)
 // 开机复位任务
 u8 TaskThread_BootReset(void)
 {
-	if (TaskThread_State == taskthread_emergency)
-	{
-		return FALSE;
-	}
+//	if (TaskThread_State == taskthread_emergency)
+//	{
+//		return FALSE;
+//	}
 
-	if (!TaskThread_CheckIdle())
-	{
-		return FALSE;
-	}
+//	if (!TaskThread_CheckIdle())
+//	{
+//		return FALSE;
+//	}
 
 	// 开启复位任务
 	if (Gas_State == gas_pumped) // 充气完成
@@ -721,7 +727,7 @@ u8 TaskThread_GEIn(void)
 	{
 		return FALSE;
 	}
-	if (GE.task == GE_BOx_Out && GE.sta == Finish)
+	if (GE.motor->postion>=GE.GE_box_len&&GE.motor->motion==Stop)
 	{
 		TIM_Cmd(TIM6, DISABLE);
 		GE.sta = Ready;
@@ -757,7 +763,7 @@ u8 TaskThread_GOIn(void)
 	{
 		return FALSE;
 	}
-	if (GO.task == GO_Box_Out && GO.sta == Finish)
+	if (GO.motor_v->postion>150*GO.motor_v->pulse_1mm&&GO.motor_v->motion==Stop)
 	{
 		TIM_Cmd(TIM6, DISABLE);
 		GO.sta = Ready;
@@ -790,7 +796,7 @@ u8 TaskThread_Check_ErrorDone(void)
 {
 	if (TaskThread_State == taskthread_error)
 	{
-		if (GE.sta == Finish && GC.sta == Finish &&
+		if ((GE.sta == Finish||GE.task==GE_finish) && GC.sta == Finish &&
 			GP.sta == Finish && GO.sta == Finish)
 		{
 			return TRUE;

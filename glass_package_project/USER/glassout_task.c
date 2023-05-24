@@ -321,7 +321,8 @@ void GO_ReadyTask(void)
 			if (GC_rot_Sen != Sen_Block && GC_claw_Sen == Sen_Block) // 等待夹手夹取玻片到旋转原点
 			{
 				GO.sta = Running;
-				motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
+				//motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
+				motorGo(GO.motor_h,GO.GOH_mid_pos,0);
 			}
 		}
 		break;
@@ -366,7 +367,8 @@ void GO_ReadyTask(void)
 					if (Check_GC()) // 封片工作结束 夹手释放
 					{
 						GO.sta = Running;
-						motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+						//motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+						motorGo(GO.motor_h,GO.GOH_end_pos,0);
 					}
 				}
 				else
@@ -770,8 +772,9 @@ void GO_FinishTask(void)
 				// 当不是由于暂停结束任务时，发送任务完成信息
 				if (TaskThread_State != taskthread_pause)
 				{
-					// 发送任务完成信息
+					// 发送任务完成信息 并进入任务完成状态
 					ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_run, Extar_run_Finish);
+					TaskThread_State=taskthread_finsih;
 				}
 			}
 		}

@@ -22,7 +22,6 @@ enum taskthread_state
 	taskthread_running, // 运行进行状态
 	taskthread_finsih,	// 运行结束状态
 	taskthread_close,	// 关机状态
-
 };
 
 // 具体任务运行状态
@@ -217,14 +216,14 @@ struct glass_out_struct
 
 extern volatile enum task_error error_type;
 extern enum taskthread_state TaskThread_State; // 任务线程运行状态 
-extern enum taskthread_state OldTaskThread_State;
+
 
 extern struct glass_enter_struct GE;
 extern struct glass_claw_struct GC;
 
 extern struct glass_out_struct GO;
 
-extern volatile u32 sensor_filter;
+
 
 // 任务线程结构体初始化 任务定时器TIM6初始化
 void TaskThread_Init(void);

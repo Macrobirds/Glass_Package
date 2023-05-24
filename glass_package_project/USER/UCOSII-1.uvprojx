@@ -483,6 +483,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\Rtc\rtc.c</FilePath>
             </File>
+            <File>
+              <FileName>motor_array.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\motor\motor_array.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

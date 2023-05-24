@@ -6,7 +6,7 @@
 #define DELAY_BIG_CYLIDER 1500
 #define DELAY_SMALL_CYLIDER 300
 #define DELAY_SPRAY 2000
-#define DELAY_MOVE_PACKAGE1 1000
+#define DELAY_MOVE_PACKAGE1 100
 #define DELAY_MOVE_PACKAGE2 100
 
 // 检查是否放置喷胶头
@@ -240,7 +240,7 @@ void GP_ReadyTask(void)
 		#ifdef BIG_CYLINDER_MOTOR
 		motorGo(GP.motor_cyl,0,0);
 		#endif
-	
+		GP_ITV1100=ITV1100_ENABLE; //ITV1100 提前通电
 		GP.sta = Running;
 		break;
 	/////////////移动到喷胶位置/////////
@@ -416,7 +416,7 @@ void GP_RunningTask(void)
 			}
 			else
 			{
-				Error_Set(Error_Sensor, GP_big_cyl_sensor | GP_small_cyl_sensor);
+				Error_Set(Error_Sensor, GP_big_cyl_sensor);
 			}
 		}
 		#endif

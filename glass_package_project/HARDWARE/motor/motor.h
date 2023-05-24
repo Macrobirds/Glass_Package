@@ -51,7 +51,7 @@ typedef volatile struct{
 	int32_t postion; //电机位置
 	u32 step; //电机单次运动步数
 	u32 timerfeq; //定时器频率
-	u16 * AccPeriodArray; //加减速数组
+	const u16 * AccPeriodArray; //加减速数组
 	u8 FRONT; //向前运动DR口电平高低 
 	float curvature; //加减速曲线曲率（值越小加速度越小）
 	TIM_TypeDef * TIM;

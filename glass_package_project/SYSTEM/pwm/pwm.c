@@ -258,7 +258,7 @@ void TIM5_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-// GO_ver_motor_pwm
+// GO_hor_motor_pwm
 // 引脚复用重定位 ，需要最后设置 ，否则复位失败
 void TIM2_PWM_Init(u16 psc)
 {
@@ -332,22 +332,12 @@ void TIM1_UP_IRQHandler(void) // TIM1中断
 		{
 			TIM_Cmd(TIM1, DISABLE);
 			GE_motor_struct.motion = Stop;
-			if(GE_motor_struct.motion == AccMove)
-			{
-				myfree(SRAMIN,GE_motor_struct.AccPeriodArray);
-				GE_motor_struct.AccPeriodArray=NULL;		
-			}
 			return;
 		}
 		if (GE_motor_struct.max_pos <= GE_motor_struct.postion) // 到达轨道最大距离
 		{
 			TIM_Cmd(TIM1, DISABLE);
 			GE_motor_struct.motion = Stop;
-			if(GE_motor_struct.motion == AccMove)
-			{
-				myfree(SRAMIN,GE_motor_struct.AccPeriodArray);
-				GE_motor_struct.AccPeriodArray=NULL;		
-			}
 			return;
 		}
 
@@ -412,12 +402,6 @@ void TIM2_IRQHandler(void) // TIM2 中断 GO_hor_motor
 			{
 				TIM_Cmd(TIM2, DISABLE);
 				GO_hor_motor_struct.motion = Stop;
-				if(GO_hor_motor_struct.motion == AccMove)
-				{
-					myfree(SRAMIN,GO_hor_motor_struct.AccPeriodArray);
-					GO_hor_motor_struct.AccPeriodArray=NULL;
-				}
-
 				return;
 			}
 
@@ -425,37 +409,12 @@ void TIM2_IRQHandler(void) // TIM2 中断 GO_hor_motor
 			{
 				TIM_Cmd(TIM2, DISABLE);
 				GO_hor_motor_struct.motion = Stop;
-				if(GO_hor_motor_struct.motion == AccMove)
-				{
-					myfree(SRAMIN,GO_hor_motor_struct.AccPeriodArray);
-					GO_hor_motor_struct.AccPeriodArray=NULL;
-				}
 				return;
 			}
 		}
 		// 在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-//		if (GO_hor_motor_struct.planpostion == 0 && GOH_start_Sen == Sen_Block)
-//		{
-//			TIM_Cmd(TIM2, DISABLE);
-//			GO_hor_motor_struct.motion = Stop;
-//			GO_hor_motor_struct.postion = 0;
-//			return;
-//		}
-//		else if (GO_hor_motor_struct.planpostion == GO.GOH_mid_pos && GOH_mid_Sen == Sen_Block)
-//		{
-//			TIM_Cmd(TIM2, DISABLE);
-//			GO_hor_motor_struct.motion = Stop;
-//			GO_hor_motor_struct.postion = GO.GOH_mid_pos;
-//			return;
-//		}
-//		else if (GO_hor_motor_struct.planpostion == GO.GOH_end_pos && GOH_end_Sen == Sen_Block)
-//		{
-//			TIM_Cmd(TIM2, DISABLE);
-//			GO_hor_motor_struct.motion = Stop;
-//			GO_hor_motor_struct.postion = GO.GOH_end_pos;
-//			return;
-//		}
+
 		/****/
 
 		if (GO_hor_motor_struct.motion == ConstMove) // 电机匀速运动
@@ -469,7 +428,7 @@ void TIM2_IRQHandler(void) // TIM2 中断 GO_hor_motor
 			{
 				TIM_SetCompare1(TIM2, (TIM2->CNT + GO_hor_motor_struct.AccPeriodArray[GO_hor_motor_struct.step]) % 0xffff);
 			} // 减速运动
-			else if (GO_hor_motor_struct.step >= GO_hor_motor_struct.planSetpNumber - GO_hor_motor_struct.accStepNumber)
+			else if (GO_hor_motor_struct.step > GO_hor_motor_struct.planSetpNumber - GO_hor_motor_struct.accStepNumber)
 			{
 				TIM_SetCompare1(TIM2, (TIM2->CNT + GO_hor_motor_struct.AccPeriodArray[GO_hor_motor_struct.planSetpNumber - GO_hor_motor_struct.step]) % 0xffff);
 			} // 匀速运动
@@ -513,12 +472,6 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 				#endif
 				GCV_motor_Break = GAS_DISABLE;
 				GC_ver_motor_struct.motion = Stop;
-				if(GC_ver_motor_struct.motion == AccMove)
-				{
-					myfree(SRAMIN,GC_ver_motor_struct.AccPeriodArray);
-					GC_ver_motor_struct.AccPeriodArray=NULL;				
-				}
-
 				return;
 			}
 
@@ -531,12 +484,6 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 				#endif
 				GCV_motor_Break = GAS_DISABLE;
 				GC_ver_motor_struct.motion = Stop;
-				if(GC_ver_motor_struct.motion == AccMove)
-				{
-					myfree(SRAMIN,GC_ver_motor_struct.AccPeriodArray);
-					GC_ver_motor_struct.AccPeriodArray=NULL;				
-				}
-
 				return;
 			}
 		}
@@ -671,11 +618,6 @@ void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
 			{
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
-				if(GO_ver_motor_struct.motion==AccMove)
-				{
-					myfree(SRAMIN,GO_ver_motor_struct.AccPeriodArray);
-					GO_ver_motor_struct.AccPeriodArray=NULL;
-				}
 				return;
 			}
 			if (GO_ver_motor_struct.max_pos <= GO_ver_motor_struct.postion) // 到达最大距离
@@ -683,11 +625,6 @@ void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
 				GO.Storage_full=TRUE;
-				if(GO_ver_motor_struct.motion==AccMove)
-				{
-					myfree(SRAMIN,GO_ver_motor_struct.AccPeriodArray);
-					GO_ver_motor_struct.AccPeriodArray=NULL;
-				}
 				return;
 			}
 		}
@@ -700,11 +637,6 @@ void TIM4_IRQHandler(void) // TIM4 中断 GO_ver_motor
 			{
 				TIM_Cmd(TIM4, DISABLE);
 				GO_ver_motor_struct.motion = Stop;
-				if(GO_ver_motor_struct.motion==AccMove)
-				{
-					myfree(SRAMIN,GO_ver_motor_struct.AccPeriodArray);
-					GO_ver_motor_struct.AccPeriodArray=NULL;
-				}
 				return;
 			}
 		}
@@ -758,11 +690,6 @@ void TIM5_IRQHandler(void) // TIM5 中断 GC_rot_motor
 			{
 				TIM_Cmd(TIM5, DISABLE);
 				GC_rot_motor_struct.motion = Stop;
-				if(GC_rot_motor_struct.motion==AccMove)
-				{
-					myfree(SRAMIN,GC_rot_motor_struct.AccPeriodArray);
-					GC_rot_motor_struct.AccPeriodArray=NULL;				
-				}
 				return;
 			}
 
@@ -770,11 +697,6 @@ void TIM5_IRQHandler(void) // TIM5 中断 GC_rot_motor
 			{
 				TIM_Cmd(TIM5,DISABLE);
 				GC_rot_motor_struct.motion=Stop;
-				if(GC_rot_motor_struct.motion==AccMove)
-				{
-					myfree(SRAMIN,GC_rot_motor_struct.AccPeriodArray);
-					GC_rot_motor_struct.AccPeriodArray=NULL;				
-				}
 				return;
 			}
 		}
@@ -833,12 +755,6 @@ void TIM8_UP_IRQHandler(void) // TIM8中断 GP_motor
 		{
 			TIM_Cmd(TIM8, DISABLE);
 			GP_motor_struct.motion = Stop;
-			if(GP_motor_struct.motion==AccMove)
-			{
-				myfree(SRAMIN,GP_motor_struct.AccPeriodArray);
-				GP_motor_struct.AccPeriodArray=NULL;
-			}
-
 			return;
 		}
 
@@ -846,11 +762,6 @@ void TIM8_UP_IRQHandler(void) // TIM8中断 GP_motor
 		{
 			TIM_Cmd(TIM8, DISABLE);
 			GP_motor_struct.motion = Stop;
-			if(GP_motor_struct.motion==AccMove)
-			{
-				myfree(SRAMIN,GP_motor_struct.AccPeriodArray);
-				GP_motor_struct.AccPeriodArray=NULL;
-			}
 			return;
 		}
 

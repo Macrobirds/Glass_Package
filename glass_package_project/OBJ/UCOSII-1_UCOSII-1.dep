@@ -45,12 +45,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -172,12 +172,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -237,12 +237,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -331,12 +331,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -350,7 +350,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
-F (..\HARDWARE\motor\motor.c)(0x64671701)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\motor.o --omf_browse ..\obj\motor.crf --depend ..\obj\motor.d)
+F (..\HARDWARE\motor\motor.c)(0x646DC19F)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\motor.o --omf_browse ..\obj\motor.crf --depend ..\obj\motor.d)
 I (..\USER\Globalconfig.h)(0x646715A2)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -393,12 +393,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -412,6 +412,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
+I (..\HARDWARE\motor\motor_array.h)(0x646D7D39)
 F (..\HARDWARE\PCF8591\PCF8591.c)(0x64098E4E)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\pcf8591.o --omf_browse ..\obj\pcf8591.crf --depend ..\obj\pcf8591.d)
 I (..\HARDWARE\PCF8591\PCF8591.h)(0x64098E4E)
 I (..\SYSTEM\IIC\myiic.h)(0x64111964)
@@ -523,12 +524,12 @@ I (..\SYSTEM\pwm\pwm.h)(0x6424DCD0)
 I (..\SYSTEM\GPIO\gpio.h)(0x64190F83)
 I (..\HARDWARE\gas\gas.h)(0x6459E51B)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -585,12 +586,12 @@ I (D:\keil5\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
 I (..\HARDWARE\pos_sensor\position.h)(0x645DE42C)
 I (..\SYSTEM\pwm\pwm.h)(0x6424DCD0)
 I (..\SYSTEM\GPIO\gpio.h)(0x64190F83)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -714,12 +715,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -732,6 +733,7 @@ I (..\USER\codeGuard.h)(0x5D8C6686)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
+F (..\HARDWARE\motor\motor_array.h)(0x646D7D39)()
 F (..\SYSTEM\delay\delay.c)(0x555AC82A)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\delay.o --omf_browse ..\obj\delay.crf --depend ..\obj\delay.d)
 I (..\SYSTEM\delay\delay.h)(0x555AC82B)
 I (..\SYSTEM\sys\sys.h)(0x64269FD8)
@@ -845,12 +847,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -958,7 +960,7 @@ I (..\STM32F10x_FWLib\inc\stm32f10x_tim.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\stm32f10x_usart.h)(0x504F415E)
 I (..\STM32F10x_FWLib\inc\stm32f10x_wwdg.h)(0x4D783BB4)
 I (..\STM32F10x_FWLib\inc\misc.h)(0x4D783BB4)
-F (..\SYSTEM\pwm\pwm.c)(0x646C8EB0)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\pwm.o --omf_browse ..\obj\pwm.crf --depend ..\obj\pwm.d)
+F (..\SYSTEM\pwm\pwm.c)(0x646DA581)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\pwm.o --omf_browse ..\obj\pwm.crf --depend ..\obj\pwm.d)
 I (..\SYSTEM\pwm\pwm.h)(0x6424DCD0)
 I (..\USER\stm32f10x_conf.h)(0x5501900A)
 I (..\STM32F10x_FWLib\inc\stm32f10x_adc.h)(0x4D783BB4)
@@ -1001,12 +1003,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -1021,7 +1023,7 @@ I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
 F (..\SYSTEM\Malloc\malloc.c)(0x62CE6522)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\malloc.o --omf_browse ..\obj\malloc.crf --depend ..\obj\malloc.d)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
 I (D:\keil5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
@@ -1124,12 +1126,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2281,12 +2283,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2345,12 +2347,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2409,12 +2411,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2428,7 +2430,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
-F (..\TASK\taskthread.c)(0x646C8981)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\taskthread.o --omf_browse ..\obj\taskthread.crf --depend ..\obj\taskthread.d)
+F (..\TASK\taskthread.c)(0x646DD3F6)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\taskthread.o --omf_browse ..\obj\taskthread.crf --depend ..\obj\taskthread.d)
 I (..\USER\Globalconfig.h)(0x646715A2)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -2471,12 +2473,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2490,7 +2492,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
-F (.\glassenter_task.c)(0x646C84A2)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\glassenter_task.o --omf_browse ..\obj\glassenter_task.crf --depend ..\obj\glassenter_task.d)
+F (.\glassenter_task.c)(0x646D8015)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\glassenter_task.o --omf_browse ..\obj\glassenter_task.crf --depend ..\obj\glassenter_task.d)
 I (Globalconfig.h)(0x646715A2)
 I (stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -2535,12 +2537,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2599,12 +2601,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2618,7 +2620,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
-F (.\glasspackage_task.c)(0x64658ABB)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\glasspackage_task.o --omf_browse ..\obj\glasspackage_task.crf --depend ..\obj\glasspackage_task.d)
+F (.\glasspackage_task.c)(0x646DC94D)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\glasspackage_task.o --omf_browse ..\obj\glasspackage_task.crf --depend ..\obj\glasspackage_task.d)
 I (Globalconfig.h)(0x646715A2)
 I (stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -2663,12 +2665,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2682,7 +2684,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
-F (.\glassout_task.c)(0x646C7FD5)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\glassout_task.o --omf_browse ..\obj\glassout_task.crf --depend ..\obj\glassout_task.d)
+F (.\glassout_task.c)(0x646DC89C)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\glassout_task.o --omf_browse ..\obj\glassout_task.crf --depend ..\obj\glassout_task.d)
 I (Globalconfig.h)(0x646715A2)
 I (stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -2727,12 +2729,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
@@ -2746,7 +2748,7 @@ I (..\HARDWARE\Rtc\rtc.h)(0x62BEAAA2)
 I (..\HARDWARE\SpiFlash\w25qxx.h)(0x637F4520)
 I (..\SYSTEM\delay\mydelay.h)(0x6419051C)
 I (D:\keil5\ARM\ARMCC\include\math.h)(0x5E8E3CC2)
-F (..\SCREENUART\uart3_dataHandle.c)(0x646C7A16)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\uart3_datahandle.o --omf_browse ..\obj\uart3_datahandle.crf --depend ..\obj\uart3_datahandle.d)
+F (..\SCREENUART\uart3_dataHandle.c)(0x646DDCA5)(--c99 -c --cpu Cortex-M3 -g -O0 --apcs=interwork --split_sections -I ..\USER -I ..\CORE -I ..\STM32F10x_FWLib\inc -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\HARDWARE\LED -I ..\UCOSII\CONFIG -I ..\UCOSII\CORE -I ..\UCOSII\PORT -I ..\USMART -I ..\SYSTEM\GPIO -I ..\SYSTEM\IIC -I ..\SYSTEM\pwm -I ..\HARDWARE\pos_sensor -I ..\HARDWARE\motor -I ..\SYSTEM\Malloc -I ..\HARDWARE\ITV0011 -I ..\HARDWARE\PCF8591 -I ..\HARDWARE\PF6847 -I ..\SYSTEM\adc -I ..\TASK -I ..\HARDWARE\gas -I ..\SYSTEM\ringbuf -I ..\SCREENUART -I ..\HARDWARE\Rtc -I ..\HARDWARE\SpiFlash-IC:\Users\39637\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="534" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\uart3_datahandle.o --omf_browse ..\obj\uart3_datahandle.crf --depend ..\obj\uart3_datahandle.d)
 I (..\USER\Globalconfig.h)(0x646715A2)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -2789,12 +2791,12 @@ I (..\SYSTEM\IIC\myiic.h)(0x64111964)
 I (..\HARDWARE\PF6847\p6847.h)(0x641BEF4F)
 I (..\HARDWARE\ITV0011\ITV0011.h)(0x6461E245)
 I (..\SYSTEM\adc\adc.h)(0x640EDBC4)
-I (..\HARDWARE\motor\motor.h)(0x645E19DB)
-I (..\SYSTEM\Malloc\malloc.h)(0x646C8A4D)
+I (..\HARDWARE\motor\motor.h)(0x646D7E65)
+I (..\SYSTEM\Malloc\malloc.h)(0x646D8CD7)
 I (..\SYSTEM\ringbuf\RingBuffer.h)(0x646C6ED5)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5E8E3CC2)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5E8E3CC2)
-I (..\TASK\taskthread.h)(0x646C7F57)
+I (..\TASK\taskthread.h)(0x646DC49E)
 I (..\SCREENUART\uart3_dataHandle.h)(0x646C6C68)
 I (..\UCOSII\CONFIG\includes.h)(0x5290AD74)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)

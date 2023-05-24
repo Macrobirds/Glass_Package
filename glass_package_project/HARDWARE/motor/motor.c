@@ -1,5 +1,5 @@
 #include "Globalconfig.h"
-
+#include "motor_array.h"
 
 
 motor_struct GE_motor_struct = {
@@ -8,7 +8,7 @@ motor_struct GE_motor_struct = {
 	.dir = Front,
 	.FRONT = 1,
 	.TIM = TIM1,
-	.AccPeriodArray = NULL,
+	.AccPeriodArray = Accarray_motor_GE,
 	.postion = -10000,
 	.pulse_1mm = 212,
 	.maxfeq = 200 * 212,
@@ -24,13 +24,13 @@ motor_struct GC_rot_motor_struct = {
 	.dir = Front,
 	.FRONT = 1,
 	.TIM = TIM5,
-	.AccPeriodArray = NULL,
+	.AccPeriodArray = Accarray_motor_GCR,
 	.postion = -10000,
 	.pulse_1mm = 1,
 	.maxfeq = 1600,
 	.startfeq = 400,
 	.defaultfeq = 600,
-	.max_pos = 2400,
+	.max_pos = 3600,
 
 };
 
@@ -40,7 +40,7 @@ motor_struct GC_ver_motor_struct = {
 	.dir = Front,
 	.FRONT = 0,
 	.TIM = TIM3,
-	.AccPeriodArray = NULL,
+	.AccPeriodArray = Accarray_motor_GCV,
 	.postion = 0,
 	.pulse_1mm = 211,
 	.maxfeq = 211 * 100,
@@ -56,7 +56,7 @@ motor_struct GP_motor_struct = {
 	.dir = Front,
 	.FRONT = 0,
 	.TIM = TIM8,
-	.AccPeriodArray = NULL,
+	.AccPeriodArray = Accarray_motor_GP,
 	.postion = -10000,
 	.pulse_1mm = 268,
 	.maxfeq = 268 * 100,
@@ -71,10 +71,10 @@ motor_struct GO_hor_motor_struct = {
 	.dir = Front,
 	.FRONT = 0,
 	.TIM = TIM2,
-	.AccPeriodArray = NULL,
+	.AccPeriodArray = Accarray_motor_GOH,
 	.postion = -10000,
 	.pulse_1mm = 268,
-	.maxfeq = 268 * 100,
+	.maxfeq = 268 * 60,
 	.startfeq = 268 * 30,
 	.defaultfeq = 268 * 60,
 	.max_pos = 60000,
@@ -86,7 +86,7 @@ motor_struct GO_ver_motor_struct = {
 	.dir = Front,
 	.FRONT = 1,
 	.TIM = TIM4,
-	.AccPeriodArray = NULL,
+	.AccPeriodArray = Accarray_motor_GOV,
 	.postion = -100000,
 	.pulse_1mm = 800,
 	.maxfeq = 800 * 30,
@@ -116,8 +116,9 @@ motor_struct GP_motor_big_cyl={
 
 void motor_parameter_Init(void)
 {
+		if(TaskThread_State==taskthread_boost)
+	{
 	// set GE motor parm
-
 	GE_motor_struct.maxfeq = Global_Parm.MOT->GE_max_speed * GE_motor_struct.pulse_1mm;
 	GE_motor_struct.startfeq = Global_Parm.MOT->GE_min_speed * GE_motor_struct.pulse_1mm;
 	GE_motor_struct.curvature = 2;
@@ -138,7 +139,7 @@ void motor_parameter_Init(void)
 	GC_rot_motor_struct.pulse_1mm = 1; // unit be pulse
 	GC_rot_motor_struct.maxfeq = Global_Parm.MOT->GCR_max_speed;
 	GC_rot_motor_struct.startfeq = Global_Parm.MOT->GCR_min_speed;
-	GC_rot_motor_struct.curvature = 1;
+	GC_rot_motor_struct.curvature = 2;
 	GC_rot_motor_struct.t_m = (GC_rot_motor_struct.timerfeq / GC_rot_motor_struct.defaultfeq);
 	GC_rot_motor_struct.accStepNumber = GC_rot_motor_struct.pulse_1mm * 100;
 	GC_rot_motor_struct.FRONT=Global_Parm.MOT->GC_rot_dir;
@@ -164,8 +165,10 @@ void motor_parameter_Init(void)
 	GO_ver_motor_struct.startfeq = Global_Parm.MOT->GOV_min_speed * GO_ver_motor_struct.pulse_1mm;
 	GO_ver_motor_struct.curvature = 2;
 	GO_ver_motor_struct.t_m = (GO_ver_motor_struct.timerfeq / GO_ver_motor_struct.defaultfeq);
-	GO_ver_motor_struct.accStepNumber = GO_ver_motor_struct.pulse_1mm * 10;
+	GO_ver_motor_struct.accStepNumber = GO_ver_motor_struct.pulse_1mm * 5;
 	GO_ver_motor_struct.FRONT=Global_Parm.MOT->GOV_dir;
+	}
+	
 }
 
 // 步数，第几步，定时器时钟频率，启动频率，目标频率，曲线系数
@@ -480,16 +483,16 @@ void motorGo(motor_struct *motor, long planPosition, u32 freq)
 // 设置混合参数  约15mm
 void setMixtureData(motor_struct *motor)
 {
-	if (motor->AccPeriodArray != NULL)
-	{
-		myfree(SRAMIN, motor->AccPeriodArray);
-	}
+//	if (motor->AccPeriodArray != NULL)
+//	{
+//		myfree(SRAMIN, motor->AccPeriodArray);
+//	}
 
 	if (motor->planSetpNumber >= motor->pulse_1mm * 20)
 	{
-		motor->AccPeriodArray = mymalloc(SRAMIN, motor->accStepNumber * 2);
+//		motor->AccPeriodArray = mymalloc(SRAMIN, motor->accStepNumber * 2);
 		motor->t_m = motor->timerfeq / motor->maxfeq;
-		GetStepPeriodArrayOnAcc(motor->AccPeriodArray, motor->accStepNumber, motor->timerfeq, motor->startfeq, motor->maxfeq, motor->curvature);
+//		GetStepPeriodArrayOnAcc(motor->AccPeriodArray, motor->accStepNumber, motor->timerfeq, motor->startfeq, motor->maxfeq, motor->curvature);
 		motor->motion = AccMove; // 设置电机运动状态为加减速状态
 		printf("acc move\r\n");
 	}
