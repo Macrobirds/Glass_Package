@@ -5,7 +5,11 @@
 #define SLOT_NUM 30
 #define WASTE_POS 268 * 36
 
+
+
 static u8 slot_num = 0;
+
+
 
 // 检测是否夹手阻挡了托盘
 static u8 Check_GC(void)
@@ -241,11 +245,13 @@ void GO_ReadyTask(void)
 				GO.sta = Running;
 			}else
 			{
+				
+				
 				GO.sta=Finish;
 				GO.task=GO_Box_Out;
 				error_type|=Error_Out_Box;
 				Error_Mesg_Send();
-				error_type=0;
+				error_type&=(~Error_Out_Box);
 			
 			}
 		}
@@ -259,7 +265,7 @@ void GO_ReadyTask(void)
 			{
 				GO.motor_v->dir = Front;
 				motor_Set_Direction(GO.motor_v);
-				motorGO_Debug(GO.motor_v, GO.GOV_box_len, 0);
+				motorGo(GO.motor_v, GO.GOV_box_len, 0);
 				GO.sta = Running;
 			}
 		}
@@ -268,7 +274,8 @@ void GO_ReadyTask(void)
 			if (GOV_box_Sen == Sen_Block)
 			{
 				// 存储槽个数+1
-				ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
+				box_signal++;
+			//	ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
 				// 存储器状态更新
 				if (GOV_start_Sen == Sen_Block)
 				{
@@ -321,8 +328,8 @@ void GO_ReadyTask(void)
 			if (GC_rot_Sen != Sen_Block && GC_claw_Sen == Sen_Block) // 等待夹手夹取玻片到旋转原点
 			{
 				GO.sta = Running;
-				//motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
-				motorGo(GO.motor_h,GO.GOH_mid_pos,0);
+				motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
+				//motorGo(GO.motor_h,GO.GOH_mid_pos,0);
 			}
 		}
 		break;
@@ -367,8 +374,8 @@ void GO_ReadyTask(void)
 					if (Check_GC()) // 封片工作结束 夹手释放
 					{
 						GO.sta = Running;
-						//motorGo_acc(GO.motor_h, GO.GOH_end_pos);
-						motorGo(GO.motor_h,GO.GOH_end_pos,0);
+						motorGo_acc(GO.motor_h, GO.GOH_end_pos);
+						//motorGo(GO.motor_h,GO.GOH_end_pos,0);
 					}
 				}
 				else
@@ -454,6 +461,9 @@ void GO_ReadyTask(void)
 					GO.sta = Running;
 				}
 			}
+		}else
+		{
+			GO.sta=Finish;
 		}
 		break;
 	}
@@ -599,6 +609,7 @@ void GO_RunningTask(void)
 		if (GOH_end_Sen == Sen_Block)
 		{
 			GO.sta = Finish;
+
 		}
 		else
 		{
@@ -821,9 +832,8 @@ void GO_FinishTask(void)
 		break;
 	case GOH_end:
 		// 封片玻片数量+1
-
 		slot_num--;
-		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_package, 0);
+		glass_signal++;
 		GO.sta = Ready;
 		GO.task = GO_out;
 		break;
@@ -831,8 +841,7 @@ void GO_FinishTask(void)
 		Next_Task(GO_start, GO_adjust);
 		break;
 	case GO_next:
-		// 盒子数量+1
-		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
+		box_signal++;
 		Next_Task(GO_start, GO_adjust);
 		break;
 	case GO_finish:

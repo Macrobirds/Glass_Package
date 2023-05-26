@@ -14,13 +14,13 @@
 #define GP_CYL_DIR PCout(9)
 
 enum motor_index{
-	GE_motor,
-	GC_rot_motor,
-	GC_ver_motor,
-	GP_motor,
-	GO_hor_motor,
-	GO_ver_motor,
-	GP_big_cyl_motor,
+	GE_motor=1,
+	GC_rot_motor=2,
+	GC_ver_motor=3,
+	GP_motor=4,
+	GO_hor_motor=5,
+	GO_ver_motor=6,
+	GP_big_cyl_motor=7,
 };
 
 enum motor_state{
@@ -41,8 +41,6 @@ typedef volatile struct{
 	enum motor_direction dir; //电机运动方向
 	u16 pulse_1mm; //移动1mm脉冲数
 	u16 t_m; //匀速运动时定时器计数值
-	u32 maxfeq; //最大运行频率
-	u32 startfeq; //最小启动频率
 	u32 defaultfeq; //匀速运动频率
 	u32 planSetpNumber; //计划运行步数
 	u32 planpostion; //计划运行位置
@@ -51,6 +49,7 @@ typedef volatile struct{
 	int32_t postion; //电机位置
 	u32 step; //电机单次运动步数
 	u32 timerfeq; //定时器频率
+	u32 maxfeq;
 	const u16 * AccPeriodArray; //加减速数组
 	u8 FRONT; //向前运动DR口电平高低 
 	float curvature; //加减速曲线曲率（值越小加速度越小）

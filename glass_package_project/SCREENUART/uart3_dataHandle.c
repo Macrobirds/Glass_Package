@@ -1,22 +1,21 @@
 #include "Globalconfig.h"
 
-static u8 ringbuf_send_buf[128]={0};
-static u8 ringbuf_task_buf[128]={0};
+static u8 ringbuf_send_buf[128] = {0};
+static u8 ringbuf_task_buf[128] = {0};
 
-RingBuffer  RingBuf_Send={
-	.size=128,
-	.in=0,
-	.out=0,
-	.buffer=ringbuf_send_buf,
+RingBuffer RingBuf_Send = {
+	.size = 128,
+	.in = 0,
+	.out = 0,
+	.buffer = ringbuf_send_buf,
 };
 
-RingBuffer  RingBuf_Task={
-	.size=128,
-	.in=0,
-	.out=0,
-	.buffer=ringbuf_task_buf,
+RingBuffer RingBuf_Task = {
+	.size = 128,
+	.in = 0,
+	.out = 0,
+	.buffer = ringbuf_task_buf,
 };
-
 
 u8 screenUart_RecvCompleteBuf[MaxProtocolLength] = {0};
 u8 screenUart_RecvCompleteBufLength = 0;
@@ -50,6 +49,7 @@ static u8 *mymemcpy1(void *dst, void *src, size_t size)
 // 大端数据转换未小端数据 返回下一源指针
 static u8 *mymemcpy2(void *src, void *dst, size_t size)
 {
+
 	switch (size)
 	{
 	case sizeof(uint8_t):
@@ -66,7 +66,7 @@ static u8 *mymemcpy2(void *src, void *dst, size_t size)
 	default:
 		break;
 	}
-	return (uint8_t *)src + size;
+	return (uint8_t *)src +size;
 }
 
 // 返回传感器数据
@@ -203,11 +203,11 @@ static void query_state_gas(u8 Index)
 // 查询参数
 static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 {
-	u8 i=0;
+	u8 i = 0;
 	u8 *tmpBuf = 0;
 	u8 buflen = datalen;
-	tmpBuf = mymalloc(SRAMIN, buflen+1);
-	memset(tmpBuf, 0, buflen+1);
+	tmpBuf = mymalloc(SRAMIN, buflen) ;
+	memset(tmpBuf, 0, buflen);
 
 	// 重新读取参数配置
 	switch (extra)
@@ -225,8 +225,8 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 		W25QXX_Read((u8 *)Global_Parm.GP, SpiFlashAddr_packageData, sizeof(Glass_Package_Data));
 		break;
 	case Extra_param_outin:
-		memset(Global_Parm.GIO, 0, sizeof(Glass_In_Out_Date));
-		W25QXX_Read((u8 *)Global_Parm.GIO, SpiFlashAddr_inoutData, sizeof(Glass_In_Out_Date));
+		memset(Global_Parm.GIO, 0, sizeof(Glass_In_Out_Data));
+		W25QXX_Read((u8 *)Global_Parm.GIO, SpiFlashAddr_inoutData, sizeof(Glass_In_Out_Data));
 		break;
 	default:
 		break;
@@ -251,18 +251,12 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 static void query_param_motor(u8 *bufptr)
 {
 	u8 *tmpptr = bufptr;
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GE_max_speed, sizeof(Global_Parm.MOT->GE_max_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GE_min_speed, sizeof(Global_Parm.MOT->GE_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GCV_max_speed, sizeof(Global_Parm.MOT->GCV_max_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GCV_min_speed, sizeof(Global_Parm.MOT->GCV_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GCR_max_speed, sizeof(Global_Parm.MOT->GCR_max_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GCR_min_speed, sizeof(Global_Parm.MOT->GCR_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GP_max_speed, sizeof(Global_Parm.MOT->GP_max_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GP_min_speed, sizeof(Global_Parm.MOT->GP_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOH_max_speed, sizeof(Global_Parm.MOT->GOH_max_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOH_min_speed, sizeof(Global_Parm.MOT->GOH_min_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_max_speed, sizeof(Global_Parm.MOT->GOV_max_speed));
-	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_min_speed, sizeof(Global_Parm.MOT->GOV_min_speed));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GE_speed, sizeof(Global_Parm.MOT->GE_speed));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GCV_speed, sizeof(Global_Parm.MOT->GCV_speed));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GCR_speed, sizeof(Global_Parm.MOT->GCR_speed));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GP_speed, sizeof(Global_Parm.MOT->GP_speed));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOH_speed, sizeof(Global_Parm.MOT->GOH_speed));
+	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_speed, sizeof(Global_Parm.MOT->GOV_speed));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOV_dir, sizeof(Global_Parm.MOT->GOV_dir));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GOH_dir, sizeof(Global_Parm.MOT->GOH_dir));
 	tmpptr = mymemcpy1(tmpptr, &Global_Parm.MOT->GP_dir, sizeof(Global_Parm.MOT->GP_dir));
@@ -316,31 +310,25 @@ static void query_param_outin(u8 *bufptr)
 u8 set_param_motor(u8 *data, u8 dataLength)
 {
 	u8 *tmpptr = data;
-	if (dataLength != 18)
+	if (dataLength != 24)
 	{
-		printf("erro len\r\n");
+		printf("motor erro len\r\n");
 		tmpptr = 0;
 		return 0;
 	}
-	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
+	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tmpptr = 0;
 		return 0;
 	}
 	// 写入电机参数到全局变量
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GE_max_speed, sizeof(Global_Parm.MOT->GE_max_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GE_min_speed, sizeof(Global_Parm.MOT->GE_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GCV_max_speed, sizeof(Global_Parm.MOT->GCV_max_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GCV_min_speed, sizeof(Global_Parm.MOT->GCV_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GCR_max_speed, sizeof(Global_Parm.MOT->GCR_max_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GCR_min_speed, sizeof(Global_Parm.MOT->GCR_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GP_max_speed, sizeof(Global_Parm.MOT->GP_max_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GP_min_speed, sizeof(Global_Parm.MOT->GP_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOH_max_speed, sizeof(Global_Parm.MOT->GOH_max_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOH_min_speed, sizeof(Global_Parm.MOT->GOH_min_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_max_speed, sizeof(Global_Parm.MOT->GOV_max_speed));
-	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_min_speed, sizeof(Global_Parm.MOT->GOV_min_speed));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GE_speed, sizeof(Global_Parm.MOT->GE_speed));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GCV_speed, sizeof(Global_Parm.MOT->GCV_speed));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GCR_speed, sizeof(Global_Parm.MOT->GCR_speed));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GP_speed, sizeof(Global_Parm.MOT->GP_speed));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOH_speed, sizeof(Global_Parm.MOT->GOH_speed));
+	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_speed, sizeof(Global_Parm.MOT->GOV_speed));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOV_dir, sizeof(Global_Parm.MOT->GOV_dir));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GOH_dir, sizeof(Global_Parm.MOT->GOH_dir));
 	tmpptr = mymemcpy2(tmpptr, &Global_Parm.MOT->GP_dir, sizeof(Global_Parm.MOT->GP_dir));
@@ -351,7 +339,7 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 	// 配置电机参数
 
 	motor_parameter_Init();
-	W25QXX_Write((u8 *)&Global_Parm.MOT, SpiFlashAddr_motorData, sizeof(Global_Parm.MOT));
+	W25QXX_Write((u8 *)Global_Parm.MOT, SpiFlashAddr_motorData, sizeof(Motor_Data));
 	delay_ms(50);
 	return 1;
 }
@@ -359,19 +347,26 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 static u8 set_param_claw(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 24)
+	u8 i=0;
+	if (datalen != 14)
 	{
-				printf("erro len\r\n");
+		printf("claw erro len\r\n");
 		tempptr = 0;
 		return 0;
 	}
-	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
+	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tempptr = 0;
 		return 0;
 	}
 	// 写入夹手参数
+	printf("\r\nset:\r\n");
+	for(i=0;i<datalen;i++)
+	{
+		printf("%x ",tempptr[i]);
+	}
+	printf("\r\n");
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCR_hor_pos, sizeof(Global_Parm.GCS->GCR_hor_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCR_ver_pos, sizeof(Global_Parm.GCS->GCR_ver_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCV_down_pos, sizeof(Global_Parm.GCS->GCV_down_pos));
@@ -382,7 +377,7 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 	tempptr = 0;
 	// 更新任务参数
 	TaskThread_Parm_Init();
-	W25QXX_Write((u8 *)&Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Global_Parm.GCS));
+	W25QXX_Write((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport__data));
 	delay_ms(50);
 	return 1;
 }
@@ -390,13 +385,14 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 static u8 set_param_package(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 19)
+	u8 i=0;
+	if (datalen != 14)
 	{
-				printf("erro len\r\n");
+		printf("package erro len\r\n");
 		tempptr = 0;
 		return 0;
 	}
-	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
+	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tempptr = 0;
@@ -412,7 +408,7 @@ static u8 set_param_package(u8 *data, u8 datalen)
 	tempptr = 0;
 	// 更新任务参数
 	TaskThread_Parm_Init();
-	W25QXX_Write((u8 *)&Global_Parm.GP, SpiFlashAddr_packageData, sizeof(Global_Parm.GP));
+	W25QXX_Write((u8 *)Global_Parm.GP, SpiFlashAddr_packageData, sizeof(Glass_Package_Data));
 	delay_ms(50);
 	return 1;
 }
@@ -420,13 +416,13 @@ static u8 set_param_package(u8 *data, u8 datalen)
 static u8 set_param_outin(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	if (datalen != 24)
+	if (datalen != 14)
 	{
-				printf("erro len\r\n");
+		printf("outin erro len\r\n");
 		tempptr = 0;
 		return 0;
 	}
-	if (!TaskThread_CheckIdle()) // 运行状态不为空闲状态
+	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tempptr = 0;
@@ -443,104 +439,68 @@ static u8 set_param_outin(u8 *data, u8 datalen)
 	tempptr = 0;
 	// 更新任务参数
 	TaskThread_Parm_Init();
-	W25QXX_Write((u8 *)&Global_Parm.GIO, SpiFlashAddr_inoutData, sizeof(Global_Parm.GIO));
+	W25QXX_Write((u8 *)Global_Parm.GIO, SpiFlashAddr_inoutData, sizeof(Glass_In_Out_Data));
 	delay_ms(50);
 	return 1;
 }
 // debug 模式下配置IO口
 static u8 set_state_IO(u8 *data)
 {
-	if (TaskThread_CheckIdle())
+	u8 sensor = data[0];
+	u8 state = data[1];
+	switch (sensor)
 	{
-		return 0;
+	case 1:
+		if(state) Main_Pump=GAS_ENABLE;
+		else  Main_Pump=GAS_DISABLE;
+		break;
+	case 2:
+		if(state) Main_in_Cyl=GAS_ENABLE;
+		else  Main_in_Cyl=GAS_DISABLE;
+		break;
+	case 3:
+		if(state) Main_out_Cyl=GAS_ENABLE;
+		else  Main_out_Cyl=GAS_DISABLE;
+		break;
+	case 4:
+		if(state) GP_sucker1_Cyl=GAS_ENABLE;
+		else  GP_sucker1_Cyl=GAS_DISABLE;
+		break;
+	case 5:
+		if(state) GP_sucker2_Cyl=GAS_ENABLE;
+		else  GP_sucker2_Cyl=GAS_DISABLE;
+		break;
+	case 6:
+		if(state) GP_sucker_Pump=GAS_ENABLE;
+		else  GP_sucker_Pump=GAS_DISABLE;
+		break;
+	case 7:
+		if(state) GP_big_Cyl=GAS_ENABLE;
+		else  GP_big_Cyl=GAS_DISABLE;
+		break;
+	case 8:
+		if(state) GP_small_Cyl=GAS_ENABLE;
+		else  GP_small_Cyl=GAS_DISABLE;
+		break;
+	case 9:
+		if(state) GC_claw_Cyl=GAS_ENABLE;
+		else  GC_claw_Cyl=GAS_DISABLE;
+		break;
+	case 10:
+		if(state) GP_spray_Cyl=GAS_ENABLE;
+		else  GP_spray_Cyl=GAS_DISABLE;
+		break;
+	case 11:
+		if(state) GP_ITV1100=ITV1100_ENABLE;
+		else  GP_ITV1100=ITV1100_DISABLE;
+		break;
+	case 12:
+		if(state) GCV_motor_Break=GAS_ENABLE;
+		else  GCV_motor_Break=GAS_DISABLE;
+		break;
+	default:
+		break;
 	}
-	if (data[0] & (1 << 0))
-	{
-		Main_Pump = GAS_ENABLE;
-	}
-	else
-		Main_Pump = GAS_DISABLE;
-
-	if (data[0] & (1 << 1))
-	{
-		Main_in_Cyl = GAS_ENABLE;
-	}
-	else
-		Main_in_Cyl = GAS_DISABLE;
-
-	if (data[0] & (1 << 2))
-	{
-		Main_out_Cyl = GAS_ENABLE;
-	}
-	else
-		Main_out_Cyl = GAS_DISABLE;
-
-	if (data[0] & (1 << 3))
-	{
-		GP_sucker1_Cyl = GAS_ENABLE;
-	}
-	else
-		GP_sucker1_Cyl = GAS_DISABLE;
-
-	if (data[0] & (1 << 4))
-	{
-
-		GP_sucker2_Cyl = GAS_ENABLE;
-	}
-	else
-		GP_sucker2_Cyl = GAS_DISABLE;
-
-	if (data[0] & (1 << 5))
-	{
-		GP_sucker_Pump = GAS_ENABLE;
-	}
-	else
-		GP_sucker_Pump = GAS_DISABLE;
-
-#ifdef BIG_CYLINDER
-
-	if (data[0] & (1 << 6))
-	{
-		GP_big_Cyl = GAS_ENABLE;
-	}
-	else
-		GP_big_Cyl = GAS_DISABLE;
-
-#endif
-	if (data[0] & (1 << 7))
-	{
-		GP_small_Cyl = GAS_ENABLE;
-	}
-	else
-		GP_small_Cyl = GAS_DISABLE;
-
-	if (data[1] & (1 << 0))
-	{
-		GC_claw_Cyl = GAS_ENABLE;
-	}
-	else
-		GC_claw_Cyl = GAS_DISABLE;
-
-	if (data[1] & (1 << 1))
-	{
-		GP_spray_Cyl = GAS_ENABLE;
-	}
-	else
-		GP_spray_Cyl = GAS_DISABLE;
-
-	if (data[1] & (1 << 2))
-	{
-		GP_ITV1100 = ITV1100_ENABLE;
-	}
-	else
-		GP_ITV1100 = ITV1100_DISABLE;
-
-	if (data[1] & (1 << 3))
-	{
-		GCV_motor_Break = GAS_ENABLE;
-	}
-	else
-		GCV_motor_Break = GAS_DISABLE;
 
 	TaskThread_State = taskthread_debug; // 进入debug模式
 	return 1;
@@ -559,8 +519,10 @@ void screenUart_protocolParse(void)
 	u8 *tmpBuf = NULL;
 	u8 *tempptr = NULL;
 	motor_struct *motor_ptr = NULL;
+	u32 motor_debug_pulse = 0;
+	u32 motor_debug_feq = 0;
 	screenUart_lastRecvIndex = Index;
-	printf("type:%d,fc:%d,extra:%d,datalength:%d",TYPE,FC,Extra,dataLength);
+	printf("type:%d,fc:%d,extra:%d,datalength:%d", TYPE, FC, Extra, dataLength);
 
 	if (dataLength > 0)
 	{
@@ -646,8 +608,7 @@ void screenUart_protocolParse(void)
 			// 电机参数
 			case Extra_param_motor:
 			{
-				printf("query motor\r\n");
-				query_param(Index, 28, Extra, query_param_motor);
+				query_param(Index, 32, Extra, query_param_motor);
 				break;
 			}
 			// 设备信息
@@ -675,19 +636,19 @@ void screenUart_protocolParse(void)
 			// 夹手托盘参数
 			case Extra_param_claw:
 			{
-				query_param(Index, 32, Extra_param_claw, query_param_calw);
+				query_param(Index, 22, Extra_param_claw, query_param_calw);
 				break;
 			}
 			// 封片参数
 			case Extra_param_package:
 			{
-				query_param(Index, 27, Extra_param_package, query_param_package);
+				query_param(Index, 22, Extra_param_package, query_param_package);
 				break;
 			}
 			// 存储器参数
 			case Extra_param_outin:
 			{
-				query_param(Index, 32, Extra_param_outin, query_param_outin);
+				query_param(Index, 22, Extra_param_outin, query_param_outin);
 				break;
 			}
 			}
@@ -807,11 +768,11 @@ void screenUart_protocolParse(void)
 			{
 			case Extra_debug_motor:
 			{
-				if (dataLength != 10)
+				if (dataLength != 8)
 				{
 					break;
 				}
-				switch (data[0])
+				switch (data[1])
 				{
 				case GE_motor:
 					motor_ptr = &GE_motor_struct;
@@ -834,7 +795,7 @@ void screenUart_protocolParse(void)
 				default:
 					break;
 				}
-				if (data[1])
+				if (data[3])
 				{
 					motor_ptr->dir = Front;
 				}
@@ -843,8 +804,12 @@ void screenUart_protocolParse(void)
 					motor_ptr->dir = Back;
 				}
 				motor_Set_Direction(motor_ptr);
-				motorGO_Debug(motor_ptr, *((uint32_t *)(&data[2])), *((uint32_t *)(&data[6])));
+				motor_debug_pulse = __REV16(*((uint16_t *)(&data[4])));
+				motor_debug_feq = __REV16(*((uint16_t *)(&data[6])));
+				motorGO_Debug(motor_ptr, motor_debug_pulse, motor_debug_feq);
 				motor_ptr = NULL;
+				motor_debug_feq = 0;
+				motor_debug_pulse = 0;
 				break;
 			}
 
@@ -951,7 +916,7 @@ void screenUart_protocolParse(void)
 				if (TaskThread_CheckStop())
 				{
 					// 进行进缸操作
-					if (GE.motor->postion>=GE.GE_box_len&&GE.motor->motion==Stop)
+					if (GE.task == GE_BOx_Out && GE.sta == Finish)
 					{
 						printf("GE in\r\n");
 						TaskThread_GEIn();
@@ -987,12 +952,14 @@ void screenUart_protocolParse(void)
 				if (TaskThread_CheckStop())
 				{
 					// 进行进缸操作
-					if (GO.motor_v->postion>150*GO.motor_v->pulse_1mm&&GO.motor_v->motion==Stop)
+					if (GO.task == GO_Box_Out && GO.sta == Finish)
 					{
+						printf("GO in\r\n");
 						TaskThread_GOIn();
 					}
 					else // 进行出缸操作
 					{
+						printf("GO out\r\n");
 						TaskThread_GOOut();
 					}
 					if (data[0] == OnOffState_on)
@@ -1011,10 +978,10 @@ void screenUart_protocolParse(void)
 				break;
 			}
 			case Extra_run_Spray:
-				if(TaskThread_State!=taskthread_running)
+				if (TaskThread_State != taskthread_running)
 				{
-					GP.sta=Ready;
-					GP.task=GP_spray_test;
+					GP.sta = Ready;
+					GP.task = GP_spray_test;
 				}
 				break;
 			// 开始/暂停 运行
@@ -1022,7 +989,9 @@ void screenUart_protocolParse(void)
 			{
 				if (dataLength != 1)
 					break;
-				if (TaskThread_State == taskthread_boost||TaskThread_State==taskthread_finsih)
+
+				printf("Taskthread_State:%d\r\n", TaskThread_State);
+				if (TaskThread_State == taskthread_boost || TaskThread_State == taskthread_finsih)
 				{
 					if (TaskThread_Start())
 					{
@@ -1112,7 +1081,6 @@ void screenUart_protocolParse(void)
 	// 清除data临时数组数据
 	myfree(SRAMIN, data);
 	data = 0;
-
 }
 // 通用应答-应答1位数据
 void ack(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 ackByte)
@@ -1256,10 +1224,97 @@ void sendProtocol_2data(u8 Index, u8 TYPE, u8 FC, u8 Extra, u8 data1, u8 data2)
 	tmpBuf = 0;
 }
 
-
 // 查询返回-数据-单条步骤
 bool queryAck_data_1step(u8 *data, u8 dataLength)
 {
 
 	return true;
 }
+
+// 	if (data[0] & (1 << 0))
+// 	{
+// 		Main_Pump = GAS_ENABLE;
+// 	}
+// 	else
+// 		Main_Pump = GAS_DISABLE;
+
+// 	if (data[0] & (1 << 1))
+// 	{
+// 		Main_in_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		Main_in_Cyl = GAS_DISABLE;
+
+// 	if (data[0] & (1 << 2))
+// 	{
+// 		Main_out_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		Main_out_Cyl = GAS_DISABLE;
+
+// 	if (data[0] & (1 << 3))
+// 	{
+// 		GP_sucker1_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		GP_sucker1_Cyl = GAS_DISABLE;
+
+// 	if (data[0] & (1 << 4))
+// 	{
+
+// 		GP_sucker2_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		GP_sucker2_Cyl = GAS_DISABLE;
+
+// 	if (data[0] & (1 << 5))
+// 	{
+// 		GP_sucker_Pump = GAS_ENABLE;
+// 	}
+// 	else
+// 		GP_sucker_Pump = GAS_DISABLE;
+
+// #ifdef BIG_CYLINDER
+
+// 	if (data[0] & (1 << 6))
+// 	{
+// 		GP_big_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		GP_big_Cyl = GAS_DISABLE;
+
+// #endif
+// 	if (data[0] & (1 << 7))
+// 	{
+// 		GP_small_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		GP_small_Cyl = GAS_DISABLE;
+
+// 	if (data[1] & (1 << 0))
+// 	{
+// 		GC_claw_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		GC_claw_Cyl = GAS_DISABLE;
+
+// 	if (data[1] & (1 << 1))
+// 	{
+// 		GP_spray_Cyl = GAS_ENABLE;
+// 	}
+// 	else
+// 		GP_spray_Cyl = GAS_DISABLE;
+
+// 	if (data[1] & (1 << 2))
+// 	{
+// 		GP_ITV1100 = ITV1100_ENABLE;
+// 	}
+// 	else
+// 		GP_ITV1100 = ITV1100_DISABLE;
+
+// 	if (data[1] & (1 << 3))
+// 	{
+// 		GCV_motor_Break = GAS_ENABLE;
+// 	}
+// 	else
+// 		GCV_motor_Break = GAS_DISABLE;

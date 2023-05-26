@@ -482,6 +482,22 @@ void Send_makeProtocol_uart3(void)
 	u8 send_len=0;
 	u8 n=0;
 	u8 * tmpbuf=NULL;
+	if(glass_signal)
+	{
+		OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  	
+		glass_signal--;
+		OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
+		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_package, 0);
+	}
+	if(box_signal)
+	{
+		OS_ENTER_CRITICAL();			//进入临界区(无法被中断打断)  	
+		box_signal--;
+		OS_EXIT_CRITICAL();				//退出临界区(可以被中断打断)
+		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
+	}
+	
+	
 	
 	if(!screenUart_RecvCompleteFlag)
 	{
@@ -493,13 +509,13 @@ void Send_makeProtocol_uart3(void)
 			//从环形数组中取出数据
 			send_len=RingBuffer_Out(&RingBuf_Send,tmpbuf,USART_SEND_LEN);
 			//从串口中发送数据
-			printf("ans:\r\n");
+			//printf("ans:\r\n");
 			for(n=0;n<send_len;n++)
 			{
-				printf("%x ",tmpbuf[n]);
+				//printf("%x ",tmpbuf[n]);
 				screenUart_sendByte(tmpbuf[n]);
 			}
-			printf("\r\n");
+			//printf("\r\n");
 			myfree(SRAMIN,tmpbuf);
 			tmpbuf=NULL;
 		}

@@ -90,41 +90,41 @@ enum Data
 enum Debug
 {
 	Extra_debug_motor=1,
-	Extra_debug_GE,
-	Extra_debug_GC,
-	Extra_debug_GP,
-	Extra_debug_GO,
-	Extra_debug_IO,
+	Extra_debug_GE=2,
+	Extra_debug_GC=3,
+	Extra_debug_GP=4,
+	Extra_debug_GO=5,
+	Extra_debug_IO=6,
 };
 //ÔËÐÐ
 enum Run
 {
 	Extra_run_Reset = 1,
-	Extra_run_Emergency,
-	Extra_run_GEInOut,
-	Extra_run_GOInOut,
-	Extra_run_Spray,
-	Extra_run_Start,
-	Extar_run_Finish,
-	Extra_run_Close,
+	Extra_run_Emergency=2,
+	Extra_run_GEInOut=3,
+	Extra_run_GOInOut=4,
+	Extra_run_Spray=5,
+	Extra_run_Start=6,
+	Extar_run_Finish=7,
+	Extra_run_Close=8,
 };
 
 //¾¯±¨
 enum Error
 {
 	Extra_error_sensor=1,
-	Extra_error_overtime_GE,
-	Extra_error_overtime_GC,
-	Extra_error_overtime_GP,
-	Extra_error_overtime_GO,
-	Extra_error_slideglass ,
-	Extra_error_InBox,
-	Extra_error_OutBox,
-	Extra_error_coverglass,
-	Extra_error_spray,
-	Extra_error_full,
-	Extra_error_grap,
-	Extra_error_suck,
+	Extra_error_overtime_GE=2,
+	Extra_error_overtime_GC=3,
+	Extra_error_overtime_GP=4,
+	Extra_error_overtime_GO=5,
+	Extra_error_slideglass =6,
+	Extra_error_InBox=7,
+	Extra_error_OutBox=8,
+	Extra_error_coverglass=9,
+	Extra_error_spray=10,
+	Extra_error_full=11,
+	Extra_error_grap=12,
+	Extra_error_suck=13,
 
 };
 

@@ -171,7 +171,6 @@ enum sensor_index //总共17个传感器
 	GOH_end_sensor ,
 	GOV_start_sensor ,
 	GOV_glass_sensor,
-
 	GP_sucker_sensor ,
 	GP_spray_sensor,
 	GP_big_cyl_sensor ,
@@ -182,56 +181,50 @@ enum sensor_index //总共17个传感器
 
 
 typedef struct{
-	u8 GE_max_speed;
-	u8 GE_min_speed;
-	u8 GCV_max_speed;
-	u8 GCV_min_speed;
-	u16 GCR_max_speed;
-	u16 GCR_min_speed;
-	u8 GP_max_speed;
-	u8 GP_min_speed;
-	u8 GOH_max_speed;
-	u8 GOH_min_speed;
-	u8 GOV_max_speed;
-	u8 GOV_min_speed;
-	u8 GOV_dir;
-	u8 GOH_dir;
-	u8 GP_dir;
-	u8 GC_rot_dir;
-	u8 GC_ver_dir;
-	u8 GE_dir;
+	u16 GE_speed;
+	u16 GCV_speed;
+	u16 GCR_speed;
+	u16 GP_speed;
+	u16 GOH_speed;
+	u16 GOV_speed;
+	u16 GOV_dir;
+	u16 GOH_dir;
+	u16 GP_dir;
+	u16 GC_rot_dir;
+	u16 GC_ver_dir;
+	u16 GE_dir;
 }Motor_Data; 
 
 
 typedef struct{
 	u16 GCR_hor_pos;
 	u16 GCR_ver_pos;
-	u32 GCV_down_pos;
-	u32 GCV_glass_len;
-	u32 GOH_mid_pos;
-	u32 GOH_end_pos;
-	u32 GCV_package_pos;
+	u16 GCV_down_pos;
+	u16 GCV_glass_len;
+	u16 GOH_mid_pos;
+	u16 GOH_end_pos;
+	u16 GCV_package_pos;
 }Glass_ClawSupport__data;
 
 typedef struct{
 	u16 delay_before;
 	u16 delay_after;
-	u32 sucker_pos;
-	u32 spray_pos;
-	u32 spray_len;
+	u16 sucker_pos;
+	u16 spray_pos;
+	u16 spray_len;
 	u16 spray_speed;
-	u8 spray_pressure;
+	u16 spray_pressure;
 }Glass_Package_Data;
 
 typedef struct{
-	u32 GOV_box_dis;
-	u32 GOV_slot_dis;
-	u32 GOV_box_len;
+	u16 GOV_box_dis;
+	u16 GOV_slot_dis;
+	u16 GOV_box_len;
 	u16 GOV_adjust;
 	u16 GOV_adjust_start;
-	u32 GE_box_len;
-	u32 GE_box_speed;
-}Glass_In_Out_Date;
+	u16 GE_box_len;
+	u16 GE_box_speed;
+}Glass_In_Out_Data;
 
 
 /////////////////Golbal Parameter///////////////////
@@ -239,7 +232,7 @@ struct Global_Parameter_struct{
 	Motor_Data * MOT;
 	Glass_ClawSupport__data * GCS;
 	Glass_Package_Data * GP;
-	Glass_In_Out_Date * GIO;
+	Glass_In_Out_Data * GIO;
 };
 
 extern struct Global_Parameter_struct Global_Parm; 

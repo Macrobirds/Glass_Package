@@ -372,6 +372,8 @@ void GP_ReadyTask(void)
 				#endif
 				GP.sta=Running;
 			}
+		}else{
+			GP.sta=Finish;
 		}
 		break;
 	}

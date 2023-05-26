@@ -333,8 +333,8 @@ void GC_ReadyTask(void)
 			}
 			
 #endif			
-			
-			
+		}else{
+			GC.sta=Finish;
 		}
 		break;
 	}

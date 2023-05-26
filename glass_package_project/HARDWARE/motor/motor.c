@@ -11,13 +11,13 @@ motor_struct GE_motor_struct = {
 	.AccPeriodArray = Accarray_motor_GE,
 	.postion = -10000,
 	.pulse_1mm = 212,
-	.maxfeq = 200 * 212,
-	.startfeq = 30 * 212,
 	.defaultfeq = 60 * 212,
 	.max_pos = 212 * 460,
+	.maxfeq = 200 * 212,
 
 };
-
+	//.maxfeq = 200 * 212,
+	//.startfeq = 30 * 212,
 motor_struct GC_rot_motor_struct = {
 	.name = GC_rot_motor,
 	.motion = Stop,
@@ -27,13 +27,13 @@ motor_struct GC_rot_motor_struct = {
 	.AccPeriodArray = Accarray_motor_GCR,
 	.postion = -10000,
 	.pulse_1mm = 1,
-	.maxfeq = 1600,
-	.startfeq = 400,
 	.defaultfeq = 600,
 	.max_pos = 3600,
+	.maxfeq = 1600,
 
 };
-
+	//.maxfeq = 1600,
+	//.startfeq = 400,
 motor_struct GC_ver_motor_struct = {
 	.name = GC_ver_motor,
 	.motion = Stop,
@@ -43,13 +43,12 @@ motor_struct GC_ver_motor_struct = {
 	.AccPeriodArray = Accarray_motor_GCV,
 	.postion = 0,
 	.pulse_1mm = 211,
-	.maxfeq = 211 * 100,
-	.startfeq = 211 * 30,
 	.defaultfeq = 211 * 30,
 	.max_pos = 36000,
-
+	.maxfeq = 211 * 100,
 };
-
+	//.maxfeq = 211 * 100,
+	//.startfeq = 211 * 30,
 motor_struct GP_motor_struct = {
 	.name = GP_motor,
 	.motion = Stop,
@@ -59,12 +58,13 @@ motor_struct GP_motor_struct = {
 	.AccPeriodArray = Accarray_motor_GP,
 	.postion = -10000,
 	.pulse_1mm = 268,
-	.maxfeq = 268 * 100,
-	.startfeq = 268 * 30,
 	.defaultfeq = 268 * 30,
 	.max_pos = 30000,
+	.maxfeq = 268 * 100,
 
 };
+	//.maxfeq = 268 * 100,
+	//.startfeq = 268 * 30,
 motor_struct GO_hor_motor_struct = {
 	.name = GO_hor_motor,
 	.motion = Stop,
@@ -74,12 +74,13 @@ motor_struct GO_hor_motor_struct = {
 	.AccPeriodArray = Accarray_motor_GOH,
 	.postion = -10000,
 	.pulse_1mm = 268,
-	.maxfeq = 268 * 60,
-	.startfeq = 268 * 30,
 	.defaultfeq = 268 * 60,
 	.max_pos = 60000,
+	.maxfeq = 268 * 60,
 
 };
+	//.maxfeq = 268 * 60,
+	//.startfeq = 268 * 30,
 motor_struct GO_ver_motor_struct = {
 	.name = GO_ver_motor,
 	.motion = Stop,
@@ -89,12 +90,12 @@ motor_struct GO_ver_motor_struct = {
 	.AccPeriodArray = Accarray_motor_GOV,
 	.postion = -100000,
 	.pulse_1mm = 800,
-	.maxfeq = 800 * 30,
-	.startfeq = 800 * 10,
 	.defaultfeq = 800 * 20,
 	.max_pos = 800 * 260,
+	.maxfeq = 800 * 30,
 };
-
+	//.maxfeq = 800 * 30,
+	//.startfeq = 800 * 10,
 
 #ifdef BIG_CYLINDER_MOTOR
 motor_struct GP_motor_big_cyl={
@@ -105,8 +106,6 @@ motor_struct GP_motor_big_cyl={
 	.AccPeriodArray=NULL,
 	.postion = 0,
 	.pulse_1mm = 0,
-	.maxfeq = 0,
-	.startfeq = 0,
 	.defaultfeq = 0,
 	.max_pos = 0,
 	
@@ -119,8 +118,7 @@ void motor_parameter_Init(void)
 		if(TaskThread_State==taskthread_boost)
 	{
 	// set GE motor parm
-	GE_motor_struct.maxfeq = Global_Parm.MOT->GE_max_speed * GE_motor_struct.pulse_1mm;
-	GE_motor_struct.startfeq = Global_Parm.MOT->GE_min_speed * GE_motor_struct.pulse_1mm;
+	GE_motor_struct.defaultfeq = Global_Parm.MOT->GE_speed * GE_motor_struct.pulse_1mm;
 	GE_motor_struct.curvature = 2;
 	GE_motor_struct.t_m = (GE_motor_struct.timerfeq / GE_motor_struct.defaultfeq);
 	GE_motor_struct.accStepNumber = GE_motor_struct.pulse_1mm * 10;
@@ -128,8 +126,7 @@ void motor_parameter_Init(void)
 
 	// set GCV motor parm
 
-	GC_ver_motor_struct.maxfeq = Global_Parm.MOT->GCV_max_speed * GC_ver_motor_struct.pulse_1mm;
-	GC_ver_motor_struct.startfeq = Global_Parm.MOT->GCV_min_speed * GC_ver_motor_struct.pulse_1mm;
+	GC_ver_motor_struct.defaultfeq = Global_Parm.MOT->GCV_speed * GC_ver_motor_struct.pulse_1mm;
 	GC_ver_motor_struct.curvature = 2;
 	GC_ver_motor_struct.t_m = (GC_ver_motor_struct.timerfeq / GC_ver_motor_struct.defaultfeq);
 	GC_ver_motor_struct.accStepNumber = GC_ver_motor_struct.pulse_1mm * 10;
@@ -137,32 +134,28 @@ void motor_parameter_Init(void)
 
 	// set GCR motor parm
 	GC_rot_motor_struct.pulse_1mm = 1; // unit be pulse
-	GC_rot_motor_struct.maxfeq = Global_Parm.MOT->GCR_max_speed;
-	GC_rot_motor_struct.startfeq = Global_Parm.MOT->GCR_min_speed;
+	GC_rot_motor_struct.defaultfeq = Global_Parm.MOT->GCR_speed;
 	GC_rot_motor_struct.curvature = 2;
 	GC_rot_motor_struct.t_m = (GC_rot_motor_struct.timerfeq / GC_rot_motor_struct.defaultfeq);
 	GC_rot_motor_struct.accStepNumber = GC_rot_motor_struct.pulse_1mm * 100;
 	GC_rot_motor_struct.FRONT=Global_Parm.MOT->GC_rot_dir;
 
 	// set GP motor parm
-	GP_motor_struct.maxfeq = Global_Parm.MOT->GP_max_speed * GP_motor_struct.pulse_1mm;
-	GP_motor_struct.startfeq = Global_Parm.MOT->GP_min_speed * GP_motor_struct.pulse_1mm;
+	GP_motor_struct.defaultfeq = Global_Parm.MOT->GP_speed * GP_motor_struct.pulse_1mm;
 	GP_motor_struct.curvature = 2;
 	GP_motor_struct.t_m = (GP_motor_struct.timerfeq / GP_motor_struct.defaultfeq);
 	GP_motor_struct.accStepNumber = GP_motor_struct.pulse_1mm * 10;
 	GP_motor_struct.FRONT=Global_Parm.MOT->GP_dir;
 
 	// set GOH motor parm
-	GO_hor_motor_struct.maxfeq = Global_Parm.MOT->GOH_max_speed;
-	GO_hor_motor_struct.startfeq = Global_Parm.MOT->GOH_min_speed;
+	GO_hor_motor_struct.defaultfeq = Global_Parm.MOT->GOH_speed*GO_hor_motor_struct.pulse_1mm;
 	GO_hor_motor_struct.curvature = 2;
 	GO_hor_motor_struct.t_m = (GO_hor_motor_struct.timerfeq / GO_hor_motor_struct.defaultfeq);
 	GO_hor_motor_struct.accStepNumber = GO_hor_motor_struct.pulse_1mm * 10;
 	GO_hor_motor_struct.FRONT=Global_Parm.MOT->GOH_dir;
 
 	// set GOV motor parm
-	GO_ver_motor_struct.maxfeq = Global_Parm.MOT->GOV_max_speed * GO_ver_motor_struct.pulse_1mm;
-	GO_ver_motor_struct.startfeq = Global_Parm.MOT->GOV_min_speed * GO_ver_motor_struct.pulse_1mm;
+	GO_ver_motor_struct.defaultfeq = Global_Parm.MOT->GOV_speed * GO_ver_motor_struct.pulse_1mm;
 	GO_ver_motor_struct.curvature = 2;
 	GO_ver_motor_struct.t_m = (GO_ver_motor_struct.timerfeq / GO_ver_motor_struct.defaultfeq);
 	GO_ver_motor_struct.accStepNumber = GO_ver_motor_struct.pulse_1mm * 5;

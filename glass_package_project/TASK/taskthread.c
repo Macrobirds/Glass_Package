@@ -8,7 +8,7 @@ struct glass_enter_struct GE = {
 	.sta = Ready,
 	.motor = &GE_motor_struct,
 	.GE_box_len = 212 * 350,
-	.GE_box_speed = 2000,
+	.GE_box_speed = 20*212,
 	.glass_Exist = FALSE,
 	.box_Exist = FALSE,
 	.subtask = 0,
@@ -20,7 +20,7 @@ struct glass_claw_struct GC = {
 	.sta = Ready,
 	.motor_v = &GC_ver_motor_struct,
 	.motor_r = &GC_rot_motor_struct,
-	.GCV_down_pos = 33000 + 211 * 2,
+	.GCV_down_pos = 33300 ,
 	.GCR_hor_pos = 130,
 	.GCR_ver_pos = 1720,
 	.GCV_glass_len = 16000,
@@ -76,8 +76,8 @@ struct glass_out_struct GO = {
 	.GOV_box_dis = 800 * 10,
 	.GOV_box_len = 800 * 241 + 600,
 	.GOV_slot_dis = 800 * 4,
-	.GOV_adjust = 700,
-	.GOV_adjust_start = 500,
+	.GOV_adjust = 600,
+	.GOV_adjust_start = 800,
 	.Storage_full = TRUE, // 默认存储器满 需要通过出槽入槽重新装填来更新存储器状态
 	.main_subtask = 0,
 	.main_task = GO_none,
@@ -86,7 +86,8 @@ struct glass_out_struct GO = {
 
 enum taskthread_state TaskThread_State = taskthread_boost;	  // 任务线程运行状态
 volatile enum task_error error_type = Error_none;
-
+volatile u8 glass_signal=0;
+volatile u8 box_signal=0;
 
 u8 TaskThread_CheckIdle(void)
 {
@@ -128,7 +129,7 @@ void Error_Mesg_Send(void)
 
 	printf("error:%d error_sensor%d\r\n", error_type, sensor_error_idx);
 	// 传感器错误
-	if (error_type | Error_Sensor)
+	if (error_type & Error_Sensor)
 	{
 		ack_task(screenUart_lastRecvIndex++,Type_controlAck,Fc_error,Extra_error_sensor,sensor_error_idx);
 	}
@@ -316,7 +317,7 @@ void Error_Set(enum task_error error, u8 error_sen)
 
 void TaskThread_Parm_Init(void)
 {
-	if(TaskThread_State==taskthread_boost)
+	if(TaskThread_State!=taskthread_running)
 	{
 	// set GE task parm
 	GE.GE_box_len = Global_Parm.GIO->GE_box_len* GE_motor_struct.pulse_1mm / SCALE;
@@ -569,6 +570,15 @@ enum taskthread_state TaskThread_IsReady(void)
 	else
 	{
 		error_type &= ~Error_Out_Box;
+			// 未放置存储盒
+		if (GO.Storage_full == TRUE)
+		{
+			error_type |= Error_StorageFull;
+		}
+		else
+		{
+			error_type &= ~Error_StorageFull;
+		}
 	}
 	// 检测是否存在滴胶头
 	if (GP_spray_Sen != Sen_Block)
@@ -579,15 +589,7 @@ enum taskthread_state TaskThread_IsReady(void)
 	{
 		error_type &= ~Error_Spray;
 	}
-	// 未放置存储盒
-	if (GO.Storage_full == TRUE)
-	{
-		error_type |= Error_StorageFull;
-	}
-	else
-	{
-		error_type &= ~Error_StorageFull;
-	}
+
 
 	if (error_type > Error_OverTime)
 	{
@@ -601,15 +603,15 @@ enum taskthread_state TaskThread_IsReady(void)
 // 开机复位任务
 u8 TaskThread_BootReset(void)
 {
-//	if (TaskThread_State == taskthread_emergency)
-//	{
-//		return FALSE;
-//	}
+	if (TaskThread_State == taskthread_emergency)
+	{
+		return FALSE;
+	}
 
-//	if (!TaskThread_CheckIdle())
-//	{
-//		return FALSE;
-//	}
+	if (!TaskThread_CheckIdle())
+	{
+		return FALSE;
+	}
 
 	// 开启复位任务
 	if (Gas_State == gas_pumped) // 充气完成
@@ -655,15 +657,7 @@ u8 TaskThread_Start(void)
 	}
 
 	// 检测系统是否就绪
-	if (TaskThread_IsReady() == taskthread_boost)
-	{
-		if (TaskThread_CheckIdle())
-		{
-			TaskThread_BootReset();
-		}
-		return FALSE;
-	}
-	else if (TaskThread_IsReady() == taskthread_error)
+	if (TaskThread_IsReady() != taskthread_ready)
 	{
 		return FALSE;
 	}
@@ -727,7 +721,7 @@ u8 TaskThread_GEIn(void)
 	{
 		return FALSE;
 	}
-	if (GE.motor->postion>=GE.GE_box_len&&GE.motor->motion==Stop)
+	if (GE.task==GE_BOx_Out&&GE.sta==Finish)
 	{
 		TIM_Cmd(TIM6, DISABLE);
 		GE.sta = Ready;
@@ -763,7 +757,7 @@ u8 TaskThread_GOIn(void)
 	{
 		return FALSE;
 	}
-	if (GO.motor_v->postion>150*GO.motor_v->pulse_1mm&&GO.motor_v->motion==Stop)
+	if (GO.task==GO_Box_Out&&GO.sta==Finish)
 	{
 		TIM_Cmd(TIM6, DISABLE);
 		GO.sta = Ready;
@@ -800,6 +794,14 @@ u8 TaskThread_Check_ErrorDone(void)
 			GP.sta == Finish && GO.sta == Finish)
 		{
 			return TRUE;
+		}
+		
+		if(error_type|Error_StorageFull)
+		{
+			if(GO.Storage_full==FALSE&&GO.motor_v->motion==Stop)
+			{
+				return TRUE;
+			}
 		}
 	}
 

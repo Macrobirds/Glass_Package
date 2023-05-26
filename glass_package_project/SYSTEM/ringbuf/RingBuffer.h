@@ -93,8 +93,10 @@ static inline uint8_t RingBuffer_Len(RingBuffer *fifo)
 {
 	if(fifo->in>fifo->out)
   return fifo->in - fifo->out;
+	else if(fifo->out>fifo->in)
+	return fifo->size-(fifo->out - fifo->in);
 	else
-	return fifo->out - fifo->in;
+	return 0;
 }
 
 /**

@@ -88,7 +88,7 @@ void uart_sendtask(void *pdata);
 	W25QXX_Read(&firstStartFlag, SpiFlashAddr_initFlag, 1);
 	delay_ms(20);
 	//首次启动
-	if(1)//firstStartFlag!=0x55)
+	if(firstStartFlag!=0x55)
 	{
 		//设置设备类型
 		DeviceType=DeviceType_fpj;
@@ -108,7 +108,7 @@ void uart_sendtask(void *pdata);
 		W25QXX_Write((u8 *)Global_Parm.GP,SpiFlashAddr_packageData,sizeof(Glass_Package_Data));
 		delay_ms(50);
 		//保存存储器参数
-		W25QXX_Write((u8 *)Global_Parm.GIO,SpiFlashAddr_inoutData,sizeof(Glass_In_Out_Date));
+		W25QXX_Write((u8 *)Global_Parm.GIO,SpiFlashAddr_inoutData,sizeof(Glass_In_Out_Data));
 		delay_ms(50);
 		//写入首次上电初始化标志位
 		firstStartFlag=0x55;
@@ -134,7 +134,7 @@ void uart_sendtask(void *pdata);
 		W25QXX_Read((u8 *)Global_Parm.GP,SpiFlashAddr_packageData,sizeof(Glass_Package_Data));
 		delay_ms(100);
 		//保存存储器参数
-		W25QXX_Read((u8 *)Global_Parm.GIO,SpiFlashAddr_inoutData,sizeof(Glass_In_Out_Date));
+		W25QXX_Read((u8 *)Global_Parm.GIO,SpiFlashAddr_inoutData,sizeof(Glass_In_Out_Data));
 		delay_ms(100);
 	}
 
@@ -195,6 +195,9 @@ void main_task(void *pdata)
 			delay_20ms=0;
 			//usmart 扫描
 			usmart_dev.scan(); 
+			//盗版检测任务
+			
+		}
 			//屏幕串口协议解析任务
 			if(screenUart_RecvCompleteFlag)
 			{
@@ -203,10 +206,6 @@ void main_task(void *pdata)
 				LED2=!LED_ON;
 				screenUart_RecvCompleteFlag = 0; // 协议已被处理
 			}
-
-			//盗版检测任务
-			
-		}
 		
 		OSTimeDlyHMSM(0,0,0,20);
 	}

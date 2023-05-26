@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\UCOSII-1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\UCOSII-1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed May 24 17:47:36 2023
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri May 26 15:38:06 2023
 <BR><P>
 <H3>Maximum Stack Usage =        372 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -323,7 +323,8 @@ Global Symbols
 <P><STRONG><a name="[1f6]"></a>__set_MSP</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, core_cm3.o(.emb_text), UNUSED)
 
 <P><STRONG><a name="[19c]"></a>__REV16</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, core_cm3.o(.emb_text))
-<BR><BR>[Called By]<UL><LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy2
+<BR><BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
+<LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy2
 <LI><a href="#[19b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy1
 </UL>
 
@@ -475,7 +476,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[110]"></a>OS_CPU_SR_Save</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, os_cpu_a.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskSuspend
+<BR><BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_makeProtocol_uart3
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskSuspend
 <LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskCreate
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_task
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_Out
@@ -496,7 +498,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[113]"></a>OS_CPU_SR_Restore</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, os_cpu_a.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskSuspend
+<BR><BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_makeProtocol_uart3
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskSuspend
 <LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTaskCreate
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_task
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_Out
@@ -649,7 +652,6 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dmaRecv_makeProtocol_uart3
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA1_Channel3_IRQHandler
-<LI><a href="#[19f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;query_param
 </UL>
 
 <P><STRONG><a name="[1fc]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
@@ -1041,7 +1043,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GC_TaskThread
 </UL>
 
-<P><STRONG><a name="[c0]"></a>GC_ReadyTask</STRONG> (Thumb, 920 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_ReadyTask))
+<P><STRONG><a name="[c0]"></a>GC_ReadyTask</STRONG> (Thumb, 930 bytes, Stack size 8 bytes, glassclaw_task.o(i.GC_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184 + Unknown Stack Size
 <LI>Call Chain = GC_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1080,8 +1082,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 104 + Unknown Stack Size
 <LI>Call Chain = GE_FinishTask &rArr; ack_task &rArr; screenUart_sendStr_task &rArr; RingBuffer_In &rArr; RingBuffer_Avail
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ack_task
+<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ack_task
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_GC
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_TaskThread
 </UL>
@@ -1121,7 +1123,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM6_IRQHandler
 </UL>
 
-<P><STRONG><a name="[ce]"></a>GO_FinishTask</STRONG> (Thumb, 422 bytes, Stack size 8 bytes, glassout_task.o(i.GO_FinishTask))
+<P><STRONG><a name="[ce]"></a>GO_FinishTask</STRONG> (Thumb, 390 bytes, Stack size 8 bytes, glassout_task.o(i.GO_FinishTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = GO_FinishTask &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1134,7 +1136,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_TaskThread
 </UL>
 
-<P><STRONG><a name="[d1]"></a>GO_ReadyTask</STRONG> (Thumb, 1534 bytes, Stack size 8 bytes, glassout_task.o(i.GO_ReadyTask))
+<P><STRONG><a name="[d1]"></a>GO_ReadyTask</STRONG> (Thumb, 1528 bytes, Stack size 8 bytes, glassout_task.o(i.GO_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184 + Unknown Stack Size
 <LI>Call Chain = GO_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1143,7 +1145,6 @@ Global Symbols
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo_acc
 <LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGo
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorGO_Debug
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ack_task
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Set
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Mesg_Send
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
@@ -1242,7 +1243,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_TaskThread
 </UL>
 
-<P><STRONG><a name="[d8]"></a>GP_ReadyTask</STRONG> (Thumb, 1200 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_ReadyTask))
+<P><STRONG><a name="[d8]"></a>GP_ReadyTask</STRONG> (Thumb, 1210 bytes, Stack size 8 bytes, glasspackage_task.o(i.GP_ReadyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184 + Unknown Stack Size
 <LI>Call Chain = GP_ReadyTask &rArr; motorGo_acc &rArr; setMixtureData &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -2057,12 +2058,15 @@ Global Symbols
 <P><STRONG><a name="[1d]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.SVC_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
 </UL>
-<P><STRONG><a name="[143]"></a>Send_makeProtocol_uart3</STRONG> (Thumb, 190 bytes, Stack size 16 bytes, usart.o(i.Send_makeProtocol_uart3))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
+<P><STRONG><a name="[143]"></a>Send_makeProtocol_uart3</STRONG> (Thumb, 286 bytes, Stack size 24 bytes, usart.o(i.Send_makeProtocol_uart3))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = Send_makeProtocol_uart3 &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymalloc
 <LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;myfree
+<LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OS_CPU_SR_Save
+<LI><a href="#[113]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OS_CPU_SR_Restore
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ack_task
 <LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_Out
 <LI><a href="#[147]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_sendByte
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_IsEmpty
@@ -2072,7 +2076,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_sendtask
 </UL>
 
-<P><STRONG><a name="[193]"></a>Set_Global_Parameter_Default</STRONG> (Thumb, 656 bytes, Stack size 0 bytes, globalconfig.o(i.Set_Global_Parameter_Default))
+<P><STRONG><a name="[193]"></a>Set_Global_Parameter_Default</STRONG> (Thumb, 556 bytes, Stack size 0 bytes, globalconfig.o(i.Set_Global_Parameter_Default))
 <BR><BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -2401,44 +2405,39 @@ Global Symbols
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM1_PWM_Init
 </UL>
 
-<P><STRONG><a name="[158]"></a>TaskThread_BootReset</STRONG> (Thumb, 102 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_BootReset))
+<P><STRONG><a name="[158]"></a>TaskThread_BootReset</STRONG> (Thumb, 122 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_BootReset))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TaskThread_BootReset
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
+<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main_task
-<LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Start
 <LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;boost_device_test
 </UL>
 
-<P><STRONG><a name="[15a]"></a>TaskThread_CheckIdle</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, taskthread.o(i.TaskThread_CheckIdle))
+<P><STRONG><a name="[159]"></a>TaskThread_CheckIdle</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, taskthread.o(i.TaskThread_CheckIdle))
 <BR><BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
+<LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_BootReset
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main_task
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gas_task
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_GEOut
-<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
-<LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Start
+<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Resume
-<LI><a href="#[1a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_param_motor
-<LI><a href="#[1ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_state_IO
-<LI><a href="#[1a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_param_package
-<LI><a href="#[1aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_param_outin
-<LI><a href="#[1a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_param_claw
 </UL>
 
-<P><STRONG><a name="[159]"></a>TaskThread_CheckStop</STRONG> (Thumb, 26 bytes, Stack size 4 bytes, taskthread.o(i.TaskThread_CheckStop))
+<P><STRONG><a name="[15a]"></a>TaskThread_CheckStop</STRONG> (Thumb, 26 bytes, Stack size 4 bytes, taskthread.o(i.TaskThread_CheckStop))
 <BR><BR>[Stack]<UL><LI>Max Depth = 4<LI>Call Chain = TaskThread_CheckStop
 </UL>
-<BR>[Calls]<UL><LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
+<BR>[Calls]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Check_ErrorDone
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_GOOut
 </UL>
 
-<P><STRONG><a name="[15b]"></a>TaskThread_Check_ErrorDone</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, taskthread.o(i.TaskThread_Check_ErrorDone))
-<BR><BR>[Called By]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
+<P><STRONG><a name="[15b]"></a>TaskThread_Check_ErrorDone</STRONG> (Thumb, 86 bytes, Stack size 0 bytes, taskthread.o(i.TaskThread_Check_ErrorDone))
+<BR><BR>[Called By]<UL><LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
 <LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Resume_Error
 </UL>
 
@@ -2463,7 +2462,7 @@ Global Symbols
 <LI><a href="#[11]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;emergency_test
 </UL>
 
-<P><STRONG><a name="[15d]"></a>TaskThread_GEIn</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_GEIn))
+<P><STRONG><a name="[15d]"></a>TaskThread_GEIn</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_GEIn))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TaskThread_GEIn
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
@@ -2475,7 +2474,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TaskThread_GEOut
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
+<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>
@@ -2492,7 +2491,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = TaskThread_GOOut &rArr; TaskThread_CheckStop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
+<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>
@@ -2513,7 +2512,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;start_task
 </UL>
 
-<P><STRONG><a name="[164]"></a>TaskThread_IsReady</STRONG> (Thumb, 190 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_IsReady))
+<P><STRONG><a name="[164]"></a>TaskThread_IsReady</STRONG> (Thumb, 188 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_IsReady))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
 <LI>Call Chain = TaskThread_IsReady &rArr; Error_Mesg_Send &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -2538,7 +2537,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = TaskThread_Resume
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
+<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 <LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;resume_test
@@ -2556,13 +2555,11 @@ Global Symbols
 <LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;resume_test
 </UL>
 
-<P><STRONG><a name="[167]"></a>TaskThread_Start</STRONG> (Thumb, 126 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_Start))
+<P><STRONG><a name="[167]"></a>TaskThread_Start</STRONG> (Thumb, 104 bytes, Stack size 8 bytes, taskthread.o(i.TaskThread_Start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = TaskThread_Start &rArr; TaskThread_IsReady &rArr; Error_Mesg_Send &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
-<LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_BootReset
 <LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_IsReady
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
@@ -2752,10 +2749,10 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;setBCC
 <LI><a href="#[179]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_sendStr_task
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
+<BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_makeProtocol_uart3
+<LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GE_FinishTask
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_OverTime_Set
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Mesg_Send
-<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_ReadyTask
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GO_FinishTask
 </UL>
 
@@ -2917,7 +2914,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
 <LI>Call Chain = gas_task &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
+<BR>[Calls]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTimeDlyHMSM
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gas_release_Func
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Gas_pump_Func
@@ -2941,7 +2938,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
-<P><STRONG><a name="[81]"></a>main</STRONG> (Thumb, 300 bytes, Stack size 8 bytes, main.o(i.main))
+<P><STRONG><a name="[81]"></a>main</STRONG> (Thumb, 404 bytes, Stack size 8 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
 <LI>Call Chain = main &rArr; OSInit &rArr; OS_InitTaskStat &rArr; OSTaskCreateExt &rArr; OS_TCBInit
 </UL>
@@ -2970,11 +2967,11 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[69]"></a>main_task</STRONG> (Thumb, 134 bytes, Stack size 0 bytes, main.o(i.main_task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 224 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 232 + Unknown Stack Size
 <LI>Call Chain = main_task &rArr; screenUart_protocolParse &rArr; TaskThread_Start &rArr; TaskThread_IsReady &rArr; Error_Mesg_Send &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
+<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_BootReset
 <LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OSTimeDlyHMSM
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
@@ -3042,7 +3039,7 @@ Global Symbols
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GP_ReadyTask
 </UL>
 
-<P><STRONG><a name="[162]"></a>motor_parameter_Init</STRONG> (Thumb, 424 bytes, Stack size 0 bytes, motor.o(i.motor_parameter_Init))
+<P><STRONG><a name="[162]"></a>motor_parameter_Init</STRONG> (Thumb, 358 bytes, Stack size 0 bytes, motor.o(i.motor_parameter_Init))
 <BR><BR>[Called By]<UL><LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Init
 <LI><a href="#[1a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_param_motor
 </UL>
@@ -3178,8 +3175,8 @@ Global Symbols
 <LI><a href="#[1a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;query_state_gas
 </UL>
 
-<P><STRONG><a name="[194]"></a>screenUart_protocolParse</STRONG> (Thumb, 2016 bytes, Stack size 56 bytes, uart3_datahandle.o(i.screenUart_protocolParse))
-<BR><BR>[Stack]<UL><LI>Max Depth = 224 + Unknown Stack Size
+<P><STRONG><a name="[194]"></a>screenUart_protocolParse</STRONG> (Thumb, 2038 bytes, Stack size 64 bytes, uart3_datahandle.o(i.screenUart_protocolParse))
+<BR><BR>[Stack]<UL><LI>Max Depth = 232 + Unknown Stack Size
 <LI>Call Chain = screenUart_protocolParse &rArr; TaskThread_Start &rArr; TaskThread_IsReady &rArr; Error_Mesg_Send &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_Set_Direction
@@ -3189,13 +3186,14 @@ Global Symbols
 <LI><a href="#[1a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;writeCiphertext
 <LI><a href="#[1a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;verifyCiphertextExistError
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
+<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_BootReset
+<LI><a href="#[19c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__REV16
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_GOOut
 <LI><a href="#[15f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_GOIn
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_GEOut
 <LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_GEIn
-<LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
+<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckStop
 <LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Start
 <LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Resume_Error
 <LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Resume
@@ -3268,14 +3266,13 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[1a6]"></a>set_param_motor</STRONG> (Thumb, 378 bytes, Stack size 16 bytes, uart3_datahandle.o(i.set_param_motor))
+<P><STRONG><a name="[1a6]"></a>set_param_motor</STRONG> (Thumb, 280 bytes, Stack size 16 bytes, uart3_datahandle.o(i.set_param_motor))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
 <LI>Call Chain = set_param_motor &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motor_parameter_Init
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 <LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25QXX_Write
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 <LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy2
 </UL>
@@ -3302,7 +3299,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usmart_config.o(.data)
 </UL>
-<P><STRONG><a name="[195]"></a>stepperMotorStart</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, motor.o(i.stepperMotorStart))
+<P><STRONG><a name="[195]"></a>stepperMotorStart</STRONG> (Thumb, 142 bytes, Stack size 16 bytes, motor.o(i.stepperMotorStart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = stepperMotorStart
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;my_delay_ms
@@ -3366,7 +3363,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.start_task)
 </UL>
 <P><STRONG><a name="[6c]"></a>uart_sendtask</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, main.o(i.uart_sendtask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = uart_sendtask &rArr; Send_makeProtocol_uart3 &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_makeProtocol_uart3
@@ -3672,7 +3669,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;postions_sensor_Init
 </UL>
 
-<P><STRONG><a name="[144]"></a>RingBuffer_IsEmpty</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, usart.o(i.RingBuffer_IsEmpty))
+<P><STRONG><a name="[144]"></a>RingBuffer_IsEmpty</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, usart.o(i.RingBuffer_IsEmpty))
 <BR><BR>[Called By]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Send_makeProtocol_uart3
 </UL>
 
@@ -3684,7 +3681,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_In
 </UL>
 
-<P><STRONG><a name="[136]"></a>RingBuffer_Len</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, ringbuffer.o(i.RingBuffer_Len))
+<P><STRONG><a name="[136]"></a>RingBuffer_Len</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, ringbuffer.o(i.RingBuffer_Len))
 <BR><BR>[Called By]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_Out
 <LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RingBuffer_Avail
 </UL>
@@ -3820,7 +3817,7 @@ Local Symbols
 <LI><a href="#[1a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_param_claw
 </UL>
 
-<P><STRONG><a name="[19f]"></a>query_param</STRONG> (Thumb, 226 bytes, Stack size 32 bytes, uart3_datahandle.o(i.query_param))
+<P><STRONG><a name="[19f]"></a>query_param</STRONG> (Thumb, 224 bytes, Stack size 32 bytes, uart3_datahandle.o(i.query_param))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104 + Unknown Stack Size
 <LI>Call Chain = query_param &rArr; delay_ms &rArr; delay_us &rArr; delay_osschedunlock &rArr; OSSchedUnlock &rArr; OS_Sched
 </UL>
@@ -3830,34 +3827,33 @@ Local Symbols
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 <LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25QXX_Read
 <LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_sendStr
-<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>
 
-<P><STRONG><a name="[66]"></a>query_param_calw</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_calw))
+<P><STRONG><a name="[66]"></a>query_param_calw</STRONG> (Thumb, 126 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_calw))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = query_param_calw &rArr; mymemcpy1
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy1
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> uart3_datahandle.o(i.screenUart_protocolParse)
 </UL>
-<P><STRONG><a name="[65]"></a>query_param_motor</STRONG> (Thumb, 320 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_motor))
+<P><STRONG><a name="[65]"></a>query_param_motor</STRONG> (Thumb, 216 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_motor))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = query_param_motor &rArr; mymemcpy1
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy1
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> uart3_datahandle.o(i.screenUart_protocolParse)
 </UL>
-<P><STRONG><a name="[68]"></a>query_param_outin</STRONG> (Thumb, 130 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_outin))
+<P><STRONG><a name="[68]"></a>query_param_outin</STRONG> (Thumb, 126 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_outin))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = query_param_outin &rArr; mymemcpy1
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy1
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> uart3_datahandle.o(i.screenUart_protocolParse)
 </UL>
-<P><STRONG><a name="[67]"></a>query_param_package</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_package))
+<P><STRONG><a name="[67]"></a>query_param_package</STRONG> (Thumb, 126 bytes, Stack size 16 bytes, uart3_datahandle.o(i.query_param_package))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = query_param_package &rArr; mymemcpy1
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy1
@@ -3891,13 +3887,12 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>
 
-<P><STRONG><a name="[1a8]"></a>set_param_claw</STRONG> (Thumb, 190 bytes, Stack size 16 bytes, uart3_datahandle.o(i.set_param_claw))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
+<P><STRONG><a name="[1a8]"></a>set_param_claw</STRONG> (Thumb, 228 bytes, Stack size 24 bytes, uart3_datahandle.o(i.set_param_claw))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = set_param_claw &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 <LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25QXX_Write
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Parm_Init
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 <LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy2
@@ -3911,7 +3906,6 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 <LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25QXX_Write
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Parm_Init
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 <LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy2
@@ -3919,13 +3913,12 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>
 
-<P><STRONG><a name="[1a9]"></a>set_param_package</STRONG> (Thumb, 190 bytes, Stack size 16 bytes, uart3_datahandle.o(i.set_param_package))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160 + Unknown Stack Size
+<P><STRONG><a name="[1a9]"></a>set_param_package</STRONG> (Thumb, 194 bytes, Stack size 24 bytes, uart3_datahandle.o(i.set_param_package))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = set_param_package &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 <LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25QXX_Write
-<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 <LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_Parm_Init
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 <LI><a href="#[19d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mymemcpy2
@@ -3933,10 +3926,8 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>
 
-<P><STRONG><a name="[1ab]"></a>set_state_IO</STRONG> (Thumb, 324 bytes, Stack size 8 bytes, uart3_datahandle.o(i.set_state_IO))
+<P><STRONG><a name="[1ab]"></a>set_state_IO</STRONG> (Thumb, 298 bytes, Stack size 8 bytes, uart3_datahandle.o(i.set_state_IO))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = set_state_IO
-</UL>
-<BR>[Calls]<UL><LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskThread_CheckIdle
 </UL>
 <BR>[Called By]<UL><LI><a href="#[194]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;screenUart_protocolParse
 </UL>

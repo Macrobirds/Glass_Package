@@ -223,7 +223,8 @@ extern struct glass_claw_struct GC;
 
 extern struct glass_out_struct GO;
 
-
+extern volatile u8 glass_signal;
+extern volatile u8 box_signal;
 
 // 任务线程结构体初始化 任务定时器TIM6初始化
 void TaskThread_Init(void);

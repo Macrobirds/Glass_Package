@@ -439,6 +439,7 @@ void GE_FinishTask(void)
 #endif
 
 	case GE_finish:
+		
 		break;
 	case GE_error:
 		break;

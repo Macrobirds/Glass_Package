@@ -5,7 +5,7 @@ OS_CPU_SR cpu_sr = 0;
 Motor_Data MOT_Parm = {0};
 Glass_ClawSupport__data GCS_Parm = {0};
 Glass_Package_Data GP_Parm = {0};
-Glass_In_Out_Date GIO_Parm = {0};
+Glass_In_Out_Data GIO_Parm = {0};
 
 u32 sensor_error_idx = 0;
 volatile u32 nowRtcTime = 0;
@@ -51,37 +51,29 @@ void Set_Global_Parameter_Default(void)
 	Global_Parm.GIO->GOV_adjust_start = GO.GOV_adjust_start;
 
 	// set GE motor parm
-	Global_Parm.MOT->GE_max_speed = GE_motor_struct.maxfeq / GE_motor_struct.pulse_1mm;
-	Global_Parm.MOT->GE_min_speed = GE_motor_struct.startfeq / GE_motor_struct.pulse_1mm;
-
+	Global_Parm.MOT->GE_speed = GE_motor_struct.defaultfeq / GE_motor_struct.pulse_1mm;
 	Global_Parm.MOT->GE_dir = GE_motor_struct.FRONT;
 
 	// set GCV motor parm
 
-	Global_Parm.MOT->GCV_max_speed = GC_ver_motor_struct.maxfeq / GC_ver_motor_struct.pulse_1mm;
-	Global_Parm.MOT->GCV_min_speed = GC_ver_motor_struct.startfeq / GC_ver_motor_struct.pulse_1mm;
-
+	Global_Parm.MOT->GCV_speed = GC_ver_motor_struct.defaultfeq / GC_ver_motor_struct.pulse_1mm;
 	Global_Parm.MOT->GC_ver_dir = GC_ver_motor_struct.FRONT;
 
 	// set GCR motor parm
-	Global_Parm.MOT->GCR_max_speed = GC_rot_motor_struct.maxfeq;
-	Global_Parm.MOT->GCR_min_speed = GC_rot_motor_struct.startfeq;
+	Global_Parm.MOT->GCR_speed = GC_rot_motor_struct.defaultfeq;
 	Global_Parm.MOT->GC_rot_dir = GC_rot_motor_struct.FRONT;
 
 	// set GP motor parm
-	Global_Parm.MOT->GP_max_speed = GP_motor_struct.maxfeq / GP_motor_struct.pulse_1mm;
-	Global_Parm.MOT->GP_min_speed = GP_motor_struct.startfeq / GP_motor_struct.pulse_1mm;
+	Global_Parm.MOT->GP_speed = GP_motor_struct.defaultfeq / GP_motor_struct.pulse_1mm;
 	Global_Parm.MOT->GP_dir = GP_motor_struct.FRONT;
 
 	// set GOH motor parm
-	Global_Parm.MOT->GOH_max_speed = GO_hor_motor_struct.maxfeq / GO_hor_motor_struct.pulse_1mm;
-	Global_Parm.MOT->GOH_min_speed = GO_hor_motor_struct.startfeq / GO_hor_motor_struct.pulse_1mm;
+	Global_Parm.MOT->GOH_speed = GO_hor_motor_struct.defaultfeq / GO_hor_motor_struct.pulse_1mm;
 	Global_Parm.MOT->GOH_dir = GO_hor_motor_struct.FRONT;
 
 	// set GOV motor parm
-	Global_Parm.MOT->GOV_max_speed = GO_ver_motor_struct.maxfeq / GO_ver_motor_struct.pulse_1mm;
-	Global_Parm.MOT->GOV_min_speed = GO_ver_motor_struct.startfeq / GO_ver_motor_struct.pulse_1mm;
-	Global_Parm.MOT->GOV_dir= GO_ver_motor_struct.FRONT ;
+	Global_Parm.MOT->GOV_speed = GO_ver_motor_struct.defaultfeq / GO_ver_motor_struct.pulse_1mm;
+	Global_Parm.MOT->GOV_dir= GO_ver_motor_struct.FRONT;
 }
 
 void setBCC(u8 *data, u8 dataLength)
