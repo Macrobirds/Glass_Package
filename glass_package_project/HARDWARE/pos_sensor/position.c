@@ -296,9 +296,6 @@ void EXTI0_IRQHandler(void)
 					TIM_Cmd(TIM4,DISABLE);
 					GO_ver_motor_struct.motion=Stop;
 					GO_ver_motor_struct.step=0;
-				}else
-				{
-
 				}
 			}
 		}else if(GO.task==GO_Box_In&&GO.subtask==1)
@@ -309,26 +306,10 @@ void EXTI0_IRQHandler(void)
 				GO_ver_motor_struct.motion=Stop;
 			}
 		}
-		//printf("exit7 trigger\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line0);
 	}	
 	
-//		//GOH_mid_Sen
-//	if(EXTI_GetITStatus(EXTI_Line0)!=RESET) //水平出料电机经过工作点
-//	{
-//		if(GO_hor_motor_struct.dir==Front) //向终点方向
-//		{
-//			delay_us(DELAY_US);
-//			if(GOH_mid_Sen==Sen_Block) //到达工作点停止
-//			{
-//				TIM_Cmd(TIM2,DISABLE);
-//				GO_hor_motor_struct.postion=GO.GOH_mid_pos;
-//				GO_hor_motor_struct.motion=Stop;
-//			}
-//		}
-//		EXTI_ClearITPendingBit(EXTI_Line0);
-//		printf("exti 1\r\n");
-//	}
+
 }
 void EXTI1_IRQHandler(void);
 void EXTI2_IRQHandler(void);
@@ -353,9 +334,6 @@ void EXTI4_IRQHandler(void);
 
 void EXTI9_5_IRQHandler(void)
 {
-//	static volatile u8 flag=FALSE;
-
-	
 	//GOH_end_Sen
 	if(EXTI_GetITStatus(EXTI_Line5)!=RESET) //水平出料到达终点
 	{
@@ -383,7 +361,7 @@ void EXTI9_5_IRQHandler(void)
 		printf("GOV_start_Sen\r\n");
 	}
 	#ifdef BIG_CYLINDER_MOTOR
-	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //垂直出料槽到达原点
+	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //大气缸步进电机到达原点
 	{
 		delay_us(DELAY_US);
 		if(GP_big_cyl_Sen==Sen_Block)
@@ -395,10 +373,13 @@ void EXTI9_5_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line7);
 		printf("big cyl motor sen\r\n");
 	}
-	
+	#else if
+	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //大气缸传感器
+	{
+		EXTI_ClearITPendingBit(EXTI_Line7);
+	}
 	#endif
-	
-	
+
 #ifdef GE_UP_SENSOR_BEFORE
 	//GE_down_Sen
 	if(EXTI_GetITStatus(EXTI_Line8)!=RESET) //进料槽对射光电下
@@ -460,7 +441,6 @@ void EXTI9_5_IRQHandler(void)
 	
 	if(EXTI_GetITStatus(EXTI_Line9)!=RESET) ///进料槽对射光电上
 	{
-		delay_us(DELAY_US);
 		EXTI_ClearITPendingBit(EXTI_Line9);
 	}
 	
@@ -480,7 +460,6 @@ void EXTI15_10_IRQHandler(void)
 				GE_motor_struct.postion=0;
 				GE_motor_struct.motion=Stop;
 			}
-			printf("GE_start_Sen\r\n");
 		EXTI_ClearITPendingBit(EXTI_Line10);
 	}
 	//GC_rot_Sen
@@ -494,7 +473,6 @@ void EXTI15_10_IRQHandler(void)
 			GC_rot_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line11);
-		printf("GC_rot_Sen\r\n");
 	}
 	//GC_ver_Sen
 	#ifdef BIG_CYLINDER_MOTOR
@@ -524,7 +502,6 @@ void EXTI15_10_IRQHandler(void)
 		}
 
 		EXTI_ClearITPendingBit(EXTI_Line12);
-		printf("GC_ver_sen\r\n");
 	}
 	#endif
 	
@@ -541,7 +518,6 @@ void EXTI15_10_IRQHandler(void)
 			GP_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line13);
-		printf("Exti 13\r\n");
 	}
 
 	
@@ -549,12 +525,28 @@ void EXTI15_10_IRQHandler(void)
 	{
 
 		EXTI_ClearITPendingBit(EXTI_Line15);
-		printf("exti 15\r\n");
 	}
 
 
 
 }
+
+//		//GOH_mid_Sen
+//	if(EXTI_GetITStatus(EXTI_Line0)!=RESET) //水平出料电机经过工作点
+//	{
+//		if(GO_hor_motor_struct.dir==Front) //向终点方向
+//		{
+//			delay_us(DELAY_US);
+//			if(GOH_mid_Sen==Sen_Block) //到达工作点停止
+//			{
+//				TIM_Cmd(TIM2,DISABLE);
+//				GO_hor_motor_struct.postion=GO.GOH_mid_pos;
+//				GO_hor_motor_struct.motion=Stop;
+//			}
+//		}
+//		EXTI_ClearITPendingBit(EXTI_Line0);
+//		printf("exti 1\r\n");
+//	}
 
 //	printf("exit8 trigger\r\n");
 //		if(GE_start_Sen==Sen_Block)

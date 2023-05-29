@@ -4,14 +4,14 @@ static u8 ringbuf_send_buf[128] = {0};
 static u8 ringbuf_task_buf[128] = {0};
 
 RingBuffer RingBuf_Send = {
-	.size = 128,
+	.size = sizeof(ringbuf_send_buf),
 	.in = 0,
 	.out = 0,
 	.buffer = ringbuf_send_buf,
 };
 
 RingBuffer RingBuf_Task = {
-	.size = 128,
+	.size = sizeof(ringbuf_task_buf),
 	.in = 0,
 	.out = 0,
 	.buffer = ringbuf_task_buf,
@@ -515,15 +515,15 @@ void screenUart_protocolParse(void)
 	u8 FC = screenUart_RecvCompleteBuf[4];
 	u8 Extra = screenUart_RecvCompleteBuf[5];
 	u8 dataLength = protocolLength - 8;
-	u8 *data = NULL;
-	u8 *tmpBuf = NULL;
-	u8 *tempptr = NULL;
-	motor_struct *motor_ptr = NULL;
-	u32 motor_debug_pulse = 0;
-	u32 motor_debug_feq = 0;
-	screenUart_lastRecvIndex = Index;
-	printf("type:%d,fc:%d,extra:%d,datalength:%d", TYPE, FC, Extra, dataLength);
+	u8 *data = NULL;	//协议数据指针
+	u8 *tmpBuf = NULL; //动态分配数组指针
+	u8 *tempptr = NULL;	//协议数据指针
+	motor_struct *motor_ptr = NULL; //电机结构体临时指针
+	u32 motor_debug_pulse = 0; //电机debug 运行脉冲数
+	u32 motor_debug_feq = 0;	//电机debug	运行频率
+	screenUart_lastRecvIndex = Index; 
 
+	printf("type:%d,fc:%d,extra:%d,datalength:%d", TYPE, FC, Extra, dataLength);
 	if (dataLength > 0)
 	{
 		data = mymalloc(SRAMIN, dataLength);
@@ -571,8 +571,8 @@ void screenUart_protocolParse(void)
 			// 设备位置
 			case Extra_state_position:
 			{
-				tmpBuf = mymalloc(SRAMIN, 25);
-				memset(tmpBuf, 0, 25);
+				tmpBuf = mymalloc(SRAMIN, 24);
+				memset(tmpBuf, 0, 24);
 				tempptr = tmpBuf;
 				tempptr = mymemcpy1(tempptr, &(GE.motor->postion), sizeof(GE.motor->postion));
 				tempptr = mymemcpy1(tempptr, &(GC.motor_v->postion), sizeof(GC.motor_v->postion));
@@ -978,7 +978,7 @@ void screenUart_protocolParse(void)
 				break;
 			}
 			case Extra_run_Spray:
-				if (TaskThread_State != taskthread_running)
+				if (TaskThread_CheckStop())
 				{
 					GP.sta = Ready;
 					GP.task = GP_spray_test;
@@ -1061,6 +1061,8 @@ void screenUart_protocolParse(void)
 					if (data[0] == OnOffState_on)
 					{
 						ack(Index, Type_controlAck, FC, Extra, AckResult_ackSucceed);
+						GO.WaitAck = 1;
+						GO.Index = Index;
 					}
 				}
 				else
@@ -1231,90 +1233,3 @@ bool queryAck_data_1step(u8 *data, u8 dataLength)
 	return true;
 }
 
-// 	if (data[0] & (1 << 0))
-// 	{
-// 		Main_Pump = GAS_ENABLE;
-// 	}
-// 	else
-// 		Main_Pump = GAS_DISABLE;
-
-// 	if (data[0] & (1 << 1))
-// 	{
-// 		Main_in_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		Main_in_Cyl = GAS_DISABLE;
-
-// 	if (data[0] & (1 << 2))
-// 	{
-// 		Main_out_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		Main_out_Cyl = GAS_DISABLE;
-
-// 	if (data[0] & (1 << 3))
-// 	{
-// 		GP_sucker1_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		GP_sucker1_Cyl = GAS_DISABLE;
-
-// 	if (data[0] & (1 << 4))
-// 	{
-
-// 		GP_sucker2_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		GP_sucker2_Cyl = GAS_DISABLE;
-
-// 	if (data[0] & (1 << 5))
-// 	{
-// 		GP_sucker_Pump = GAS_ENABLE;
-// 	}
-// 	else
-// 		GP_sucker_Pump = GAS_DISABLE;
-
-// #ifdef BIG_CYLINDER
-
-// 	if (data[0] & (1 << 6))
-// 	{
-// 		GP_big_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		GP_big_Cyl = GAS_DISABLE;
-
-// #endif
-// 	if (data[0] & (1 << 7))
-// 	{
-// 		GP_small_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		GP_small_Cyl = GAS_DISABLE;
-
-// 	if (data[1] & (1 << 0))
-// 	{
-// 		GC_claw_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		GC_claw_Cyl = GAS_DISABLE;
-
-// 	if (data[1] & (1 << 1))
-// 	{
-// 		GP_spray_Cyl = GAS_ENABLE;
-// 	}
-// 	else
-// 		GP_spray_Cyl = GAS_DISABLE;
-
-// 	if (data[1] & (1 << 2))
-// 	{
-// 		GP_ITV1100 = ITV1100_ENABLE;
-// 	}
-// 	else
-// 		GP_ITV1100 = ITV1100_DISABLE;
-
-// 	if (data[1] & (1 << 3))
-// 	{
-// 		GCV_motor_Break = GAS_ENABLE;
-// 	}
-// 	else
-// 		GCV_motor_Break = GAS_DISABLE;

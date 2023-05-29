@@ -22,12 +22,17 @@ motor_struct GC_rot_motor_struct = {
 	.name = GC_rot_motor,
 	.motion = Stop,
 	.dir = Front,
+#ifdef GC_ROT_PACKAGE
 	.FRONT = 1,
+#endif
+#ifdef GC_VER_PACKAGE
+		.FRONT = 0,
+#endif	
 	.TIM = TIM5,
 	.AccPeriodArray = Accarray_motor_GCR,
 	.postion = -10000,
 	.pulse_1mm = 1,
-	.defaultfeq = 600,
+	.defaultfeq = 1000,
 	.max_pos = 3600,
 	.maxfeq = 1600,
 
@@ -594,51 +599,3 @@ void motorAccGO_Debug(motor_struct *motor, u32 pulse)
 	stepperMotorStart(motor, motor->t_m);
 }
 
-// volatile int32_t GE_motor_struct_postion=-1;
-// volatile u32 GE_motor_struct_step=0;
-// volatile int32_t GC_rot_motor_struct_postion=-1;
-// volatile u32 GC_rot_motor_struct_step=0;
-// volatile int32_t GC_ver_motor_struct_postion=-1;
-// volatile u32 GC_ver_motor_struct_step=0;
-// volatile int32_t GP_motor_struct_postion=-1;
-// volatile u32 GP_motor_struct_step=0;
-// volatile int32_t GO_hor_motor_struct_postion=-1;
-// volatile u32 GO_hor_motor_struct_step=0;
-// volatile int32_t GO_ver_motor_struct_postion=-1;
-// volatile u32 GO_ver_motor_struct_step=0;
-
-// void stepperMotor_Set_planstep(motor_struct * motor,u32 planstep)
-//{
-//	switch(motor->name)
-//	{
-//		case GE_motor:
-//		GE_motor_struct_step=planstep;
-//		break;
-//		case GC_rot_motor:
-//		GC_rot_motor_struct_step=planstep;
-//		break;
-//		case GC_ver_motor:
-//		GC_ver_motor_struct_step=planstep;
-//		break;
-//		case GP_motor:
-//		GP_motor_struct_step=planstep;
-//		break;
-//		case GO_hor_motor:
-//		GO_hor_motor_struct_step=planstep;
-//		break;
-//		case GO_ver_motor:
-//		GO_ver_motor_struct_step=planstep;
-//		break;
-//		default: break;
-//
-//	}
-// }
-// void stepperMotor_Reset_Step(motor_struct * motor)
-//{
-//
-// }
-
-// volatile int32_t stepperMotor_Get_position(motor_struct *motor)
-//{
-
-//}

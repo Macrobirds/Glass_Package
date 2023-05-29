@@ -3,7 +3,8 @@
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 #define DELAY_SUCKER 100
-#define DELAY_BIG_CYLIDER 1500
+#define DELAY_BIG_CYLIDER_DOWN 1500
+#define DELAY_BIG_CYLIDER_UP 1000
 #define DELAY_SMALL_CYLIDER 300
 #define DELAY_SPRAY 2000
 #define DELAY_MOVE_PACKAGE1 100
@@ -410,7 +411,7 @@ void GP_RunningTask(void)
 	////////////////大小气缸复位///////////////// basic
 	case GP_cyl_start:
 		#ifdef BIG_CYLINDER
-		if (GP.running_tim > MAX(DELAY_BIG_CYLIDER, DELAY_SMALL_CYLIDER))
+		if (GP.running_tim > MAX(DELAY_BIG_CYLIDER_UP, DELAY_SMALL_CYLIDER))
 		{
 			if ((GP_big_cyl_Sen == Sen_Block) && (GP_small_cyl_Sen == Sen_Block))
 			{
@@ -473,7 +474,7 @@ void GP_RunningTask(void)
 			}		
 		}else if(GP.subtask==1)
 		{
-			if(GP.running_tim>DELAY_BIG_CYLIDER)
+			if(GP.running_tim>DELAY_BIG_CYLIDER_DOWN)
 			{
 				GP.subtask=2;
 				GP.sta=Ready;
@@ -525,7 +526,7 @@ void GP_RunningTask(void)
 		else if (GP.subtask == 1)
 		{
 			#ifdef BIG_CYLINDER
-			if (GP.running_tim > DELAY_BIG_CYLIDER) // 等待大气缸下降
+			if (GP.running_tim > DELAY_BIG_CYLIDER_DOWN) // 等待大气缸下降
 			{
 				if (GP_big_cyl_Sen != Sen_Block)
 				{
@@ -561,7 +562,7 @@ void GP_RunningTask(void)
 	///////////玻片吸盘上升///////////
 	case GP_sucker_up:
 		#ifdef BIG_CYLINDER
-		if (GP.running_tim > DELAY_BIG_CYLIDER)
+		if (GP.running_tim > DELAY_BIG_CYLIDER_UP)
 		{
 			if (GP_big_cyl_Sen == Sen_Block)
 			{
@@ -686,7 +687,7 @@ void GP_RunningTask(void)
 			}
 			#endif
 			#ifdef BIG_CYLINDER
-			if (GP.running_tim > 1000)
+			if (GP.running_tim > 500)
 			{
 				GP.subtask = 0;
 				GP.sta = Finish;
@@ -703,7 +704,7 @@ void GP_RunningTask(void)
 		if(error_type&Error_Cover_Glass)
 		{
 			#ifdef BIG_CYLINDER
-			if(GP.running_tim>DELAY_BIG_CYLIDER)
+			if(GP.running_tim>DELAY_BIG_CYLIDER_DOWN)
 			{
 				if(GP_big_cyl_Sen==Sen_Block)
 				{
@@ -749,7 +750,7 @@ void GP_RunningTask(void)
 			}else if(GP.subtask==1) //大气缸下降
 			{
 				#ifdef BIG_CYLINDER
-				if(GP.running_tim>DELAY_BIG_CYLIDER)
+				if(GP.running_tim>DELAY_BIG_CYLIDER_DOWN)
 				{
 					GP.subtask=2;
 					GP.sta=Ready;
@@ -773,7 +774,7 @@ void GP_RunningTask(void)
 			}else if(GP.subtask==3) //大气缸复位
 			{
 				#ifdef BIG_CYLINDER
-				if(GP.running_tim>DELAY_BIG_CYLIDER)
+				if(GP.running_tim>DELAY_BIG_CYLIDER_DOWN)
 				{
 					if(GP_big_cyl_Sen==Sen_Block)
 					{
@@ -889,6 +890,7 @@ void GP_FinishTask(void)
 		}
 		break;
 	case GP_sucker_up:
+#ifdef GC_ROT_PACKAGE
 		if ((GC.task == GC_rot_hor) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
 		{
 			if(GP_sucker_Sen==Sen_Block)
@@ -908,6 +910,29 @@ void GP_FinishTask(void)
 			GP.sta = Ready;
 			GP.subtask = 0;
 		}
+#endif
+#ifdef GC_VER_PACKAGE
+		if ((GC.task == GC_move_package) && (GC.sta == Finish)) // 等待夹手将玻片放置到承托盘上
+		{
+			if(GP_sucker_Sen==Sen_Block)
+			{
+				GP.sta = Ready;
+				GP.task = GP_move_spray;
+				GP.subtask = 0;
+			}else
+			{
+				Error_Set(Error_Sucker,0);
+			}
+
+		}
+		else if (GC.task == GC_finish)
+		{
+			GP.task = GP_finish;
+			GP.sta = Ready;
+			GP.subtask = 0;
+		}
+#endif
+
 		break;
 	case GP_move_spray:
 		GP.sta = Ready;

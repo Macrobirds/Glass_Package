@@ -39,12 +39,13 @@ float P6847_GetPressure(void)
 	
 }
 
+//ADC2初始化  通过ADC2读取气压计模拟输出
 void P6847_adc_init(void)
 {
 	adc2_init();
 }
 
-//返回单位为Kpa
+//通过adc2读取气压计压力 返回单位为Kpa 
 float P6847_adc_GetPressure(void)
 {
 	int16_t adc_val=0;

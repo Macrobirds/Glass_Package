@@ -3,7 +3,7 @@
 
 #define PWM_PRIORITY 1
 
-// GE motor pwm
+// GE motor 输出引脚和PWM输出初始化
 void TIM1_PWM_Init(u16 psc)
 {
 
@@ -49,7 +49,7 @@ void TIM1_PWM_Init(u16 psc)
 	TIM_ARRPreloadConfig(TIM1, ENABLE);
 
 	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;		  // TIM1中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY; // 先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY; // 先占优先级1级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		  // 从优先级3级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			  // IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);							  // 根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
@@ -59,7 +59,7 @@ void TIM1_PWM_Init(u16 psc)
 	TIM_Cmd(TIM1, DISABLE);
 }
 
-// GO_ver_motor pwm
+// GO_ver_motor 输出引脚和PWM输出初始化
 void TIM4_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -71,28 +71,27 @@ void TIM4_PWM_Init(u16 psc)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
 
 	GO_ver_motor_struct.timerfeq = 36000000 / psc;
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	//设置该引脚为复用输出功能，输出TIM4 CH1的PWM脉冲波形 GPIOB.6
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	//TIM4 CH1
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; //复用推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);	//初始化GPIO
 
-	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;
-	TIM_TimeBaseStructure.TIM_Prescaler = psc - 1;
-	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;					//设置为最大值 当计数值值满时重新装载
+	TIM_TimeBaseStructure.TIM_Prescaler = psc - 1;				//设置用来作为TIMx时钟的预分频值
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;		//设置始终分割： TDTS= Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;	//设置为向上计数模式
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);				//设置定时器的TIM_TimeBaseStructure寄存器
 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
-	TIM_OCInitStructure.TIM_Pulse = 500;
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;			//输出模式为电平自动翻转模式
+	TIM_OCInitStructure.TIM_Pulse = 500;						
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	//	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
-	TIM_OC1Init(TIM4, &TIM_OCInitStructure);
-	TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Disable);
 
-	TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
+	TIM_OC1Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Disable);	//关闭TIM4的预装载寄存器
+
+	TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);	//TIM4 CC1中断开启
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PWM_PRIORITY;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -100,7 +99,7 @@ void TIM4_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-// GC_ver_motor pwm
+// GC_ver_motor 输出引脚和PWM输出初始化
 void TIM3_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -112,11 +111,11 @@ void TIM3_PWM_Init(u16 psc)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
 
 	GC_ver_motor_struct.timerfeq = 36000000 / psc;
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	//设置该引脚为复用输出功能，输出TIM4 CH1的PWM脉冲波形 GPIOA.6
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	//TIM3 CH1
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	//复用推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);	//初始化GPIO
 	
 	#ifdef BIG_CYLINDER_MOTOR
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
@@ -126,20 +125,19 @@ void TIM3_PWM_Init(u16 psc)
 	
 	#endif
 
-	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;
-	TIM_TimeBaseStructure.TIM_Prescaler = psc - 1;
-	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	TIM_TimeBaseStructure.TIM_Period = 0XFFFF;				//设置为最大值 当计数值值满时重新装载
+	TIM_TimeBaseStructure.TIM_Prescaler = psc - 1;			//设置用来作为TIMx时钟的预分频值
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;	//设置始终分割： TDTS= Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;//设置为向上计数模式
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);				//设置定时器的TIM_TimeBaseStructure寄存器
 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;		//输出模式为电平自动翻转模式
 	TIM_OCInitStructure.TIM_Pulse = 500;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	//	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
+
 	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Disable);
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Disable);//关闭TIM3的预装载寄存器
 	
 	
 	
@@ -152,7 +150,7 @@ void TIM3_PWM_Init(u16 psc)
 	TIM_ITConfig(TIM3,TIM_IT_CC1,DISABLE);
 	TIM_ITConfig(TIM3,TIM_IT_CC3,DISABLE);
 	#else
-	TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);
+	TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);//TIM3 CC1中断开启
 	#endif
 
 	
@@ -163,7 +161,7 @@ void TIM3_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-// GP_motor pwm
+// GP_motor 输出引脚和PWM输出初始化
 void TIM8_PWM_Init(u16 psc)
 {
 
@@ -218,7 +216,7 @@ void TIM8_PWM_Init(u16 psc)
 	TIM_Cmd(TIM8, DISABLE);
 }
 
-// GC_rot_motor pwm
+// GC_rot_motor 输出引脚和PWM输出初始化
 void TIM5_PWM_Init(u16 psc)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -245,8 +243,7 @@ void TIM5_PWM_Init(u16 psc)
 	TIM_OCInitStructure.TIM_Pulse = 500;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	//	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-	//	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCIdleState_Reset;
+
 	TIM_OC1Init(TIM5, &TIM_OCInitStructure);
 	TIM_OC1PreloadConfig(TIM5, TIM_OCPreload_Disable);
 
@@ -258,7 +255,7 @@ void TIM5_PWM_Init(u16 psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-// GO_hor_motor_pwm
+// GO_hor_motor 输出引脚和PWM输出初始化
 // 引脚复用重定位 ，需要最后设置 ，否则复位失败
 void TIM2_PWM_Init(u16 psc)
 {
@@ -343,13 +340,7 @@ void TIM1_UP_IRQHandler(void) // TIM1中断
 
 		// 在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		//		if(GE_motor_struct.dir==Back&&GE_start_Sen==Sen_Block)
-		//		{
-		//			TIM_Cmd(TIM1,DISABLE);
-		//			GE_motor_struct.postion=0;
-		//			GE_motor_struct.motion=Stop;
-		//			return;
-		//		}
+
 		/****/
 
 		if (GE_motor_struct.motion == ConstMove) // 电机匀速运动
@@ -490,14 +481,6 @@ void TIM3_IRQHandler(void) // TIM3 中断 GC_ver_motor
 
 		// 在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		//		if(GC_ver_motor_struct.planpostion==0&&GC_ver_Sen==Sen_Block)
-		//		{
-		//			TIM_Cmd(TIM3,DISABLE);
-		//			GC_ver_motor_struct.motion=Stop;
-		//			GC_ver_motor_struct.postion=0;
-		//			return;
-
-		//		}
 
 		/****/
 
@@ -703,13 +686,7 @@ void TIM5_IRQHandler(void) // TIM5 中断 GC_rot_motor
 
 		// 在不同任务下判断需要停止时电机方向和传感器状态
 		/***/
-		//		if(GC_rot_motor_struct.dir==Back&&GC_rot_Sen==Sen_Block)
-		//		{
-		//			TIM_Cmd(TIM5,DISABLE);
-		//			GC_rot_motor_struct.motion=Stop;
-		//			GC_rot_motor_struct.postion=0;
-		//			return;
-		//		}
+
 
 		/****/
 
@@ -766,15 +743,8 @@ void TIM8_UP_IRQHandler(void) // TIM8中断 GP_motor
 		}
 
 		//		//在不同任务下判断需要停止时电机方向和传感器状态
-		//		/***/
-		//		if(GP_motor_struct.dir==Back&&GP_start_Sen==Sen_Block)
-		//		{
-		//			TIM_Cmd(TIM8,DISABLE);
-		//			GP_motor_struct.motion=Stop;
-		//			GP_motor_struct.postion=0;
-		//			return;
+		/***/
 
-		//		}
 
 		/****/
 
@@ -805,42 +775,3 @@ void TIM8_UP_IRQHandler(void) // TIM8中断 GP_motor
 	}
 }
 
-//			///////////////////////////////////
-//			TIM_ClearITPendingBit(TIM1,TIM_FLAG_Update);//清除更新中断标志位
-//			TIM_SetAutoreload(TIM1,1000);//设定自动重装值
-//			TIM_SetCompare1(TIM1,500); //匹配值2等于重装值一半，是以占空比为50%
-//			/////////////////////////////////
-
-//	u16 capture;
-//	if(TIM_GetITStatus(TIM5,TIM_IT_CC1)!=RESET)
-//	{
-//		TIM_ClearITPendingBit(TIM5,TIM_IT_CC1);
-//		capture=TIM_GetCapture1(TIM5);
-//		TIM_SetCompare1(TIM5,capture+1000);
-//
-//	}
-
-//	u16 capture;
-//	if(TIM_GetITStatus(TIM4,TIM_IT_CC1)!=RESET)
-//	{
-//		TIM_ClearITPendingBit(TIM4,TIM_IT_CC1);
-//		capture=TIM_GetCapture1(TIM4);
-//		TIM_SetCompare1(TIM4,capture+1000);
-//
-//	}
-
-//	u16 capture=0;
-//	if(TIM_GetITStatus(TIM3,TIM_IT_CC1)!=RESET)
-//	{
-//		TIM_ClearITPendingBit(TIM3,TIM_IT_CC1);
-//		capture=TIM_GetCapture1(TIM3);
-//		TIM_SetCompare1(TIM3,capture+1000);
-//	}
-
-//		u16 capture_val=0;
-//	 if(TIM_GetITStatus(TIM2,TIM_IT_CC1)!=RESET)
-//	 {
-//		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
-//		 capture_val=TIM_GetCapture1(TIM2);
-//		 TIM_SetCompare1(TIM2,capture_val+1000);
-//	 }

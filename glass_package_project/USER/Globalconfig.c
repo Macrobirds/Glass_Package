@@ -98,10 +98,10 @@ void set_carrierVersions_Default(void)
 		Carrier_Versions_Default = BP;
 		// mpd.carriersVersions = BP;
 		break;
-	// 未设置机型，使用默认参数
 	case DeviceType_fpj:
 		Carrier_Versions_Default = FPJ;
 		break;
+	// 未设置机型，使用默认参数
 	case DeviceType_none:
 	default:
 		break;
@@ -120,19 +120,31 @@ void getDeviceSnNumber(void)
 	deviceSnNumber = (long)((ChipUniqueID[0] ^ ChipUniqueID[1] ^ ChipUniqueID[2]) & 0xffffff);
 }
 
-// void checkPirate(void)
-//{
-//	// 如果检验失败，程序是盗版，破坏程序
-//	if (verifyCiphertextExistError())
-//	{
-//		// 如果读保护已经开启，关闭读保护，格式化芯片
-//		if (FLASH_GetReadOutProtectionStatus() == SET)
-//			close_FlashReadProtect();
-//		// 读保护未开启，先打开，等下开机再格式化
-//		else
-//		{
-//			open_FlashReadProtect();
-//			POWER = !POWER_ON;
-//		}
-//	}
-// }
+void checkPirate(void)
+{
+	// 如果检验失败，程序是盗版，破坏程序
+	if (verifyCiphertextExistError())
+	{
+		// 如果读保护已经开启，关闭读保护，格式化芯片
+		if (FLASH_GetReadOutProtectionStatus() == SET)
+			close_FlashReadProtect();
+		// 读保护未开启，先打开，等下开机再格式化
+		else
+		{
+			open_FlashReadProtect();
+			// 电源关闭 POWER = !POWER_ON;
+		}
+	}
+}
+
+bool checkDeviceType_isExist(u8 tmp_DeviceType)
+{
+	switch(tmp_DeviceType)
+	{
+		case DeviceType_none:
+		case DeviceType_fpj:
+			return true;
+		default:
+			return false;
+	}
+}

@@ -6,34 +6,33 @@
 // 夹手是否被阻挡
 static u8 Check_GP(void)
 {
-	// #ifdef DEBUG_MODE
-	//	return TRUE;
-	// #else
+
 	if (GC_claw_Sen == Sen_Block) // 夹手夹紧状态
 	{
 		if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop &&
-			GP.motor->postion == GP.sucker_pos && GP.motor->motion == Stop) /**/
+			GP.motor->postion == GP.sucker_pos && GP.motor->motion == Stop) /*夹手托盘位于原点 封片装置在吸片位置*/
 		{
 			return TRUE;
 		}
 	}
 	else
 	{
-		if (GO.motor_h->motion == Stop)
+		if (GO.motor_h->motion == Stop) //夹手托盘静止
 		{
 			return TRUE;
 		}
 	}
 	return FALSE;
-	// #endif
 }
 
+//从子任务恢复到主任务
 static void Resume_Task(void)
 {
 	GC.sta = Ready;
 	GC.subtask = GC.main_subtask;
 	GC.task = GC.main_task;
 }
+
 // 跳转到指定任务中执行 Task 主任务 Next_task 下一子任务
 static void Next_Task(enum glass_claw_task_index Resume_task, enum glass_claw_task_index Next_task)
 {
@@ -62,12 +61,12 @@ void GC_ReadyTask(void)
 	{
 	case GC_none:
 		break;
-	///////////////////垂直方向复位到原点/////////////////////basic
+	/*垂直方向复位到原点 basic*/
 	case GC_ver_start:
 		motorGo(GC.motor_v, 0, 0);
 		GC.sta = Running;
 		break;
-	///////////////////旋转方向复位到原点///////////////////// basic
+	/*旋转方向复位到原点 basic*/
 	case GC_rot_start:
 		if (GC_rot_Sen != Sen_Block)
 		{
@@ -82,17 +81,17 @@ void GC_ReadyTask(void)
 			}
 		}
 		break;
-	/////////////夹手释放////////////////////////basic
+	/*夹手释放 basic*/
 	case GC_release:
 		GC_claw_Cyl = GAS_DISABLE; // 夹手释放
 		GC.sta = Running;
 		break;
-	/////////////夹手夹紧/////////////////////basic
+	/*夹手夹紧 basic*/
 	case GC_grab:
 		GC_claw_Cyl = GAS_ENABLE; // 夹手夹紧
 		GC.sta = Running;
 		break;
-	///////////////开机复位//////////////////////
+	/*开机复位*/
 	case GC_reset_on:
 		if (GC.subtask == 0) // 夹手释放
 		{
@@ -123,8 +122,9 @@ void GC_ReadyTask(void)
 		}
 
 		break;
-	////////////////夹手关机复位//////////////////
+	/*夹手关机复位*/
 	case GC_reset_off:
+#ifdef GC_ROT_PACKAGE
 		if (GC.subtask == 0) // 复位至垂直原点
 		{
 			Next_Task(GC.task, GC_ver_start);
@@ -173,8 +173,57 @@ void GC_ReadyTask(void)
 				Next_Task(GC_none, GC_rot_start);
 			}
 		}
+#endif
+#ifdef GC_VER_PACKAGE
+	if(GC.subtask==0)
+	{
+		if(GC_claw_Sen==Sen_Block) //夹手夹紧
+		{
+				if(GC.motor_r->postion==GC.GCR_hor_pos&&GC.motor_r->motion==Stop) //夹手水平停止
+				{
+					GC.subtask=2;
+				}else
+				{
+					Next_Task(GC.task,GC_ver_start); //夹手复位至垂直原点
+				}
+		}else
+		{
+			GC.subtask=5; //夹手复位至垂直原点
+		}
+	}else if(GC.subtask==1)
+	{
+		if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //玻片托盘在原点停止
+		{
+			motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
+			GC.sta=Running;
+		}
+	}else if(GC.subtask==2)
+	{
+		if(GO.motor_h->postion==GO.GOH_mid_pos&&GO.motor_h->motion==Stop) //玻片托盘在封片位置停止
+		{
+			motorGo(GC.motor_v,GC.GCV_pacakge_pos,0);
+			GC.sta=Running;
+		}
+	}else if(GC.subtask==3)
+	{
+		Next_Task(GC.task,GC_release); //夹手释放
+	}else if(GC.subtask==4)
+	{
+		Next_Task(GC.task,GC_rot_start); //夹手复位旋转原点
+	}else if(GC.subtask==5)
+	{
+		Next_Task(GC.task,GC_ver_start); //夹手复位至垂直原点
+	}else if(GC.subtask==6)
+	{
+		if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //玻片托盘复位至原点
+		{
+			motorGo_acc(GC.motor_r,GC.GCR_hor_pos);
+			GC.sta=Running;
+		}
+	}
+#endif
 		break;
-	///////////////////开始运行任务//////////////////////////
+	/*开始运行任务*/
 	case GC_start:
 #ifdef GC_ROT_PACKAGE
 		// 释放夹手 并跳转到旋转垂直任务
@@ -193,10 +242,9 @@ void GC_ReadyTask(void)
 				Next_Task(GC_rot_down, GC_rot_start);
 			}
 		}
-
 #endif
 		break;
-	//////////////////夹手旋转至垂直位置//////////////////
+	/*夹手旋转至垂直位置*/
 	case GC_rot_down:
 		if (GC.motor_r->postion == GC.GCV_down_pos)
 		{
@@ -211,7 +259,7 @@ void GC_ReadyTask(void)
 			}
 		}
 		break;
-	////////////////夹手下降至玻片装载槽////////////////
+	/*夹手下降至玻片装载槽*/
 	case GC_move_down:
 		// 玻片移动至夹手正下方
 		if (GE_up_Sen != Sen_Block && GE_down_Sen == Sen_Block && GE.motor->motion == Stop)
@@ -220,11 +268,12 @@ void GC_ReadyTask(void)
 			GC.sta = Running;
 		}
 		break;
-	////////////////夹手旋转至水平位置/////////////////////
+	/*夹手旋转至水平位置*/
 	case GC_check_glass:
 		motorGo_acc(GC.motor_v, GC.GCV_down_pos - GC.GCV_glass_len); // 向上移动一定距离 检测是否存在玻片
 		GC.sta = Running;
 		break;
+	/*夹手上升至原点*/
 	case GC_move_up:
 		motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq * 2);
 		GC.sta = Running;
@@ -256,6 +305,7 @@ void GC_ReadyTask(void)
 
 #endif
 #ifdef GC_VER_PACKAGE
+	/*夹手旋转至水平位置*/
 	case GC_rot_hor:
 		if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop)
 		{
@@ -263,6 +313,7 @@ void GC_ReadyTask(void)
 			GC.sta = Running;
 		}
 		break;
+	/*夹手垂直移动至封片位置*/
 	case GC_move_package:
 		if (GO.motor_h->postion == GO.GOH_mid_pos && GO.motor_h->motion == Stop)
 		{
@@ -397,6 +448,7 @@ void GC_RunningTask(void)
 		break;
 	////////////////////////夹手关机复位/////////////////
 	case GC_reset_off:
+#ifdef GC_ROT_PACKAGE
 		if (GC.subtask == 0) // 复位至垂直原点
 		{
 		}
@@ -425,6 +477,42 @@ void GC_RunningTask(void)
 		else if (GC.subtask == 5)
 		{
 		}
+#endif
+#ifdef GC_VER_PACKAGE
+	if(GC.subtask==0)
+	{
+
+	}else if(GC.subtask==1)
+	{
+		if(GC.motor_r->motion==Stop)
+		{
+			GC.sta=Ready;
+			GC.subtask++;
+		}
+	}else if(GC.subtask==2)
+	{
+		if(GC.motor_v->motion==Stop)
+		{
+			GC.sta=Ready;
+			GC.subtask++;
+		}
+	}else if(GC.subtask==3)
+	{
+
+	}else if(GC.subtask==4)
+	{
+
+	}else if(GC.subtask==5)
+	{
+
+	}else if(GC.subtask==6)
+	{
+		if(GC.motor_r->motion==Stop)
+		{
+			GC.sta=Finish;
+		}	
+	}
+#endif
 		break;
 	/////////////////开始运行////////////////////
 	case GC_start:

@@ -8,7 +8,7 @@ struct glass_enter_struct GE = {
 	.sta = Ready,
 	.motor = &GE_motor_struct,
 	.GE_box_len = 212 * 350,
-	.GE_box_speed = 20*212,
+	.GE_box_speed = 20 * 212,
 	.glass_Exist = FALSE,
 	.box_Exist = FALSE,
 	.subtask = 0,
@@ -20,15 +20,22 @@ struct glass_claw_struct GC = {
 	.sta = Ready,
 	.motor_v = &GC_ver_motor_struct,
 	.motor_r = &GC_rot_motor_struct,
-	.GCV_down_pos = 33300 ,
+#ifdef GC_ROT_PACKAGE
+	.GCV_down_pos = 33300,
 	.GCR_hor_pos = 130,
 	.GCR_ver_pos = 1720,
+#endif
+#ifdef GC_VER_PACKAGE
+	.GCV_down_pos = 33300 + 211 * 4,
+	.GCR_hor_pos = 1645,
+	.GCR_ver_pos = 45,
+#endif
+
 	.GCV_glass_len = 16000,
 	.main_subtask = 0,
 	.main_task = GC_none,
 	.Glass_Ready = FALSE,
-	.GCV_pacakge_pos=211*3
-};
+	.GCV_pacakge_pos = 880};
 
 #ifdef BIG_CYLINDER_MOTOR
 struct glass_package_struct GP = {
@@ -84,19 +91,17 @@ struct glass_out_struct GO = {
 	.GOH_waste_pos = 268 * 36 + 9210 + 400,
 };
 
-enum taskthread_state TaskThread_State = taskthread_boost;	  // 任务线程运行状态
+enum taskthread_state TaskThread_State = taskthread_boost; // 任务线程运行状态
 volatile enum task_error error_type = Error_none;
-volatile u8 glass_signal=0;
-volatile u8 box_signal=0;
 
+// 任务线程是否空闲
 u8 TaskThread_CheckIdle(void)
 {
 	if (TaskThread_State == taskthread_emergency)
 	{
 		return FALSE;
 	}
-	
-	
+
 	if (GE.task == GE_none && GC.task == GC_none &&
 		GP.task == GP_none && GO.task == GO_none)
 	{
@@ -107,17 +112,15 @@ u8 TaskThread_CheckIdle(void)
 	{
 		return TRUE;
 	}
-	
-	if(TaskThread_State==taskthread_boost||TaskThread_State==taskthread_pause||TaskThread_State==taskthread_finsih)
+
+	if (TaskThread_State == taskthread_boost || TaskThread_State == taskthread_pause || TaskThread_State == taskthread_finsih || TaskThread_State == taskthread_close)
 	{
-		if(GE.motor->motion==Stop&&GC.motor_r->motion==Stop&&GC.motor_v->motion==Stop
-			&&GP.motor->motion==Stop&&GO.motor_h->motion==Stop&&GO.motor_v->motion==Stop)
+		if (GE.motor->motion == Stop && GC.motor_r->motion == Stop && GC.motor_v->motion == Stop && GP.motor->motion == Stop && GO.motor_h->motion == Stop && GO.motor_v->motion == Stop)
 		{
 			return TRUE;
 		}
 	}
-	
-	
+
 	return FALSE;
 }
 
@@ -131,7 +134,7 @@ void Error_Mesg_Send(void)
 	// 传感器错误
 	if (error_type & Error_Sensor)
 	{
-		ack_task(screenUart_lastRecvIndex++,Type_controlAck,Fc_error,Extra_error_sensor,sensor_error_idx);
+		ack_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_sensor, sensor_error_idx);
 	}
 	// 缺少盖玻片
 	if (error_type & Error_Cover_Glass)
@@ -317,35 +320,34 @@ void Error_Set(enum task_error error, u8 error_sen)
 
 void TaskThread_Parm_Init(void)
 {
-	if(TaskThread_State!=taskthread_running)
+	if (TaskThread_State != taskthread_running)
 	{
-	// set GE task parm
-	GE.GE_box_len = Global_Parm.GIO->GE_box_len* GE_motor_struct.pulse_1mm / SCALE;
-	GE.GE_box_speed = Global_Parm.GIO->GE_box_speed * GE_motor_struct.pulse_1mm;
-	// set GC task parm
-	GC.GCR_hor_pos = Global_Parm.GCS->GCR_hor_pos;
-	GC.GCR_ver_pos = Global_Parm.GCS->GCR_ver_pos;
-	GC.GCV_down_pos = Global_Parm.GCS->GCV_down_pos*GC_ver_motor_struct.pulse_1mm / SCALE;
-	GC.GCV_glass_len = Global_Parm.GCS->GCV_glass_len*GC_ver_motor_struct.pulse_1mm / SCALE;
-	GC.GCV_pacakge_pos=Global_Parm.GCS->GCV_package_pos;
-	// set GP parm
-	GP.delay_after = Global_Parm.GP->delay_after;
-	GP.delay_before = Global_Parm.GP->delay_before;
-	GP.sucker_pos = Global_Parm.GP->sucker_pos* GP_motor_struct.pulse_1mm / SCALE;
-	GP.spray_pos = Global_Parm.GP->spray_pos* GP_motor_struct.pulse_1mm / SCALE;
-	GP.spray_len = Global_Parm.GP->spray_len* GP_motor_struct.pulse_1mm / SCALE;
-	GP.spray_speed = Global_Parm.GP->spray_speed * GP_motor_struct.pulse_1mm;
-	GP.spray_pressure = Global_Parm.GP->spray_pressure;
-	// set GO parm
-	GO.GOH_end_pos = Global_Parm.GCS->GOH_end_pos*GO_hor_motor_struct.pulse_1mm / SCALE;
-	GO.GOH_mid_pos = Global_Parm.GCS->GOH_mid_pos*GO_hor_motor_struct.pulse_1mm / SCALE;
-	GO.GOV_box_dis = Global_Parm.GIO->GOV_box_dis *GO_ver_motor_struct.pulse_1mm/SCALE;
-	GO.GOV_slot_dis = Global_Parm.GIO->GOV_slot_dis*GO_ver_motor_struct.pulse_1mm/SCALE ;
-	GO.GOV_box_len = Global_Parm.GIO->GOV_box_len *GO_ver_motor_struct.pulse_1mm/SCALE;
-	GO.GOV_adjust=Global_Parm.GIO->GOV_adjust;
-	GO.GOV_adjust_start=Global_Parm.GIO->GOV_adjust_start;	
+		// set GE task parm
+		GE.GE_box_len = Global_Parm.GIO->GE_box_len * GE_motor_struct.pulse_1mm / SCALE;
+		GE.GE_box_speed = Global_Parm.GIO->GE_box_speed * GE_motor_struct.pulse_1mm;
+		// set GC task parm
+		GC.GCR_hor_pos = Global_Parm.GCS->GCR_hor_pos;
+		GC.GCR_ver_pos = Global_Parm.GCS->GCR_ver_pos;
+		GC.GCV_down_pos = Global_Parm.GCS->GCV_down_pos * GC_ver_motor_struct.pulse_1mm / SCALE;
+		GC.GCV_glass_len = Global_Parm.GCS->GCV_glass_len * GC_ver_motor_struct.pulse_1mm / SCALE;
+		GC.GCV_pacakge_pos = Global_Parm.GCS->GCV_package_pos;
+		// set GP parm
+		GP.delay_after = Global_Parm.GP->delay_after;
+		GP.delay_before = Global_Parm.GP->delay_before;
+		GP.sucker_pos = Global_Parm.GP->sucker_pos * GP_motor_struct.pulse_1mm / SCALE;
+		GP.spray_pos = Global_Parm.GP->spray_pos * GP_motor_struct.pulse_1mm / SCALE;
+		GP.spray_len = Global_Parm.GP->spray_len * GP_motor_struct.pulse_1mm / SCALE;
+		GP.spray_speed = Global_Parm.GP->spray_speed * GP_motor_struct.pulse_1mm;
+		GP.spray_pressure = Global_Parm.GP->spray_pressure;
+		// set GO parm
+		GO.GOH_end_pos = Global_Parm.GCS->GOH_end_pos * GO_hor_motor_struct.pulse_1mm / SCALE;
+		GO.GOH_mid_pos = Global_Parm.GCS->GOH_mid_pos * GO_hor_motor_struct.pulse_1mm / SCALE;
+		GO.GOV_box_dis = Global_Parm.GIO->GOV_box_dis * GO_ver_motor_struct.pulse_1mm / SCALE;
+		GO.GOV_slot_dis = Global_Parm.GIO->GOV_slot_dis * GO_ver_motor_struct.pulse_1mm / SCALE;
+		GO.GOV_box_len = Global_Parm.GIO->GOV_box_len * GO_ver_motor_struct.pulse_1mm / SCALE;
+		GO.GOV_adjust = Global_Parm.GIO->GOV_adjust;
+		GO.GOV_adjust_start = Global_Parm.GIO->GOV_adjust_start;
 	}
-
 }
 
 void TaskThread_Init(void)
@@ -354,10 +356,10 @@ void TaskThread_Init(void)
 	// Init TIM6 Interrupt  1ms
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	//初始化电机参数
+
+	// 初始化电机参数
 	motor_parameter_Init();
-	//初始化任务参数
+	// 初始化任务参数
 	TaskThread_Parm_Init();
 
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE); // 时钟使能
@@ -378,7 +380,6 @@ void TaskThread_Init(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;						  // IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);										  // 初始化NVIC寄存器
 	TIM_Cmd(TIM6, ENABLE);
-
 }
 
 void TIM6_IRQHandler(void) // TIM6中断
@@ -570,7 +571,7 @@ enum taskthread_state TaskThread_IsReady(void)
 	else
 	{
 		error_type &= ~Error_Out_Box;
-			// 未放置存储盒
+		// 未放置存储盒
 		if (GO.Storage_full == TRUE)
 		{
 			error_type |= Error_StorageFull;
@@ -590,7 +591,6 @@ enum taskthread_state TaskThread_IsReady(void)
 		error_type &= ~Error_Spray;
 	}
 
-
 	if (error_type > Error_OverTime)
 	{
 		Error_Mesg_Send(); // 上报错误
@@ -603,49 +603,42 @@ enum taskthread_state TaskThread_IsReady(void)
 // 开机复位任务
 u8 TaskThread_BootReset(void)
 {
+	//任务状态为紧急停止状态
 	if (TaskThread_State == taskthread_emergency)
 	{
 		return FALSE;
 	}
-
+	//任务状态是否空闲
 	if (!TaskThread_CheckIdle())
 	{
 		return FALSE;
 	}
 
 	// 开启复位任务
-	if (Gas_State == gas_pumped) // 充气完成
-	{
-		TIM_Cmd(TIM6, DISABLE);
-		// 清空错误警报
-		error_type = 0;
-		sensor_error_idx = 0;
+	TIM_Cmd(TIM6, DISABLE);
+	// 清空错误警报
+	error_type = 0;
+	sensor_error_idx = 0;
 
-		GE.subtask = 0;
-		GE.sta = Ready;
-		GE.task = GE_reset_on;
+	GE.subtask = 0;
+	GE.sta = Ready;
+	GE.task = GE_reset_on;
 
-		GC.subtask = 0;
-		GC.sta = Ready;
-		GC.task = GC_reset_on;
+	GC.subtask = 0;
+	GC.sta = Ready;
+	GC.task = GC_reset_on;
 
-		GP.subtask = 0;
-		GP.sta = Ready;
-		GP.task = GP_reset_on;
+	GP.subtask = 0;
+	GP.sta = Ready;
+	GP.task = GP_reset_on;
 
-		GO.subtask = 0;
-		GO.sta = Ready;
-		GO.task = GO_reset_on;
-		TIM_Cmd(TIM6, ENABLE);
-		TaskThread_State = taskthread_boost;
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-
-	return FALSE;
+	GO.subtask = 0;
+	GO.sta = Ready;
+	GO.task = GO_reset_on;
+	TIM_Cmd(TIM6, ENABLE);
+	//任务状态为启动状态
+	TaskThread_State = taskthread_boost;
+	return TRUE;
 }
 
 // 开始运行任务
@@ -721,7 +714,7 @@ u8 TaskThread_GEIn(void)
 	{
 		return FALSE;
 	}
-	if (GE.task==GE_BOx_Out&&GE.sta==Finish)
+	if (GE.task == GE_BOx_Out && GE.sta == Finish)
 	{
 		TIM_Cmd(TIM6, DISABLE);
 		GE.sta = Ready;
@@ -757,7 +750,7 @@ u8 TaskThread_GOIn(void)
 	{
 		return FALSE;
 	}
-	if (GO.task==GO_Box_Out&&GO.sta==Finish)
+	if (GO.task == GO_Box_Out && GO.sta == Finish)
 	{
 		TIM_Cmd(TIM6, DISABLE);
 		GO.sta = Ready;
@@ -790,15 +783,15 @@ u8 TaskThread_Check_ErrorDone(void)
 {
 	if (TaskThread_State == taskthread_error)
 	{
-		if ((GE.sta == Finish||GE.task==GE_finish) && GC.sta == Finish &&
+		if ((GE.sta == Finish || GE.task == GE_finish) && GC.sta == Finish &&
 			GP.sta == Finish && GO.sta == Finish)
 		{
 			return TRUE;
 		}
-		
-		if(error_type|Error_StorageFull)
+
+		if (error_type | Error_StorageFull)
 		{
-			if(GO.Storage_full==FALSE&&GO.motor_v->motion==Stop)
+			if (GO.Storage_full == FALSE && GO.motor_v->motion == Stop)
 			{
 				return TRUE;
 			}

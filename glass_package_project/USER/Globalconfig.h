@@ -23,7 +23,6 @@
 
 
 // 条件编译参数
-
 #define BIG_CYLINDER
 
 
@@ -247,6 +246,8 @@ void setBCC(u8 *data, u8 dataLength);
 void getDeviceSnNumber(void);
 void checkPirate(void);
 void set_carrierVersions_Default(void);
+bool checkDeviceType_isExist(u8 tmp_DeviceType);
+
 
 extern OS_CPU_SR cpu_sr;
 

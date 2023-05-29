@@ -7,6 +7,7 @@
 
 #define TIME 5
 
+//ITV0011初始化 初始化PCF8591模块 初始化软件iic引脚
 void ITV0011_IIC_Init()
 {
 	GP_ITV1100=ITV1100_DISABLE;
@@ -14,15 +15,17 @@ void ITV0011_IIC_Init()
 	PCF8591_DAC_Output(0x90,0x40,0);//DAC输出为0
 }
 
+//开启ITV0011电源及模拟输出
 void ITV0011_IIC_Enable(u8 volt)
 {
 
 	GP_ITV1100=ITV1100_ENABLE;
 	PCF8591_DAC_Output(0x90,0x40,volt);
 }
+
+//关闭ITV0011电源及模拟输出
 void ITV0011_IIC_Disable()
 {
-
 	GP_ITV1100=ITV1100_DISABLE;
 	PCF8591_DAC_Output(0x90,0x40,0);
 }

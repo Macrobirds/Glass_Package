@@ -185,6 +185,7 @@ void GO_ReadyTask(void)
 		break;
 	//////////////////关机复位/////////////////
 	case GO_reset_off:
+#ifdef GC_ROT_PACKAGE
 		if (GO.subtask == 0) // 回到水平原点
 		{
 			if (Check_GC())
@@ -227,6 +228,56 @@ void GO_ReadyTask(void)
 				}
 			}
 		}
+#endif
+#ifdef GC_VER_PACKAGE
+	if(GO.subtask==0)
+	{
+		if(GC_claw_Sen==Sen_Block)
+		{
+			if(GC.motor_r->postion==GC.GCR_hor_pos&&GC.motor_r->motion==Stop)
+			{
+				GO.subtask=1;
+			}else
+			{
+				if(GO.motor_h->motion==Stop&&GO.motor_v->motion==Stop)
+				{
+					Next_Task(GO.task,GOH_start);
+				}
+			}
+		}else
+		{
+			GO.subtask=2;
+		}
+	}else if(GO.subtask==1)
+	{
+		if(GC_claw_Sen==Sen_Block)
+		{
+			if(GC.motor_r->postion==GC.GCR_hor_pos&&GC_ver_Sen==Sen_Block)
+			{
+				motorGo_acc(GO.motor_h,GO.GOH_mid_pos);
+				GO.sta=Running;
+			}
+		}else
+		{
+			GO.subtask=2;
+		}
+
+	}else if(GO.subtask==2)
+	{
+		if(GC_rot_Sen!=Sen_Block)
+		{
+			Next_Task(GO.task,GOH_start);
+		}
+		if(GOH_start_Sen==Sen_Block)
+		{
+			GO.sta=Finish;
+		}
+		
+	}else if(GO.subtask==3)
+	{
+		GO.sta=Finish;
+	}
+#endif
 		break;
 	//////////////////存储器推出////////////////
 	case GO_Box_Out:
@@ -274,8 +325,7 @@ void GO_ReadyTask(void)
 			if (GOV_box_Sen == Sen_Block)
 			{
 				// 存储槽个数+1
-				box_signal++;
-			//	ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
+				ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
 				// 存储器状态更新
 				if (GOV_start_Sen == Sen_Block)
 				{
@@ -344,7 +394,7 @@ void GO_ReadyTask(void)
 		}
 		else
 		{
-			if (GC_ver_Sen==Sen_Block&&GC.motor_r->postion==GC.GCR_hor_pos) // 等待夹手水平
+			if (GC_ver_Sen==Sen_Block&&GC.motor_r->postion==GC.GCR_hor_pos&&GC.motor_r->motion==Stop) // 等待夹手水平
 			{
 				GO.sta = Running;
 				motorGo_acc(GO.motor_h, GO.GOH_mid_pos); // 移动到封片工作点
@@ -537,6 +587,7 @@ void GO_RunningTask(void)
 		break;
 	////////////////关机复位///////////////////////
 	case GO_reset_off:
+#ifdef GC_ROT_PACKAGE
 		if (GO.subtask == 0) // 回到水平原点
 		{
 		}
@@ -552,6 +603,26 @@ void GO_RunningTask(void)
 		else if (GO.subtask == 2) // 等待夹手释放 回到水平原点
 		{
 		}
+#endif
+#ifdef GC_VER_PACKAGE
+	if(GO.subtask==0)
+	{
+
+	}else if(GO.subtask==1)
+	{
+		if(GO.motor_h->motion==Stop)
+		{
+			GO.sta=Ready;
+			GO.subtask++;
+		}
+	}else if(GO.subtask==2)
+	{
+
+	}else if(GO.subtask==3)
+	{
+
+	}
+#endif
 		break;
 	///////////////出槽////////////////////////////
 	case GO_Box_Out:
@@ -642,14 +713,6 @@ void GO_RunningTask(void)
 		{
 			GO.sta = Finish;
 			printf("next box pos:%d\r\n", GO.motor_v->postion);
-			//				if (GOV_glass_Sen!=Sen_Block)
-			//				{
-			//					GO.sta=Finish;
-			//				}else //槽满
-			//				{
-			//					GO.sta=Ready;
-			//					GO.task=GO_finish;
-			//				}
 		}
 		break;
 
@@ -739,6 +802,11 @@ void GO_FinishTask(void)
 		GO.sta = Ready;
 		GO.task = GO_none;
 		GO.subtask = 0;
+		if(GO.WaitAck)
+		{
+			GO.WaitAck = 0;
+			ack_task(GO.Index,Type_controlAck,Fc_run,Extra_run_Close,AckResult_executeSucceed);
+		}
 		break;
 	case GO_Box_Out:
 		GO.subtask = 0;
@@ -807,7 +875,8 @@ void GO_FinishTask(void)
 				if (TaskThread_State != taskthread_pause)
 				{
 					// 发送任务完成信息
-					ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_run, Extar_run_Finish);
+					ack_0data_task(screenUart_lastRecvIndex++, Type_control, Fc_run, Extar_run_Finish);
+					TaskThread_State=taskthread_finsih;
 				}
 			}
 		}
@@ -833,7 +902,7 @@ void GO_FinishTask(void)
 	case GOH_end:
 		// 封片玻片数量+1
 		slot_num--;
-		glass_signal++;
+		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_package, 0);
 		GO.sta = Ready;
 		GO.task = GO_out;
 		break;
@@ -841,7 +910,7 @@ void GO_FinishTask(void)
 		Next_Task(GO_start, GO_adjust);
 		break;
 	case GO_next:
-		box_signal++;
+		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_box, 0);
 		Next_Task(GO_start, GO_adjust);
 		break;
 	case GO_finish:

@@ -25,15 +25,17 @@ void Gas_Init(void)
 	GC_claw_Cyl=GAS_DISABLE;
 }
 
+//喷胶压力开启
 void Gas_Spray_Enable(void)
 {
 	ITV0011_IIC_Enable(GP.spray_pressure);
-	GP_spray_Cyl=GAS_ENABLE;
+	GP_spray_Cyl=GAS_ENABLE; //开启喷胶阀
 }
 
+//喷胶压力关闭
 void Gas_Spray_Disable(void)
 {
-	GP_spray_Cyl=GAS_DISABLE;
+	GP_spray_Cyl=GAS_DISABLE; //关闭喷胶阀
 	ITV0011_IIC_Disable();
 }
 
@@ -63,7 +65,7 @@ enum gas_state Gas_pump_Func(void)
 	return Gas_State;
 }
 
-
+//控制气路 完成泄气任务
 enum gas_state Gas_release_Func(void)
 {
 		float Pressure=0;
@@ -84,7 +86,7 @@ enum gas_state Gas_release_Func(void)
 		{
 				Main_out_Cyl=GAS_DISABLE;
 				return gas_released;
-		}else
+		}else if(Pressure>50)
 		{
 			Main_out_Cyl=GAS_ENABLE;
 			return gas_releasing;
