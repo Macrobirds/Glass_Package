@@ -50,13 +50,13 @@ static void Next_Task(enum glass_claw_task_index Resume_task, enum glass_claw_ta
 	GC.sta = Ready; // 跳转到下一任务执行
 	GC.task = Next_task;
 }
-
-void GC_ReadyTask(void)
-{
 	//	if(GC.task!=GC_none)
 	//	{
 	//			printf("GC task:%d\r\n ",GC.task);
 	//	}
+
+void GC_ReadyTask(void)
+{
 	switch (GC.task)
 	{
 	case GC_none:
@@ -237,7 +237,7 @@ void GC_ReadyTask(void)
 			{
 				Next_Task(GC.task, GC_release);
 			}
-			else if (GC.subtask == 1)
+			else if (GC.subtask == 1) //夹手复位至旋转原点
 			{
 				Next_Task(GC_rot_down, GC_rot_start);
 			}
@@ -313,7 +313,7 @@ void GC_ReadyTask(void)
 			GC.sta = Running;
 		}
 		break;
-	/*夹手垂直移动至封片位置*/
+	/*夹手垂直下降至封片位置*/
 	case GC_move_package:
 		if (GO.motor_h->postion == GO.GOH_mid_pos && GO.motor_h->motion == Stop)
 		{
@@ -332,7 +332,7 @@ void GC_ReadyTask(void)
 			motorGo(GC.motor_v, 0, GC.motor_v->defaultfeq * 2);
 			GC.sta = Running;
 		}
-		else if (error_type & Error_Sucker)
+		else if (error_type & Error_Sucker) //发生吸取错误
 		{
 #ifdef GC_ROT_PACKAGE
 			if (GC.subtask == 0)
@@ -363,22 +363,21 @@ void GC_ReadyTask(void)
 #ifdef GC_VER_PACKAGE
 			if(GC.subtask==0)
 			{
-				if(GC.motor_r->postion<=GC.GCR_ver_pos&&GC.motor_r->motion==Stop)
+				if(GC.motor_r->postion<=GC.GCR_ver_pos&&GC.motor_r->motion==Stop) //夹手旋转角度小于垂直角度 直接结束
 				{
 					GC.sta=Finish;
 				}else
 				{
-					if(GC.motor_r->motion==Stop&&GC.motor_v->motion==Stop)
+					if(GC.motor_r->motion==Stop&&GC.motor_v->motion==Stop) //夹手复位至垂直原点
 					{
-						motorGo(GC.motor_v,0,0);
-						GC.sta=Running;
+						 Next_Task(GC.task,GC_ver_start);
 					}
 				}
 			}else if(GC.subtask==1)
 			{
-				if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop)
+				if (GOH_start_Sen == Sen_Block && GO.motor_h->motion == Stop) //夹手托盘复位至原点
 				{
-					motorGo(GC.motor_r, GC.GCR_ver_pos, 0);
+					motorGo(GC.motor_r, GC.GCR_ver_pos, 0); //旋转至垂直位置
 					GC.sta = Running;
 				}
 			}
@@ -397,7 +396,7 @@ void GC_RunningTask(void)
 	{
 	case GC_none:
 		break;
-		////////////夹手复位至垂直原点////////////////basic
+		/*夹手复位至垂直原点 basic*/
 	case GC_ver_start:
 		if (GC_ver_Sen == Sen_Block)
 		{
@@ -411,7 +410,7 @@ void GC_RunningTask(void)
 			}
 		}
 		break;
-	///////////夹手复位至旋转原点//////////////// basic
+	/*夹手复位至旋转原点 baisc*/
 	case GC_rot_start:
 		if (GC_rot_Sen != Sen_Block)
 		{
@@ -422,11 +421,39 @@ void GC_RunningTask(void)
 			if (GC.motor_r->motion == Stop)
 			{
 
-				//	Error_Set(Error_Sensor, GC_rot_sensor);
+				//Error_Set(Error_Sensor, GC_rot_sensor);
 			}
 		}
 		break;
-	///////////////开机复位///////////////////////////////
+	/*夹手释放延时超时*/
+	case GC_release:
+		if (GC.running_tim > DELAY_MS)
+		{
+			if (GC_claw_Sen != Sen_Block)
+			{
+				GC.sta = Finish;
+			}
+			else
+			{
+				Error_Set(Error_Sensor, GC_claw_sensor);
+			}
+		}
+		break;
+	/*等待夹手夹紧 basic*/
+	case GC_grab:
+		if (GC.running_tim > DELAY_MS) // 等待延时超时 夹手夹紧
+		{
+			if (GC_claw_Sen == Sen_Block)
+			{
+				GC.sta = Finish;
+			}
+			else
+			{
+				Error_Set(Error_Sensor, GC_claw_sensor);
+			}
+		}
+		break;
+	/*开机复位*/
 	case GC_reset_on:
 		if (GC.subtask == 0) // 夹手释放
 		{
@@ -446,7 +473,7 @@ void GC_RunningTask(void)
 		{
 		}
 		break;
-	////////////////////////夹手关机复位/////////////////
+	/*关机复位*/
 	case GC_reset_off:
 #ifdef GC_ROT_PACKAGE
 		if (GC.subtask == 0) // 复位至垂直原点
@@ -514,39 +541,26 @@ void GC_RunningTask(void)
 	}
 #endif
 		break;
-	/////////////////开始运行////////////////////
+	/*开始运行*/
 	case GC_start:
 
-		break;
-	///////////////////夹手旋转至垂直位置/////////////////
+	break;
+	/*夹手旋转至垂直位置*/
 	case GC_rot_down:
 		if (GC.motor_r->motion == Stop) // 夹手旋转至水平
 		{
 			GC.sta = Finish;
 		}
 		break;
-	////////////////夹手下降至玻片装载槽////////////////
+	/*夹手下降至玻片装载槽*/
 	case GC_move_down:
 		if (GC.motor_v->motion == Stop) // 夹手下降至玻片位置
 		{
 			GC.sta = Finish;
 		}
 		break;
-	//////////////////等待夹手夹紧/////////////////// basic
-	case GC_grab:
-		if (GC.running_tim > DELAY_MS) // 等待延时超时 夹手夹紧
-		{
-			if (GC_claw_Sen == Sen_Block)
-			{
-				GC.sta = Finish;
-			}
-			else
-			{
-				Error_Set(Error_Sensor, GC_claw_sensor);
-			}
-		}
-		break;
-	///////////////夹手旋转至水平位置//////////
+
+	/*检测是否夹取玻片成功*/
 	case GC_check_glass:
 		if (GC.motor_v->motion == Stop)
 		{
@@ -588,12 +602,14 @@ void GC_RunningTask(void)
 		break;
 #endif
 #ifdef GC_VER_PACKAGE
+	/*夹手旋转至水平位置*/
 	case GC_rot_hor:
 		if (GC.motor_r->motion == Stop)
 		{
 			GC.sta = Finish;
 		}
 		break;
+	/*夹手下降至封片位置*/
 	case GC_move_package:
 		if (GC.motor_v->motion == Stop)
 		{
@@ -602,25 +618,12 @@ void GC_RunningTask(void)
 		}
 		break;
 #endif
-	////////////////////夹手释放延时超时///////////////////////
-	case GC_release:
-		if (GC.running_tim > DELAY_MS)
-		{
-			if (GC_claw_Sen != Sen_Block)
-			{
-				GC.sta = Finish;
-			}
-			else
-			{
-				Error_Set(Error_Sensor, GC_claw_sensor);
-			}
-		}
 
-		break;
 	case GC_finish:
 		break;
+	/*错误处理*/
 	case GC_error:
-		if (error_type & Error_Grap)
+		if (error_type & Error_Grap) /*夹取错误*/
 		{
 			if (GC_ver_Sen == Sen_Block)
 			{
@@ -634,7 +637,7 @@ void GC_RunningTask(void)
 				}
 			}
 		}
-		else if (error_type & Error_Sucker)
+		else if (error_type & Error_Sucker) //吸取错误
 		{
 #ifdef GC_ROT_PACKAGE
 			if (GC.subtask == 0)
@@ -666,19 +669,7 @@ void GC_RunningTask(void)
 #ifdef GC_VER_PACKAGE
 			if(GC.subtask==0)
 			{
-				if (GC_ver_Sen == Sen_Block)
-				{
-					GC.sta = Ready;
-					GC.subtask = 1;
-				}
-				else
-				{
-					if (GC.motor_v->motion == Stop)
-					{
 
-							Error_Set(Error_Sensor, GC_ver_sensor);
-					}
-				}
 			}else if(GC.subtask==1)
 			{
 				if (GC.motor_r->motion == Stop)
@@ -851,7 +842,6 @@ void GC_TaskThread(void)
 		if (GC.running_tim > OVERTIME)
 		{
 			Error_OverTime_Set(Extra_error_overtime_GC, GC.task);
-			// Error_Set(Error_OverTime, 0);
 		}
 	}
 	if (GC.sta == Finish)

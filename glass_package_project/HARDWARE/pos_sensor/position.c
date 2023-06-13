@@ -99,7 +99,7 @@ static void Exti_Init_0_7(void)
 	{
 		//GPIOD 7
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, GPIO_PinSource7);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; //下降沿触发
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //下降沿触发
 		EXTI_InitStructure.EXTI_Line = EXTI_Line7;
 		EXTI_Init(&EXTI_InitStructure);
 	}
@@ -287,16 +287,20 @@ void EXTI0_IRQHandler(void)
 	if(EXTI_GetITStatus(EXTI_Line0)!=RESET) //检测到存储槽是否存在玻片
 	{
 		delay_us(DELAY_US);
-		if(GO.task>GO_Box_Out)
+		if(GO.task==GO_out)
 		{
 			if(GOV_glass_Sen!=Sen_Block) //下降沿触发
 			{
-				if(GO_ver_motor_struct.step>200) //确保移动到下一个槽
-				{
+//				if(GO_ver_motor_struct.step>200) //确保移动到下一个槽
+//				{
+////					GO_ver_motor_struct.step=GO_ver_motor_struct.planpostion-100;
+//					TIM_Cmd(TIM4,DISABLE);
+//					GO_ver_motor_struct.motion=Stop;
+//					GO_ver_motor_struct.step=0;
+//				}
 					TIM_Cmd(TIM4,DISABLE);
 					GO_ver_motor_struct.motion=Stop;
 					GO_ver_motor_struct.step=0;
-				}
 			}
 		}else if(GO.task==GO_Box_In&&GO.subtask==1)
 		{
@@ -326,10 +330,25 @@ void EXTI3_IRQHandler(void)
 			GO_hor_motor_struct.motion=Stop;
 		}
 		EXTI_ClearITPendingBit(EXTI_Line3);
-		printf("exti 3\r\n");
 	}
 }
-void EXTI4_IRQHandler(void);
+void EXTI4_IRQHandler(void)
+{
+	//GP_small_cyl_Sen
+	if(EXTI_GetITStatus(EXTI_Line4)!=RESET) //封片设备到达原点
+	{
+		delay_us(DELAY_US);
+		if(GP_small_cyl_Sen==Sen_Block)//封片设备停止
+		{
+			if(GP.task==GP_package)
+			{
+				GP.cyl_pos_flag=TRUE; //标识气缸到位需要动作
+			}
+		}
+		EXTI_ClearITPendingBit(EXTI_Line4);
+	}
+
+}
 
 
 void EXTI9_5_IRQHandler(void)
@@ -373,9 +392,17 @@ void EXTI9_5_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line7);
 		printf("big cyl motor sen\r\n");
 	}
-	#else if
+	#else 
 	if(EXTI_GetITStatus(EXTI_Line7)!=RESET) //大气缸传感器
 	{
+		delay_us(DELAY_US);
+		if(GP_cyl_pos_Sen==Sen_Block)
+		{
+			if(GP.task==GP_package)
+			{
+				GP.cyl_pos_flag=TRUE; //标识气缸到位需要动作
+			}
+		}
 		EXTI_ClearITPendingBit(EXTI_Line7);
 	}
 	#endif

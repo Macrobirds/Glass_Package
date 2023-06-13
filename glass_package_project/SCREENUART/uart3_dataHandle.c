@@ -66,7 +66,7 @@ static u8 *mymemcpy2(void *src, void *dst, size_t size)
 	default:
 		break;
 	}
-	return (uint8_t *)src +size;
+	return (uint8_t *)src + size;
 }
 
 // 返回传感器数据
@@ -206,7 +206,7 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 	u8 i = 0;
 	u8 *tmpBuf = 0;
 	u8 buflen = datalen;
-	tmpBuf = mymalloc(SRAMIN, buflen) ;
+	tmpBuf = mymalloc(SRAMIN, buflen);
 	memset(tmpBuf, 0, buflen);
 
 	// 重新读取参数配置
@@ -217,8 +217,8 @@ static void query_param(u8 Index, u8 datalen, u8 extra, void (*cpy_fun)(u8 *))
 		W25QXX_Read((u8 *)Global_Parm.MOT, SpiFlashAddr_motorData, sizeof(Motor_Data));
 		break;
 	case Extra_param_claw:
-		memset(Global_Parm.GCS, 0, sizeof(Glass_ClawSupport__data));
-		W25QXX_Read((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport__data));
+		memset(Global_Parm.GCS, 0, sizeof(Glass_ClawSupport_data));
+		W25QXX_Read((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport_data));
 		break;
 	case Extra_param_package:
 		memset(Global_Parm.GP, 0, sizeof(Glass_Package_Data));
@@ -316,7 +316,7 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 		tmpptr = 0;
 		return 0;
 	}
-	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
+	if (TaskThread_State == taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tmpptr = 0;
@@ -347,26 +347,20 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 static u8 set_param_claw(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	u8 i=0;
+	u8 i = 0;
 	if (datalen != 14)
 	{
 		printf("claw erro len\r\n");
 		tempptr = 0;
 		return 0;
 	}
-	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
+	if (TaskThread_State == taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tempptr = 0;
 		return 0;
 	}
-	// 写入夹手参数
-	printf("\r\nset:\r\n");
-	for(i=0;i<datalen;i++)
-	{
-		printf("%x ",tempptr[i]);
-	}
-	printf("\r\n");
+
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCR_hor_pos, sizeof(Global_Parm.GCS->GCR_hor_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCR_ver_pos, sizeof(Global_Parm.GCS->GCR_ver_pos));
 	tempptr = mymemcpy2(tempptr, &Global_Parm.GCS->GCV_down_pos, sizeof(Global_Parm.GCS->GCV_down_pos));
@@ -377,7 +371,7 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 	tempptr = 0;
 	// 更新任务参数
 	TaskThread_Parm_Init();
-	W25QXX_Write((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport__data));
+	W25QXX_Write((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport_data));
 	delay_ms(50);
 	return 1;
 }
@@ -385,14 +379,14 @@ static u8 set_param_claw(u8 *data, u8 datalen)
 static u8 set_param_package(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	u8 i=0;
+	u8 i = 0;
 	if (datalen != 14)
 	{
 		printf("package erro len\r\n");
 		tempptr = 0;
 		return 0;
 	}
-	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
+	if (TaskThread_State == taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tempptr = 0;
@@ -422,7 +416,7 @@ static u8 set_param_outin(u8 *data, u8 datalen)
 		tempptr = 0;
 		return 0;
 	}
-	if (TaskThread_State==taskthread_running) // 运行状态不为空闲状态
+	if (TaskThread_State == taskthread_running) // 运行状态不为空闲状态
 	{
 		printf("error state\r\n");
 		tempptr = 0;
@@ -451,52 +445,76 @@ static u8 set_state_IO(u8 *data)
 	switch (sensor)
 	{
 	case 1:
-		if(state) Main_Pump=GAS_ENABLE;
-		else  Main_Pump=GAS_DISABLE;
+		if (state)
+			Main_Pump = GAS_ENABLE;
+		else
+			Main_Pump = GAS_DISABLE;
 		break;
 	case 2:
-		if(state) Main_in_Cyl=GAS_ENABLE;
-		else  Main_in_Cyl=GAS_DISABLE;
+		if (state)
+			Main_in_Cyl = GAS_ENABLE;
+		else
+			Main_in_Cyl = GAS_DISABLE;
 		break;
 	case 3:
-		if(state) Main_out_Cyl=GAS_ENABLE;
-		else  Main_out_Cyl=GAS_DISABLE;
+		if (state)
+			Main_out_Cyl = GAS_ENABLE;
+		else
+			Main_out_Cyl = GAS_DISABLE;
 		break;
 	case 4:
-		if(state) GP_sucker1_Cyl=GAS_ENABLE;
-		else  GP_sucker1_Cyl=GAS_DISABLE;
+		if (state)
+			GP_sucker1_Cyl = GAS_ENABLE;
+		else
+			GP_sucker1_Cyl = GAS_DISABLE;
 		break;
 	case 5:
-		if(state) GP_sucker2_Cyl=GAS_ENABLE;
-		else  GP_sucker2_Cyl=GAS_DISABLE;
+		if (state)
+			GP_sucker2_Cyl = GAS_ENABLE;
+		else
+			GP_sucker2_Cyl = GAS_DISABLE;
 		break;
 	case 6:
-		if(state) GP_sucker_Pump=GAS_ENABLE;
-		else  GP_sucker_Pump=GAS_DISABLE;
+		if (state)
+			GP_sucker_Pump = GAS_ENABLE;
+		else
+			GP_sucker_Pump = GAS_DISABLE;
 		break;
 	case 7:
-		if(state) GP_big_Cyl=GAS_ENABLE;
-		else  GP_big_Cyl=GAS_DISABLE;
+		if (state)
+			GP_big_Cyl = GAS_ENABLE;
+		else
+			GP_big_Cyl = GAS_DISABLE;
 		break;
 	case 8:
-		if(state) GP_small_Cyl=GAS_ENABLE;
-		else  GP_small_Cyl=GAS_DISABLE;
+		if (state)
+			GP_small_Cyl = GAS_ENABLE;
+		else
+			GP_small_Cyl = GAS_DISABLE;
 		break;
 	case 9:
-		if(state) GC_claw_Cyl=GAS_ENABLE;
-		else  GC_claw_Cyl=GAS_DISABLE;
+		if (state)
+			GC_claw_Cyl = GAS_ENABLE;
+		else
+			GC_claw_Cyl = GAS_DISABLE;
 		break;
 	case 10:
-		if(state) GP_spray_Cyl=GAS_ENABLE;
-		else  GP_spray_Cyl=GAS_DISABLE;
+		if (state)
+			GP_spray_Cyl = GAS_ENABLE;
+		else
+			GP_spray_Cyl = GAS_DISABLE;
 		break;
 	case 11:
-		if(state) GP_ITV1100=ITV1100_ENABLE;
-		else  GP_ITV1100=ITV1100_DISABLE;
+		if (state)
+			GP_ITV1100 = ITV1100_ENABLE;
+		else
+			GP_ITV1100 = ITV1100_DISABLE;
 		break;
 	case 12:
-		if(state) GCV_motor_Break=GAS_ENABLE;
-		else  GCV_motor_Break=GAS_DISABLE;
+		if (state)
+			GCV_motor_Break = GAS_ENABLE;
+		else
+			GCV_motor_Break = GAS_DISABLE;
 		break;
 	default:
 		break;
@@ -504,6 +522,51 @@ static u8 set_state_IO(u8 *data)
 
 	TaskThread_State = taskthread_debug; // 进入debug模式
 	return 1;
+}
+
+static void set_debug_motor(u8 *data)
+{
+	motor_struct *motor_ptr = NULL; // 电机结构体临时指针
+	u32 motor_debug_pulse = 0;		// 电机debug 运行脉冲数
+	u32 motor_debug_feq = 0;		// 电机debug	运行频率
+	switch (data[1])
+	{
+	case GE_motor:
+		motor_ptr = &GE_motor_struct;
+		break;
+	case GC_ver_motor:
+		motor_ptr = &GC_ver_motor_struct;
+		break;
+	case GC_rot_motor:
+		motor_ptr = &GC_rot_motor_struct;
+		break;
+	case GP_motor:
+		motor_ptr = &GP_motor_struct;
+		break;
+	case GO_hor_motor:
+		motor_ptr = &GO_hor_motor_struct;
+		break;
+	case GO_ver_motor:
+		motor_ptr = &GO_ver_motor_struct;
+		break;
+	default:
+		break;
+	}
+	if (data[3])
+	{
+		motor_ptr->dir = Front;
+	}
+	else
+	{
+		motor_ptr->dir = Back;
+	}
+	motor_Set_Direction(motor_ptr);
+	motor_debug_pulse = __REV16(*((uint16_t *)(&data[4])));
+	motor_debug_feq = __REV16(*((uint16_t *)(&data[6])));
+	motorGO_Debug(motor_ptr, motor_debug_pulse, motor_debug_feq);
+	motor_ptr = NULL;
+	motor_debug_feq = 0;
+	motor_debug_pulse = 0;
 }
 
 // 接收到的数据进行协议解析
@@ -515,13 +578,11 @@ void screenUart_protocolParse(void)
 	u8 FC = screenUart_RecvCompleteBuf[4];
 	u8 Extra = screenUart_RecvCompleteBuf[5];
 	u8 dataLength = protocolLength - 8;
-	u8 *data = NULL;	//协议数据指针
-	u8 *tmpBuf = NULL; //动态分配数组指针
-	u8 *tempptr = NULL;	//协议数据指针
-	motor_struct *motor_ptr = NULL; //电机结构体临时指针
-	u32 motor_debug_pulse = 0; //电机debug 运行脉冲数
-	u32 motor_debug_feq = 0;	//电机debug	运行频率
-	screenUart_lastRecvIndex = Index; 
+	u8 *data = NULL;				// 协议数据指针
+	u8 *tmpBuf = NULL;				// 动态分配数组指针
+	u8 *tempptr = NULL;				// 协议数据指针
+
+	screenUart_lastRecvIndex = Index;
 
 	printf("type:%d,fc:%d,extra:%d,datalength:%d", TYPE, FC, Extra, dataLength);
 	if (dataLength > 0)
@@ -772,44 +833,7 @@ void screenUart_protocolParse(void)
 				{
 					break;
 				}
-				switch (data[1])
-				{
-				case GE_motor:
-					motor_ptr = &GE_motor_struct;
-					break;
-				case GC_ver_motor:
-					motor_ptr = &GC_ver_motor_struct;
-					break;
-				case GC_rot_motor:
-					motor_ptr = &GC_rot_motor_struct;
-					break;
-				case GP_motor:
-					motor_ptr = &GP_motor_struct;
-					break;
-				case GO_hor_motor:
-					motor_ptr = &GO_hor_motor_struct;
-					break;
-				case GO_ver_motor:
-					motor_ptr = &GO_ver_motor_struct;
-					break;
-				default:
-					break;
-				}
-				if (data[3])
-				{
-					motor_ptr->dir = Front;
-				}
-				else
-				{
-					motor_ptr->dir = Back;
-				}
-				motor_Set_Direction(motor_ptr);
-				motor_debug_pulse = __REV16(*((uint16_t *)(&data[4])));
-				motor_debug_feq = __REV16(*((uint16_t *)(&data[6])));
-				motorGO_Debug(motor_ptr, motor_debug_pulse, motor_debug_feq);
-				motor_ptr = NULL;
-				motor_debug_feq = 0;
-				motor_debug_pulse = 0;
+				set_debug_motor(data);
 				break;
 			}
 
@@ -1034,7 +1058,6 @@ void screenUart_protocolParse(void)
 				}
 				else if (TaskThread_State == taskthread_error)
 				{
-					printf("error resume \r\n");
 					if (TaskThread_Resume_Error())
 					{
 						if (data[0] == OnOffState_on)
@@ -1049,6 +1072,8 @@ void screenUart_protocolParse(void)
 							ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
 						}
 					}
+				}else {
+					ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
 				}
 				break;
 			}
@@ -1232,4 +1257,3 @@ bool queryAck_data_1step(u8 *data, u8 dataLength)
 
 	return true;
 }
-

@@ -9,12 +9,12 @@
 #define IoInput_1_Enable					0
 #define IoInput_2_Enable					0
 #define IoInput_3_Enable					1
-#define IoInput_4_Enable					0
+#define IoInput_4_Enable					1
 #define IoInput_5_Enable					1
 #define IoInput_6_Enable					1
 #define IoInput_7_Enable					1
 #define IoInput_8_Enable					1
-#define IoInput_9_Enable					1
+#define IoInput_9_Enable					0
 #define IoInput_10_Enable					1
 #define IoInput_11_Enable					1
 #define IoInput_12_Enable					1

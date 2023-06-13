@@ -4,7 +4,7 @@
 
 #define SLOT_NUM 30
 #define WASTE_POS 268 * 36
-
+#define GLASS_OUT_DIS 2300
 
 
 static u8 slot_num = 0;
@@ -71,6 +71,10 @@ static void Next_Task(enum glass_out_task_index Resume_task, enum glass_out_task
 	GO.sta = Ready; // 跳转到下一任务执行
 	GO.task = Next_task;
 }
+	//		if(GO.task!=GO_none)
+	//		{
+	//			printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
+	//		}
 
 void GO_ReadyTask(void)
 {
@@ -79,15 +83,12 @@ void GO_ReadyTask(void)
 	{
 		GO.Storage_full = TRUE;
 	}
-	//		if(GO.task!=GO_none)
-	//		{
-	//			printf("GO task:%d subtask:%d\r\n",GO.task,GO.subtask);
-	//		}
+
 	switch (GO.task)
 	{
 	case GO_none:
 		break;
-	///////////复位到垂直原点位置///////////////////// basic
+	/*复位到垂直原点位置 baisc*/
 	case GOV_start:
 		if (GOV_start_Sen == Sen_Block)
 		{
@@ -99,10 +100,9 @@ void GO_ReadyTask(void)
 		{
 			GO.sta = Running;
 			motorGo(GO.motor_v, 0, 0);
-			//	motorGo_acc(GO.motor_v, 0);
 		}
 		break;
-	///////////////复位至水平原点/////////////////// basic
+	/*复位至水平原点 basic*/
 	case GOH_start:
 		if (GOH_start_Sen == Sen_Block)
 		{
@@ -119,23 +119,21 @@ void GO_ReadyTask(void)
 			}
 		}
 		break;
-	///////////微调存储器位置让玻片对准槽下端/////////////// basic
+	/*微调存储器位置让玻片对准槽 basic*/
 	case GO_adjust:
 		GO.sta = Running;
 		GO.motor_v->dir = Front;
 		motor_Set_Direction(GO.motor_v);
 		if (GOV_start_Sen == Sen_Block)
 		{
-			printf("dual box\r\n");
 			motorGO_Debug(GO.motor_v, GO.GOV_adjust_start, 0);
 		}
 		else
 		{
-			printf("singal box\r\n");
 			motorGO_Debug(GO.motor_v, GO.GOV_adjust, 0);
 		}
 		break;
-	////////////////////开机复位///////////////
+	/*开机复位*/
 	case GO_reset_on:
 		GO.Storage_full = TRUE;
 		slot_num = 0;
@@ -183,7 +181,7 @@ void GO_ReadyTask(void)
 			Next_Task(GO_none, GO_adjust);
 		}
 		break;
-	//////////////////关机复位/////////////////
+	/*关机复位*/
 	case GO_reset_off:
 #ifdef GC_ROT_PACKAGE
 		if (GO.subtask == 0) // 回到水平原点
@@ -230,9 +228,9 @@ void GO_ReadyTask(void)
 		}
 #endif
 #ifdef GC_VER_PACKAGE
-	if(GO.subtask==0)
+	if(GO.subtask==0) 
 	{
-		if(GC_claw_Sen==Sen_Block)
+		if(GC_claw_Sen==Sen_Block) //夹手夹紧
 		{
 			if(GC.motor_r->postion==GC.GCR_hor_pos&&GC.motor_r->motion==Stop)
 			{
@@ -248,13 +246,13 @@ void GO_ReadyTask(void)
 		{
 			GO.subtask=2;
 		}
-	}else if(GO.subtask==1)
+	}else if(GO.subtask==1) 
 	{
 		if(GC_claw_Sen==Sen_Block)
 		{
-			if(GC.motor_r->postion==GC.GCR_hor_pos&&GC_ver_Sen==Sen_Block)
+			if(GC.motor_r->postion==GC.GCR_hor_pos&&GC_ver_Sen==Sen_Block) //夹手位于旋转水平位置 且在垂直原点
 			{
-				motorGo_acc(GO.motor_h,GO.GOH_mid_pos);
+				motorGo_acc(GO.motor_h,GO.GOH_mid_pos); //移动到封片位置
 				GO.sta=Running;
 			}
 		}else
@@ -262,9 +260,9 @@ void GO_ReadyTask(void)
 			GO.subtask=2;
 		}
 
-	}else if(GO.subtask==2)
+	}else if(GO.subtask==2) //复位至水平原点
 	{
-		if(GC_rot_Sen!=Sen_Block)
+		if(GC_rot_Sen!=Sen_Block||GC.task==GC_none) //夹手回到原点
 		{
 			Next_Task(GO.task,GOH_start);
 		}
@@ -279,14 +277,14 @@ void GO_ReadyTask(void)
 	}
 #endif
 		break;
-	//////////////////存储器推出////////////////
+	/*存储器推出*/
 	case GO_Box_Out:
 		GO.Storage_full = TRUE;
 		slot_num = 0;
 		motorGo_acc(GO.motor_v, GO.GOV_box_len);
 		GO.sta = Running;
 		break;
-	/////////////////存储器进入////////////////
+	/*存储器进入*/
 	case GO_Box_In:
 		if (GO.subtask == 0) // 存储器进入
 		{
@@ -296,10 +294,8 @@ void GO_ReadyTask(void)
 				GO.sta = Running;
 			}else
 			{
-				
-				
 				GO.sta=Finish;
-				GO.task=GO_Box_Out;
+				GO.task=GO_Box_Out; //发送缺少存储盒的错误信息
 				error_type|=Error_Out_Box;
 				Error_Mesg_Send();
 				error_type&=(~Error_Out_Box);
@@ -313,7 +309,7 @@ void GO_ReadyTask(void)
 				GO.subtask = 2;
 			}
 			else
-			{
+			{  /*向上移动对准存储槽上端*/
 				GO.motor_v->dir = Front;
 				motor_Set_Direction(GO.motor_v);
 				motorGo(GO.motor_v, GO.GOV_box_len, 0);
@@ -346,7 +342,7 @@ void GO_ReadyTask(void)
 			}
 		}
 		break;
-	////////////////开始运行///////////////////////
+	/*开始运行*/
 	case GO_start: // 水平复位到原点
 		if (GOH_start_Sen == Sen_Block)
 		{
@@ -362,9 +358,7 @@ void GO_ReadyTask(void)
 				GO.sta = Running;
 			}
 		}
-		break;
-	//////////////移动至封片工作点////////////////////
-		
+		break;		
 #ifdef GC_ROT_PACKAGE
 	case GOH_package:
 		if (GO.motor_h->postion == GO.GOH_mid_pos)
@@ -385,12 +379,12 @@ void GO_ReadyTask(void)
 		break;
 #endif
 #ifdef GC_VER_PACKAGE
+	/*移动至封片工作点*/
 	case GOH_package:
 		if (GO.motor_h->postion == GO.GOH_mid_pos)
 		{
 			stepperMotorStop(GO.motor_h);
 			GO.sta = Finish;
-			GO.motor_h->postion = GO.GOH_mid_pos;
 		}
 		else
 		{
@@ -402,8 +396,7 @@ void GO_ReadyTask(void)
 		}
 		break;
 #endif
-
-	////////////移动到水平终点 玻片放置到存储槽////////////////
+	/*移动到水平终点 玻片放置到存储槽*/
 	case GOH_end:
 		if (GOH_end_Sen == Sen_Block)
 		{
@@ -425,7 +418,6 @@ void GO_ReadyTask(void)
 					{
 						GO.sta = Running;
 						motorGo_acc(GO.motor_h, GO.GOH_end_pos);
-						//motorGo(GO.motor_h,GO.GOH_end_pos,0);
 					}
 				}
 				else
@@ -435,15 +427,32 @@ void GO_ReadyTask(void)
 			}
 		}
 		break;
+	/*将玻片移出托盘,托盘复位*/
+	case GOH_back:
+		if(GO.subtask==0)
+		{
+			GO.motor_v->dir = Front;
+			motor_Set_Direction(GO.motor_v);
+			motorGO_Debug(GO.motor_v,GLASS_OUT_DIS,0);
+			GO.sta=Running;
+		}else if(GO.subtask==1)
+		{
+			GO.sta=Running;
 
-	///////////将玻片移出托盘,放入存储槽///////////////
+		}else	if(GO.subtask==2)
+		{
+			Next_Task(GO_out,GOH_start);
+		}
+		break;
+	/*对准下一存储槽*/
 	case GO_out:
-		GO.motor_v->dir = Front;
-		motor_Set_Direction(GO.motor_v);
-		motorGO_Debug(GO.motor_v, GO.GOV_slot_dis, 0);
+		motorGo(GO.motor_v,GO.motor_v->max_pos-800,800*10);
+	//		GO.motor_v->dir = Front;
+//		motor_Set_Direction(GO.motor_v);
+//motorGO_Debug(GO.motor_v, GO.GOV_slot_dis, 0);
 		GO.sta = Running;
 		break;
-	////////////移动到下一存储盒///////////////////
+	/*移动到下一存储盒*/
 	case GO_next:
 		if (GOV_glass_Sen == Sen_Block)
 		{
@@ -468,7 +477,7 @@ void GO_ReadyTask(void)
 		{
 			GO.sta = Finish;
 		}
-		else if (error_type & Error_Sucker)
+		else if (error_type & Error_Sucker) //吸取玻片错误
 		{
 			if (GO.subtask == 0) // 托盘复位至原点
 			{
@@ -486,12 +495,11 @@ void GO_ReadyTask(void)
 					}
 #endif
 #ifdef GC_VER_PACKAGE
-					if (GC_ver_Sen == Sen_Block && GC.motor_v->motion == Stop)
+					if (GC_ver_Sen == Sen_Block && GC.motor_v->motion == Stop) //夹手复位至垂直原点
 					{
 						motorGo(GO.motor_h, 0, 0);
 						GO.sta = Running;
-					}
-					
+					}	
 #endif
 				}
 			}
@@ -525,7 +533,7 @@ void GO_RunningTask(void)
 	{
 	case GO_none:
 		break;
-	///////////复位到垂直原点位置///////////////////// basic
+	/*复位到垂直原点位置 basic*/
 	case GOV_start:
 		if (GOV_start_Sen == Sen_Block)
 		{
@@ -539,7 +547,7 @@ void GO_RunningTask(void)
 			}
 		}
 		break;
-	///////////////复位至水平原点/////////////////// basic
+	/*复位至水平原点 basic*/
 	case GOH_start:
 		if (GOH_start_Sen == Sen_Block)
 		{
@@ -553,14 +561,14 @@ void GO_RunningTask(void)
 			}
 		}
 		break;
-	///////////微调存储器位置让玻片对准槽下端/////////////// basic
+	/*微调存储器位置让玻片对准槽下端 basic*/
 	case GO_adjust:
 		if (GO.motor_v->motion == Stop)
 		{
 			GO.sta = Finish;
 		}
 		break;
-	////////////////开机复位///////////////////////////
+	/*开机复位*/
 	case GO_reset_on:
 		if (GO.subtask == 0) // 检测水平原点传感器 若感应 离开原点 重新校准水平位置
 		{
@@ -585,7 +593,7 @@ void GO_RunningTask(void)
 		{
 		}
 		break;
-	////////////////关机复位///////////////////////
+	/*关机复位*/
 	case GO_reset_off:
 #ifdef GC_ROT_PACKAGE
 		if (GO.subtask == 0) // 回到水平原点
@@ -624,14 +632,14 @@ void GO_RunningTask(void)
 	}
 #endif
 		break;
-	///////////////出槽////////////////////////////
+	/*存储槽出槽*/
 	case GO_Box_Out:
 		if (GO.motor_v->motion == Stop)
 		{
 			GO.sta = Finish;
 		}
 		break;
-	////////////////////进槽/////////////////////
+	/*存储槽进槽*/
 	case GO_Box_In:
 		if (GO.subtask == 0) // 存储器进入
 		{
@@ -653,7 +661,7 @@ void GO_RunningTask(void)
 		{
 		}
 		break;
-	////////////开始运行//////////////////
+	/*开始运行*/
 	case GO_start:
 		if (GOH_start_Sen == Sen_Block)
 		{
@@ -668,19 +676,19 @@ void GO_RunningTask(void)
 		}
 		break;
 
-	//////////////移动至封片工作点////////////////////
+	/*移动至封片工作点*/
 	case GOH_package:
 		if (GO.motor_h->motion == Stop)
 		{
 			GO.sta = Finish;
 		}
 		break;
-	////////////移动到水平终点 玻片放置到存储槽////////////////
+	/*移动到水平终点 玻片放置到存储槽*/
 	case GOH_end:
 		if (GOH_end_Sen == Sen_Block)
 		{
+			printf("end box pos:%d\r\n", GO.motor_v->postion);
 			GO.sta = Finish;
-
 		}
 		else
 		{
@@ -690,24 +698,46 @@ void GO_RunningTask(void)
 			}
 		}
 		break;
-
+	case GOH_back:
+		if(GO.subtask==0)
+		{
+			if(GO.motor_h->motion==Stop)
+			{
+				GO.subtask++;
+				GO.sta=Ready;
+			}
+		}else	if(GO.subtask==1)
+		{
+			if(GO.running_tim>500)
+			{
+				GO.subtask++;
+				GO.sta=Ready;
+			}
+		}else if(GO.subtask==2)
+		{
+		
+		}
+		break;
+	/*玻片存储 存储盒向上移动*/
 	case GO_out:
-
 		if (GO.motor_v->motion == Stop) // 走完一个槽的距离后 仍然有感应
 		{
 			printf("out box pos:%d\r\n", GO.motor_v->postion);
-			if (GOV_glass_Sen != Sen_Block)
-			{
-				GO.sta = Finish;
-			}
-			else
-			{
-				GO.sta = Ready; // 到达下一个槽或者槽满
-				GO.task = GO_next;
-			}
+//			if (GOV_glass_Sen != Sen_Block)
+//			{
+//				GO.sta = Finish;
+//			}
+//			else
+//			{
+//				GO.sta = Ready; // 到达下一个槽或者槽满
+//				GO.task = GO_next;
+//			}
+			GO.sta=Finish;
+			
 		}
 
 		break;
+	/*移动到下一存储盒*/
 	case GO_next:
 		if (GO.motor_v->motion == Stop)
 		{
@@ -728,7 +758,7 @@ void GO_RunningTask(void)
 		{
 			GO.sta = Finish;
 		}
-		else if (error_type & Error_Sucker)
+		else if (error_type & Error_Sucker) //吸取盖玻片失败
 		{
 			if (GO.subtask == 0) // 托盘复位至原点
 			{
@@ -904,7 +934,10 @@ void GO_FinishTask(void)
 		slot_num--;
 		ack_task(screenUart_lastRecvIndex++, Type_set, Fc_data, Extra_data_package, 0);
 		GO.sta = Ready;
-		GO.task = GO_out;
+//		GO.task = GO_out;
+	GO.task=GOH_back;
+		break;
+	case GOH_back:
 		break;
 	case GO_out:
 		Next_Task(GO_start, GO_adjust);

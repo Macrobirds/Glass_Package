@@ -182,7 +182,7 @@ void GE_RunningTask(void)
 			}
 			else
 			{
-				if (GE.motor->motion == Stop)
+				if (GE.motor->motion == Stop) //
 				{
 					Error_Set(Error_Sensor, GE_start_sensor);
 				}
@@ -445,13 +445,15 @@ void GE_FinishTask(void)
 
 void GE_TaskThread(void)
 {
+	//任务准备状态
 	if (GE.sta == Ready)
 	{
 		GE_ReadyTask();
 		// 重载计时
 		GE.running_tim = 0;
 	}
-
+	
+	//任务运行状态
 	if (GE.sta == Running)
 	{
 		GE_RunningTask();
@@ -460,10 +462,9 @@ void GE_TaskThread(void)
 		if (GE.running_tim > OVERTIME)
 		{
 			Error_OverTime_Set(Extra_error_overtime_GE, GE.task);
-			// Error_Set(Error_OverTime, 0);
 		}
 	}
-
+	//任务结束状态
 	if (GE.sta == Finish)
 	{
 		if (GE.task <= GE_BOx_Out)

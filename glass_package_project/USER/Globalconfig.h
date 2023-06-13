@@ -67,6 +67,7 @@
 
 #ifdef BIG_CYLINDER
 #define GP_big_cyl_Sen PEin(0) //大气缸传感器
+#define GP_cyl_pos_Sen PDin(7) //大气缸位置传感器
 #endif
 
 
@@ -159,23 +160,23 @@ enum Carrier_Versions {BMH = 1, BP = 2, FPJ=3};
 enum sensor_index //总共17个传感器
 {
 	sensor_none=0,
-	GE_start_sensor,
-	GE_up_sensor ,
-	GE_down_sensor,
-	GC_rot_sensor ,
-	GC_ver_sensor ,
-	GP_start_sensor,
-	GOH_start_sensor ,
-	GOH_mid_sensor ,
-	GOH_end_sensor ,
-	GOV_start_sensor ,
-	GOV_glass_sensor,
-	GP_sucker_sensor ,
-	GP_spray_sensor,
-	GP_big_cyl_sensor ,
-	GP_small_cyl_sensor ,
-	GC_claw_sensor,
-	GOV_box_sensor ,
+	GE_start_sensor=1,
+	GE_up_sensor=2 ,
+	GE_down_sensor=3,
+	GC_rot_sensor =4,
+	GC_ver_sensor =5,
+	GP_start_sensor=6,
+	GOH_start_sensor=7 ,
+	GOH_mid_sensor =8,
+	GOH_end_sensor =9,
+	GOV_start_sensor =10,
+	GOV_glass_sensor=11,
+	GP_sucker_sensor =12,
+	GP_spray_sensor=13,
+	GP_big_cyl_sensor =14,
+	GP_small_cyl_sensor =15,
+	GC_claw_sensor=16,
+	GOV_box_sensor =17,
 };
 
 
@@ -203,7 +204,7 @@ typedef struct{
 	u16 GOH_mid_pos;
 	u16 GOH_end_pos;
 	u16 GCV_package_pos;
-}Glass_ClawSupport__data;
+}Glass_ClawSupport_data;
 
 typedef struct{
 	u16 delay_before;
@@ -229,7 +230,7 @@ typedef struct{
 /////////////////Golbal Parameter///////////////////
 struct Global_Parameter_struct{
 	Motor_Data * MOT;
-	Glass_ClawSupport__data * GCS;
+	Glass_ClawSupport_data * GCS;
 	Glass_Package_Data * GP;
 	Glass_In_Out_Data * GIO;
 };
@@ -307,6 +308,7 @@ struct glass_package_struct
 	u8 spray_pressure;
 	u8 subtask;
 	u8 main_subtask;
+	volatile u8 cyl_pos_flag;
 };
 #endif
 

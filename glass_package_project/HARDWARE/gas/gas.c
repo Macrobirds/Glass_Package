@@ -50,7 +50,6 @@ enum gas_state Gas_pump_Func(void)
 	if(Pressure>PRESSURE_MAX)
 	{
 		Main_in_Cyl=GAS_DISABLE;
-		delay_ms(100);
 		Main_Pump=GAS_DISABLE;
 		return gas_pumped;
 	}
@@ -88,6 +87,7 @@ enum gas_state Gas_release_Func(void)
 				return gas_released;
 		}else if(Pressure>50)
 		{
+			Main_Pump=GAS_DISABLE;
 			Main_out_Cyl=GAS_ENABLE;
 			return gas_releasing;
 		}

@@ -3,7 +3,7 @@
 OS_CPU_SR cpu_sr = 0;
 
 Motor_Data MOT_Parm = {0};
-Glass_ClawSupport__data GCS_Parm = {0};
+Glass_ClawSupport_data GCS_Parm = {0};
 Glass_Package_Data GP_Parm = {0};
 Glass_In_Out_Data GIO_Parm = {0};
 

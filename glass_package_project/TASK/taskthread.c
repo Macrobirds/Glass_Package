@@ -7,7 +7,7 @@ struct glass_enter_struct GE = {
 	.task = GE_none,
 	.sta = Ready,
 	.motor = &GE_motor_struct,
-	.GE_box_len = 212 * 350,
+	.GE_box_len = 212 * 330,
 	.GE_box_speed = 20 * 212,
 	.glass_Exist = FALSE,
 	.box_Exist = FALSE,
@@ -26,7 +26,7 @@ struct glass_claw_struct GC = {
 	.GCR_ver_pos = 1720,
 #endif
 #ifdef GC_VER_PACKAGE
-	.GCV_down_pos = 33300 + 211 * 4,
+	.GCV_down_pos = 33300 + 900,
 	.GCR_hor_pos = 1645,
 	.GCR_ver_pos = 45,
 #endif
@@ -65,11 +65,12 @@ struct glass_package_struct GP = {
 	.spray_pos = 19000,
 	.spray_len = 268 * 15,
 	.spray_speed = 268 * 30,
-	.delay_before = 420,
+	.delay_before = 800,
 	.delay_after = 120,
 	.spray_pressure = 3,
 	.main_subtask = 0,
 	.main_task = GP_none,
+	.cyl_pos_flag=FALSE,
 };
 #endif
 
@@ -113,7 +114,7 @@ u8 TaskThread_CheckIdle(void)
 		return TRUE;
 	}
 
-	if (TaskThread_State == taskthread_boost || TaskThread_State == taskthread_pause || TaskThread_State == taskthread_finsih || TaskThread_State == taskthread_close)
+	if (TaskThread_State == taskthread_boost || TaskThread_State == taskthread_pause || TaskThread_State == taskthread_finsih )
 	{
 		if (GE.motor->motion == Stop && GC.motor_r->motion == Stop && GC.motor_v->motion == Stop && GP.motor->motion == Stop && GO.motor_h->motion == Stop && GO.motor_v->motion == Stop)
 		{
@@ -129,7 +130,6 @@ void Error_Mesg_Send(void)
 {
 	// 发送错误信息
 	/************************/
-
 	printf("error:%d error_sensor%d\r\n", error_type, sensor_error_idx);
 	// 传感器错误
 	if (error_type & Error_Sensor)
@@ -166,7 +166,6 @@ void Error_Mesg_Send(void)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_suck);
 	}
-
 	/***********************/
 }
 
@@ -511,6 +510,7 @@ u8 TaskThread_Resume_Error(void)
 		error_type &= ~(Error_Cover_Glass + Error_Spray); // 清除对应错误码
 		GP.task = GP.resume_task;
 		GP.sta = Ready;
+		GP.subtask = 0;
 	}
 	// 吸取盖玻片错误
 	if (error_type & (Error_Sucker))
@@ -518,13 +518,17 @@ u8 TaskThread_Resume_Error(void)
 		error_type &= ~(Error_Sucker); // 清除对应错误码
 		GP.task = GP.resume_task;
 		GP.sta = Ready;
+		GP.subtask = 0;
 
 		GO.task = GO.resume_task;
 		GO.sta = Ready;
+		GO.subtask = 0;
+
 		if (GC.task == GC_error)
 		{
 			GC.task = GC.resume_task;
 			GC.sta = Ready;
+			GC.subtask = 0;
 		}
 	}
 
@@ -534,6 +538,7 @@ u8 TaskThread_Resume_Error(void)
 		error_type &= ~(Error_Out_Box + Error_StorageFull);
 		GO.task = GO.resume_task;
 		GO.sta = Ready;
+		GO.subtask = 0;
 	}
 	// 夹取失败
 	if (error_type & Error_Grap)
@@ -541,6 +546,7 @@ u8 TaskThread_Resume_Error(void)
 		error_type &= ~(Error_Grap);
 		GC.task = GC.resume_task;
 		GC.sta = Ready;
+		GC.subtask = 0;
 	}
 	TIM_Cmd(TIM6, ENABLE);
 	TaskThread_State = taskthread_running;
@@ -603,17 +609,27 @@ enum taskthread_state TaskThread_IsReady(void)
 // 开机复位任务
 u8 TaskThread_BootReset(void)
 {
-	//任务状态为紧急停止状态
+	// 任务状态为紧急停止状态
 	if (TaskThread_State == taskthread_emergency)
 	{
 		return FALSE;
 	}
-	//任务状态是否空闲
+	// 任务状态是否空闲
 	if (!TaskThread_CheckIdle())
 	{
 		return FALSE;
 	}
-
+	// 气阀状态初始化
+	Main_out_Cyl = GAS_DISABLE;
+#ifdef BIG_CYLINDER
+	GP_big_Cyl = GAS_DISABLE; // 大气缸推出
+#endif
+	GP_small_Cyl = GAS_DISABLE; // 小气缸推回
+	GP_sucker1_Cyl = GAS_DISABLE;
+	GP_sucker2_Cyl = GAS_DISABLE;
+	GP_sucker_Pump = GAS_DISABLE;
+	GP_spray_Cyl = GAS_DISABLE;
+	GC_claw_Cyl = GAS_DISABLE;
 	// 开启复位任务
 	TIM_Cmd(TIM6, DISABLE);
 	// 清空错误警报
@@ -636,7 +652,7 @@ u8 TaskThread_BootReset(void)
 	GO.sta = Ready;
 	GO.task = GO_reset_on;
 	TIM_Cmd(TIM6, ENABLE);
-	//任务状态为启动状态
+	// 任务状态为启动状态
 	TaskThread_State = taskthread_boost;
 	return TRUE;
 }

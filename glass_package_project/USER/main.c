@@ -109,7 +109,7 @@ int main(void)
 		W25QXX_Write((u8 *)Global_Parm.MOT, SpiFlashAddr_motorData, sizeof(Motor_Data));
 		delay_ms(50);
 		// 保存托盘夹手参数
-		W25QXX_Write((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport__data));
+		W25QXX_Write((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport_data));
 		delay_ms(50);
 		// 保存封片参数
 		W25QXX_Write((u8 *)Global_Parm.GP, SpiFlashAddr_packageData, sizeof(Glass_Package_Data));
@@ -140,7 +140,7 @@ int main(void)
 		W25QXX_Read((u8 *)Global_Parm.MOT, SpiFlashAddr_motorData, sizeof(Motor_Data));
 		delay_ms(50);
 		// 保存托盘夹手参数
-		W25QXX_Read((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport__data));
+		W25QXX_Read((u8 *)Global_Parm.GCS, SpiFlashAddr_clawsupportData, sizeof(Glass_ClawSupport_data));
 		delay_ms(50);
 		// 保存封片参数
 		W25QXX_Read((u8 *)Global_Parm.GP, SpiFlashAddr_packageData, sizeof(Glass_Package_Data));
@@ -177,7 +177,7 @@ void start_task(void *pdata)
 void main_task(void *pdata)
 {
 	static u32 delay_20ms = 0;
-    static u32 checkPirate_delay_1sec = 0;
+   static u32 checkPirate_delay_1sec = 0;
 	 // 执行盗版检查时间（分钟）
     u8 checkPirate_time_minute = rand() % 100 + 30;
     // 欺骗破解者输入help自毁程序
@@ -235,7 +235,6 @@ void main_task(void *pdata)
 
 void gas_task(void *pdata)
 {
-	printf("gas task\r\n");
 	while (1)
 	{
 		if (TaskThread_State < taskthread_close)
@@ -256,7 +255,6 @@ void gas_task(void *pdata)
 // 串口接受任务
 void uart_receivetask(void *pdata)
 {
-	printf("uart receive task\r\n");
 	while (1)
 	{
 		OSTimeDlyHMSM(0, 0, 0, 10);
@@ -267,7 +265,6 @@ void uart_receivetask(void *pdata)
 // 串口发送任务
 void uart_sendtask(void *pdata)
 {
-	printf("uart send task\r\n");
 	while (1)
 	{
 		OSTimeDlyHMSM(0, 0, 0, 20);

@@ -144,6 +144,7 @@ enum glass_out_task_index
 	GO_start,	  // 开始运行
 	GOH_package,  // 玻片托盘移动到水平封片位置
 	GOH_end,	  // 玻片托盘移动到水平终点位置
+	GOH_back,
 	GO_out,		  // 玻片出料
 	GO_next,	  // 移动到下一存储器
 	GO_finish,
@@ -207,6 +208,8 @@ struct glass_out_struct
 	u8 WaitAck;			  // 通讯协议应答标志
 	u8 Storage_full;	  // 存储槽是否满状态
 	u32 GOH_waste_pos;	  // 废片位置
+
+
 };
 
 extern volatile enum task_error error_type;

@@ -320,17 +320,7 @@ void MYDMA_Enable(DMA_Channel_TypeDef *DMA_CHx)
 	DMA_Cmd(DMA_CHx, ENABLE);					   // 使能USART2 TX DMA1 所指示的通道
 }
 
-//// 串口2 DMA接收缓冲区满了，仍未拿走，触发中断
-// void DMA1_Channel6_IRQHandler(void)
-//{
-//     if(DMA_GetFlagStatus(DMA1_FLAG_TC6))
-//     {
-//         DMA_ClearFlag(DMA1_FLAG_TC6); 							// 清除缓冲区满中断标志
-//         memset(USART2_RX_BUF, 0, USART2_REC_LEN);   // 清空DMA接收缓冲区
-//         MYDMA_Enable(DMA1_Channel6);								// 开始一次DMA传输！
-////			DMA_ClearITPendingBit(DMA1_IT_GL6); // 清除全部中断标志
-//    }
-//}
+
 
 // 串口3 DMA接收缓冲区满了，仍未拿走，触发中断
 void DMA1_Channel3_IRQHandler(void)
@@ -469,7 +459,7 @@ void Send_makeProtocol_uart3(void)
 	u8 n = 0;
 	u8 *tmpbuf = NULL;
 	// 发送协议栈回复内容
-	if (!RingBuffer_IsEmpty(&RingBuf_Send)) // 发送环形数组不为空
+	while (!RingBuffer_IsEmpty(&RingBuf_Send)) // 发送环形数组不为空
 	{
 		tmpbuf = mymalloc(SRAMIN, USART_SEND_LEN);
 		memset(tmpbuf, 0, USART_SEND_LEN);
@@ -484,11 +474,10 @@ void Send_makeProtocol_uart3(void)
 		tmpbuf = NULL;
 	}
 	// 发送任务运行中的回复内容
-	if (!RingBuffer_IsEmpty(&RingBuf_Task)) // 发送环形数组不为空
+	while (!RingBuffer_IsEmpty(&RingBuf_Task)) // 发送环形数组不为空
 	{
 		tmpbuf = mymalloc(SRAMIN, USART_SEND_LEN);
 		memset(tmpbuf, 0, USART_SEND_LEN);
-
 		// 从环形数组中取出数据
 		send_len = RingBuffer_Out(&RingBuf_Task, tmpbuf, USART_SEND_LEN);
 		// 从串口中发送数据
