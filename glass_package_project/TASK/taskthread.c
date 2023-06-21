@@ -135,36 +135,43 @@ void Error_Mesg_Send(void)
 	if (error_type & Error_Sensor)
 	{
 		ack_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_sensor, sensor_error_idx);
+		return;
 	}
 	// È±ÉÙ¸Ç²£Æ¬
 	if (error_type & Error_Cover_Glass)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_coverglass);
+		return;
 	}
 	// È±ÉÙÅç½ºÍ·
 	if (error_type & Error_Spray)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_spray);
+		return;
 	}
 	// È±ÉÙ´æ´¢ºÐ
 	if (error_type & Error_Out_Box)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_OutBox);
+		return;
 	}
 	// ´æ´¢ºÐÂú
 	if (error_type & Error_StorageFull)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_full);
+		return;
 	}
 	// ¼ÐÈ¡Ê§°Ü
 	if (error_type & Error_Grap)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_grap);
+		return;
 	}
 	// ÎüÈ¡²£Æ¬Ê§°Ü
 	if (error_type & Error_Sucker)
 	{
 		ack_0data_task(screenUart_lastRecvIndex++, Type_controlAck, Fc_error, Extra_error_suck);
+		return;
 	}
 	/***********************/
 }
@@ -627,7 +634,7 @@ u8 TaskThread_BootReset(void)
 	GP_small_Cyl = GAS_DISABLE; // Ð¡Æø¸×ÍÆ»Ø
 	GP_sucker1_Cyl = GAS_DISABLE;
 	GP_sucker2_Cyl = GAS_DISABLE;
-	GP_sucker_Pump = GAS_DISABLE;
+	GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump = GAS_DISABLE;
 	GP_spray_Cyl = GAS_DISABLE;
 	GC_claw_Cyl = GAS_DISABLE;
 	// ¿ªÆô¸´Î»ÈÎÎñ
@@ -807,7 +814,7 @@ u8 TaskThread_Check_ErrorDone(void)
 
 		if (error_type | Error_StorageFull)
 		{
-			if (GO.Storage_full == FALSE && GO.motor_v->motion == Stop)
+			if (GO.motor_v->motion == Stop)
 			{
 				return TRUE;
 			}

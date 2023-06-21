@@ -95,7 +95,7 @@ void GP_ReadyTask(void)
 		break;
 	/*吸盘与喷油复位 basic*/
 	case GP_sucker_start:
-		GP_sucker_Pump = GAS_DISABLE;
+		GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump = GAS_DISABLE;
 		GP_sucker1_Cyl = GAS_DISABLE;
 		GP_sucker2_Cyl = GAS_DISABLE;
 		Gas_Spray_Disable();
@@ -224,7 +224,7 @@ void GP_ReadyTask(void)
 	case GP_suck_glass:
 		if (GP_sucker_Sen == Sen_Block)
 		{
-			GP_sucker_Pump = GAS_ENABLE; // 开启吸盘气泵
+			GP_sucker_Pump=SUCKER_ENABLE;//GP_sucker_Pump = GAS_ENABLE; // 开启吸盘气泵
 			GP_sucker1_Cyl = GAS_ENABLE; // 开启吸盘1 吸盘2
 			GP_sucker2_Cyl = GAS_ENABLE;
 			GP.sta = Running;
@@ -315,7 +315,7 @@ void GP_ReadyTask(void)
 
 		else if (GP.subtask == 3)
 		{
-			GP_sucker_Pump = GAS_DISABLE; // 关闭吸盘2气阀 吸盘气泵
+			GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump = GAS_DISABLE; // 关闭吸盘2气阀 吸盘气泵
 			GP_sucker1_Cyl = GAS_DISABLE;
 			GP_sucker2_Cyl = GAS_DISABLE;
 			GP.sta = Running;

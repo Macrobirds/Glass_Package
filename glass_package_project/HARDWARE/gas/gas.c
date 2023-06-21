@@ -20,7 +20,7 @@ void Gas_Init(void)
 	GP_small_Cyl=GAS_DISABLE; //小气缸推回
 	GP_sucker1_Cyl=GAS_DISABLE;
 	GP_sucker2_Cyl=GAS_DISABLE;
-	GP_sucker_Pump=GAS_DISABLE;
+	GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump=GAS_DISABLE;
 	GP_spray_Cyl=GAS_DISABLE;
 	GC_claw_Cyl=GAS_DISABLE;
 }
@@ -75,7 +75,7 @@ enum gas_state Gas_release_Func(void)
 		GP_small_Cyl=GAS_ENABLE;
 		GP_sucker1_Cyl=GAS_DISABLE;
 		GP_sucker2_Cyl=GAS_DISABLE;
-		GP_sucker_Pump=GAS_DISABLE;
+		GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump=GAS_DISABLE;
 		GP_spray_Cyl=GAS_DISABLE;
 		GC_claw_Cyl=GAS_DISABLE;
 		Main_Pump=GAS_DISABLE;

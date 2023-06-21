@@ -94,7 +94,9 @@
 
 #define GP_sucker1_Cyl PDout(14) //ÎüÅÌ1·§ 
 #define GP_sucker2_Cyl PDout(15) //ÎüÅÌ2·§
-#define GP_sucker_Pump PBout(0) //ÎüÅÌ±Ã
+#define GP_sucker_Pump	PEout(4) //ÎüÅÌ±Ã
+//#define GP_sucker_Pump PBout(0) 
+
 
 #ifdef BIG_CYLINDER
 #define GP_big_Cyl PDout(11) //´óÆø¸×
@@ -147,6 +149,9 @@ enum Carrier_Versions {BMH = 1, BP = 2, FPJ=3};
 #define ITV1100_DISABLE 0
 #define ITV1100_ENABLE 1
 
+
+#define SUCKER_ENABLE 1
+#define SUCKER_DISABLE 0
 
 #define EN_ENABLE				0
 #define LED_ON 					0

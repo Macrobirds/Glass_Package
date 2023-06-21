@@ -347,7 +347,6 @@ u8 set_param_motor(u8 *data, u8 dataLength)
 static u8 set_param_claw(u8 *data, u8 datalen)
 {
 	u8 *tempptr = data;
-	u8 i = 0;
 	if (datalen != 14)
 	{
 		printf("claw erro len\r\n");
@@ -476,9 +475,9 @@ static u8 set_state_IO(u8 *data)
 		break;
 	case 6:
 		if (state)
-			GP_sucker_Pump = GAS_ENABLE;
+			GP_sucker_Pump=SUCKER_ENABLE;//GP_sucker_Pump = GAS_ENABLE;
 		else
-			GP_sucker_Pump = GAS_DISABLE;
+			GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump = GAS_DISABLE;
 		break;
 	case 7:
 		if (state)
