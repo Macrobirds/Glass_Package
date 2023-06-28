@@ -117,6 +117,9 @@ int main(void)
 		// 保存存储器参数
 		W25QXX_Write((u8 *)Global_Parm.GIO, SpiFlashAddr_inoutData, sizeof(Glass_In_Out_Data));
 		delay_ms(50);
+		//保存警报参数
+		W25QXX_Write((u8 *)Global_Parm.Warn, SpiFlashAddr_WarnData, sizeof(Warning_Data));
+		delay_ms(50);
 		// 写入首次上电初始化标志位
 		firstStartFlag = 0x55;
 		W25QXX_Write(&firstStartFlag, SpiFlashAddr_initFlag, 1);
@@ -147,6 +150,9 @@ int main(void)
 		delay_ms(50);
 		// 保存存储器参数
 		W25QXX_Read((u8 *)Global_Parm.GIO, SpiFlashAddr_inoutData, sizeof(Glass_In_Out_Data));
+		delay_ms(50);
+		//保存警报参数
+		W25QXX_Read((u8 *)Global_Parm.Warn, SpiFlashAddr_WarnData, sizeof(Warning_Data));
 		delay_ms(50);
 	}
 
@@ -188,7 +194,7 @@ void main_task(void *pdata)
 //		open_FlashReadProtect();
 //		//关闭电源 POWER = !POWER_ON;
 //	}
-
+	Buzzer=BUZZER_DISABLE;
 	// 等待气压稳定
 	while (Gas_State == gas_pumping)
 	{

@@ -73,7 +73,7 @@ void GE_ReadyTask(void)
 		if (check_GC())
 		{
 			
-			motorGo_acc(GE.motor, GE.motor->max_pos - 100);
+			motorGo_acc(GE.motor, GE.motor->max_pos - 1000);
 			//motorGo(GE.motor,GE.motor->max_pos-100,0);
 			GE.sta = Running;
 		}

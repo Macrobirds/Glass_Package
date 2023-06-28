@@ -120,6 +120,7 @@ u8 TaskThread_CheckIdle(void)
 		{
 			return TRUE;
 		}
+		
 	}
 
 	return FALSE;
@@ -243,6 +244,11 @@ void Error_Set(enum task_error error, u8 error_sen)
 		GP.resume_task = GP_sucker_down;
 		GP.sta = Ready;
 		GP.task = GP_error;
+		//¿ªÆôÈ±ÉÙ¸Ç²£Æ¬·äÃùÆ÷ÌáÐÑ
+		if(Global_Parm.Warn->GP_cover_buzzer)
+		{
+			Buzzer=BUZZER_ENABLE;
+		}
 	}
 	// È±ÉÙÅç½ºÍ·
 	if (error_type & Error_Spray)
@@ -250,6 +256,10 @@ void Error_Set(enum task_error error, u8 error_sen)
 		GP.resume_task = GP.task;
 		GP.sta = Ready;
 		GP.task = GP_error;
+		if(Global_Parm.Warn->GP_spray_buzzer)
+		{
+			Buzzer=BUZZER_ENABLE;
+		}
 	}
 	// È±ÉÙ´æ´¢ºÐ
 	if (error_type & Error_Out_Box)
@@ -264,6 +274,10 @@ void Error_Set(enum task_error error, u8 error_sen)
 		GO.resume_task = GO.task;
 		GO.sta = Ready;
 		GO.task = GO_error;
+		if(Global_Parm.Warn->GO_storage_buzzer)
+		{
+			Buzzer=BUZZER_ENABLE;
+		}
 	}
 	// ¼ÐÈ¡Ê§°Ü
 	if (error_type & Error_Grap)
@@ -291,6 +305,10 @@ void Error_Set(enum task_error error, u8 error_sen)
 			GC.sta = Ready;
 			GC.task = GC_error;
 			GC.subtask = 0;
+		}
+		if(Global_Parm.Warn->GP_sucker_buzzer)
+		{
+			Buzzer=BUZZER_ENABLE;
 		}
 	}
 
@@ -557,6 +575,7 @@ u8 TaskThread_Resume_Error(void)
 	}
 	TIM_Cmd(TIM6, ENABLE);
 	TaskThread_State = taskthread_running;
+	Buzzer=BUZZER_DISABLE;
 	return TRUE;
 }
 
@@ -698,6 +717,7 @@ u8 TaskThread_Start(void)
 		TIM_Cmd(TIM6, ENABLE);
 		TaskThread_State = taskthread_running;
 		return TRUE;
+		Buzzer=BUZZER_DISABLE;
 	}
 
 	return FALSE;
@@ -725,7 +745,9 @@ u8 TaskThread_Close(void)
 		GO.task = GO_reset_off;
 		TIM_Cmd(TIM6, ENABLE);
 		TaskThread_State = taskthread_close;
+		Buzzer=BUZZER_DISABLE;
 		return TRUE;
+		
 	}
 	return FALSE;
 }

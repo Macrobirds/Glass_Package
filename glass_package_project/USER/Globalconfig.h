@@ -40,7 +40,7 @@
 #define SpiFlashAddr_clawsupportData 			0x0600			// 储存夹手封片托盘参数
 #define SpiFlashAddr_packageData 			0x0700			// 储存封片参数
 #define SpiFlashAddr_inoutData				0x0800 			//存储出入槽参数
-#define SpiFlashAddr_bakParam 			0x0900			// 备用参数
+#define SpiFlashAddr_WarnData 			0x0900			// 警报参数
 #define FlashSIZE_bakParam  			60
 
 #define SCALE 10
@@ -110,7 +110,7 @@
 
 #define GP_ITV1100 PEout(3) //ITV电源开关
 
-
+#define Buzzer PEout(5)
 
 #define DeveiceType_package 3
 
@@ -152,6 +152,9 @@ enum Carrier_Versions {BMH = 1, BP = 2, FPJ=3};
 
 #define SUCKER_ENABLE 1
 #define SUCKER_DISABLE 0
+
+#define BUZZER_ENABLE 1
+#define BUZZER_DISABLE 0
 
 #define EN_ENABLE				0
 #define LED_ON 					0
@@ -232,16 +235,26 @@ typedef struct{
 }Glass_In_Out_Data;
 
 
+typedef struct{
+	u8 GP_sucker_buzzer;
+	u8 GP_sucker_stop;
+	u8 GP_cover_buzzer;
+	u8 GO_storage_buzzer;
+	u8 GP_spray_buzzer;
+	u8 Finish_buzzer;
+}Warning_Data;
+
 /////////////////Golbal Parameter///////////////////
 struct Global_Parameter_struct{
 	Motor_Data * MOT;
 	Glass_ClawSupport_data * GCS;
 	Glass_Package_Data * GP;
 	Glass_In_Out_Data * GIO;
+	Warning_Data * Warn;
 };
 
 extern struct Global_Parameter_struct Global_Parm; 
-extern  u32 sensor_error_idx;
+extern  u8 sensor_error_idx;
 
 
 extern u32 deviceSnNumber;

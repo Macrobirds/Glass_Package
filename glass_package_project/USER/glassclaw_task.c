@@ -188,7 +188,7 @@ void GC_ReadyTask(void)
 				}
 		}else
 		{
-			GC.subtask=5; //夹手复位至垂直原点
+			GC.subtask=4; //夹手复位至垂直原点
 		}
 	}else if(GC.subtask==1)
 	{
@@ -212,7 +212,8 @@ void GC_ReadyTask(void)
 		Next_Task(GC.task,GC_rot_start); //夹手复位旋转原点
 	}else if(GC.subtask==5)
 	{
-		Next_Task(GC.task,GC_ver_start); //夹手复位至垂直原点
+		GC.subtask++;
+		//Next_Task(GC.task,GC_ver_start); //夹手复位至垂直原点
 	}else if(GC.subtask==6)
 	{
 		if(GOH_start_Sen==Sen_Block&&GO.motor_h->motion==Stop) //玻片托盘复位至原点

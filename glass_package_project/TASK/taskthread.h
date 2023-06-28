@@ -9,7 +9,7 @@
 #define GE_UP_DOWN_SENSOR // 不识别装载盒前后端程序宏定义
 // #define GE_UP_SENSOR_BEFORE	//识别装载槽前后端宏定义
 
-#define OVERTIME 20000 // 当任务运行超过20s时认为系统发生超时错误
+#define OVERTIME 30000 // 当任务运行超过30s时认为系统发生超时错误
 
 // 任务线程状态
 enum taskthread_state
@@ -146,7 +146,6 @@ enum glass_out_task_index
 	GOH_end,	  // 玻片托盘移动到水平终点位置
 	GOH_back,
 	GO_out,		  // 玻片出料
-	GO_next,	  // 移动到下一存储器
 	GO_finish,
 	GO_error, // 异常处理任务
 };

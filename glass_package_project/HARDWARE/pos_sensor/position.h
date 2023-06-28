@@ -19,7 +19,7 @@
 #define IoInput_11_Enable					1
 #define IoInput_12_Enable					1
 #define IoInput_13_Enable					1
-#define IoInput_14_Enable					0
+#define IoInput_14_Enable					1
 #define IoInput_15_Enable					0
 
 

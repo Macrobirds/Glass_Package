@@ -131,7 +131,7 @@ static void Exti_Init_8_15(void)
 	{
 		//GPIOE.14
 		GPIO_EXTILineConfig(GPIO_PortSourceGPIOE, GPIO_PinSource14);
-		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising; //上升沿触发
+		EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling; //双边沿沿触发
 		EXTI_InitStructure.EXTI_Line = EXTI_Line14;
 		EXTI_Init(&EXTI_InitStructure);
 	}
@@ -476,7 +476,6 @@ void EXTI9_5_IRQHandler(void)
 }
 void EXTI15_10_IRQHandler(void)
 {
-	printf("exti15-10\r\n");
 	//GE_start_Sen
 	if(EXTI_GetITStatus(EXTI_Line10)!=RESET) //进料槽移动到原点
 	{
@@ -547,12 +546,42 @@ void EXTI15_10_IRQHandler(void)
 		EXTI_ClearITPendingBit(EXTI_Line13);
 	}
 
-	
-	if(EXTI_GetITStatus(EXTI_Line15)!=RESET) //封片设备到达原点
+	if(EXTI_GetITStatus(EXTI_Line14)!=RESET) //封片设备到达原点
 	{
+		delay_us(DELAY_US);
+		if(GOV_box_Sen==Sen_Block) //上升沿触发
+		{
+			if(TaskThread_CheckStop()&&GO.task!=GO_Box_In)
+			{
+				TIM_Cmd(TIM6,DISABLE);
+				GO.task=GO_Box_In;
+				GO.sta=Ready;
+				GO.subtask=0;
+				TIM_Cmd(TIM6,ENABLE);
+			}
 
-		EXTI_ClearITPendingBit(EXTI_Line15);
+		}else //下降沿触发
+		{
+			if(TaskThread_CheckStop()&&GO.task!=GO_Box_In)
+			{
+				TIM_Cmd(TIM6,DISABLE);
+				GO.task=GO_Box_Out;
+				GO.sta=Ready;
+				GO.subtask=0;
+				GO.Storage_full=TRUE;
+				TIM_Cmd(TIM6,ENABLE);
+			}
+		}
+		EXTI_ClearITPendingBit(EXTI_Line14);
 	}
+	
+	
+	
+//	if(EXTI_GetITStatus(EXTI_Line15)!=RESET) //封片设备到达原点
+//	{
+
+//		EXTI_ClearITPendingBit(EXTI_Line15);
+//	}
 
 
 

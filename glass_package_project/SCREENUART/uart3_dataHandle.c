@@ -436,6 +436,28 @@ static u8 set_param_outin(u8 *data, u8 datalen)
 	delay_ms(50);
 	return 1;
 }
+
+static u8 set_param_warning(u8 *data, u8 datalen)
+{
+	u8 *tempptr = data;
+	if (datalen != 6)
+	{
+		tempptr = 0;
+		return 0;
+	}
+	tempptr = mymemcpy2(tempptr, &Global_Parm.Warn->GP_sucker_stop, sizeof(Global_Parm.Warn->GP_sucker_stop));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.Warn->GP_sucker_buzzer, sizeof(Global_Parm.Warn->GP_sucker_buzzer));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.Warn->GP_cover_buzzer, sizeof(Global_Parm.Warn->GP_cover_buzzer));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.Warn->GO_storage_buzzer, sizeof(Global_Parm.Warn->GO_storage_buzzer));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.Warn->GP_spray_buzzer, sizeof(Global_Parm.Warn->GP_spray_buzzer));
+	tempptr = mymemcpy2(tempptr, &Global_Parm.Warn->Finish_buzzer, sizeof(Global_Parm.Warn->Finish_buzzer));
+	tempptr = 0;
+	// 保存警报参数
+	W25QXX_Write((u8 *)Global_Parm.Warn, SpiFlashAddr_WarnData, sizeof(Warning_Data));
+	delay_ms(50);
+	return 1;
+}
+
 // debug 模式下配置IO口
 static u8 set_state_IO(u8 *data)
 {
@@ -475,9 +497,9 @@ static u8 set_state_IO(u8 *data)
 		break;
 	case 6:
 		if (state)
-			GP_sucker_Pump=SUCKER_ENABLE;//GP_sucker_Pump = GAS_ENABLE;
+			GP_sucker_Pump = SUCKER_ENABLE; // GP_sucker_Pump = GAS_ENABLE;
 		else
-			GP_sucker_Pump=SUCKER_DISABLE;//GP_sucker_Pump = GAS_DISABLE;
+			GP_sucker_Pump = SUCKER_DISABLE; // GP_sucker_Pump = GAS_DISABLE;
 		break;
 	case 7:
 		if (state)
@@ -514,6 +536,12 @@ static u8 set_state_IO(u8 *data)
 			GCV_motor_Break = GAS_ENABLE;
 		else
 			GCV_motor_Break = GAS_DISABLE;
+		break;
+	case 13:
+		if (state)
+			Buzzer = BUZZER_ENABLE;
+		else
+			Buzzer = BUZZER_DISABLE;
 		break;
 	default:
 		break;
@@ -577,9 +605,9 @@ void screenUart_protocolParse(void)
 	u8 FC = screenUart_RecvCompleteBuf[4];
 	u8 Extra = screenUart_RecvCompleteBuf[5];
 	u8 dataLength = protocolLength - 8;
-	u8 *data = NULL;				// 协议数据指针
-	u8 *tmpBuf = NULL;				// 动态分配数组指针
-	u8 *tempptr = NULL;				// 协议数据指针
+	u8 *data = NULL;	// 协议数据指针
+	u8 *tmpBuf = NULL;	// 动态分配数组指针
+	u8 *tempptr = NULL; // 协议数据指针
 
 	screenUart_lastRecvIndex = Index;
 
@@ -808,8 +836,13 @@ void screenUart_protocolParse(void)
 				break;
 			}
 			}
+		// 设置警报参数
+		case Extra_param_warning:
+		{
+			set_param_warning(data, dataLength);
+		}
 
-			break;
+		break;
 		}
 		}
 	}
@@ -1071,7 +1104,9 @@ void screenUart_protocolParse(void)
 							ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
 						}
 					}
-				}else {
+				}
+				else
+				{
 					ack(Index, Type_controlAck, FC, Extra, AckResult_ackFailed);
 				}
 				break;
@@ -1103,6 +1138,19 @@ void screenUart_protocolParse(void)
 		}
 		break;
 	}
+	case Type_controlAck:
+		switch (FC)
+		{
+		case Fc_run:
+			switch (Extra)
+			{
+			case Extar_run_Finish:
+				Buzzer=BUZZER_DISABLE;
+				break;
+			}
+			break;
+		}
+		break;
 	}
 	// 清除data临时数组数据
 	myfree(SRAMIN, data);

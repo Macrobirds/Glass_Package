@@ -77,6 +77,7 @@ enum Param
 	Extra_param_claw=4,
 	Extra_param_package=5,
 	Extra_param_outin=6,
+	Extra_param_warning=7,
 };
 
 //Êý¾Ý

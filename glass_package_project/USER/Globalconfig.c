@@ -6,8 +6,9 @@ Motor_Data MOT_Parm = {0};
 Glass_ClawSupport_data GCS_Parm = {0};
 Glass_Package_Data GP_Parm = {0};
 Glass_In_Out_Data GIO_Parm = {0};
+Warning_Data Warn_Parm={0};
 
-u32 sensor_error_idx = 0;
+u8 sensor_error_idx = 0;
 volatile u32 nowRtcTime = 0;
 u32 deviceSnNumber = 0;
 u8 DeviceType = DeviceType_Default;
@@ -19,6 +20,7 @@ struct Global_Parameter_struct Global_Parm = {
 	.GCS = &GCS_Parm,
 	.GP = &GP_Parm,
 	.GIO = &GIO_Parm,
+	.Warn=&Warn_Parm,
 };
 
 void Set_Global_Parameter_Default(void)
